@@ -1,0 +1,18 @@
+# Example file ffor configuration
+# save this file as azure_config in this folder with your config and credentials
+
+ACCOUNT="your_azure_account"
+
+PASSWORD="your_azure_password"
+
+RESOURCEGROUPNAME="your_resource_group"
+
+# between 3 and 24 character, only lowercase letters and numbers
+STORAGENAME="your_storage_name"
+
+LOCATION="your_location"
+
+# name has to be unique
+FUNCTIONNAME="your_function_app_name"
+
+LANGUAGE="your_language"
