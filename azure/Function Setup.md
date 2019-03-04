@@ -47,13 +47,13 @@ sudo npm install -g azure-functions-core-tools
 ## Create a resource group
 
 ```shell
-az group create --name <NAME> --location <LOCATION>
+az group create --name <NAME_OF_RESOURCE_GROUP> --location <LOCATION>
 ```
 
 ## Create an Azure storage account
 
 ```shell
-az storage account create --name <NAME> --location <LOCATION> --resource-group <NAME_OF_RESOURCE_GROUP> --sku Standard_LRS
+az storage account create --name <NAME_OF_STORAGE> --location <LOCATION> --resource-group <NAME_OF_RESOURCE_GROUP> --sku Standard_LRS
 ```
 
 ## Create an Azure function app
@@ -65,7 +65,7 @@ az functionapp create --resource-group <NAME_OF_RESOURCE_GROUP> --consumption-pl
 ## Create a function project locally
 
 ```shell
-func init <APP_NAME> --language <LANGUAGE>
+func init <APP_NAME> --worker-runtime <RUNTIME> --language <LANGUAGE>
 ```
 
 and switch to the directoy:
@@ -88,7 +88,7 @@ func start
 ## Deploy the function
 
 ```shell
-func azure functionapp publish <FUNCTION_NAME>
+func azure functionapp publish <APP_NAME>
 ```
 
 ### Hints
