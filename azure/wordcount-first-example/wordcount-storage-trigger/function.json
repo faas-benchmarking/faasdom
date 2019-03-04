@@ -1,0 +1,19 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "myBlob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "samples-workitems/{name}",
+      "connection": ""
+    },
+    {
+      "name": "myOutputBlob",
+      "type": "blob",
+      "path": "samples-workitems/results/{name}",
+      "connection": "",
+      "direction": "out"
+    }
+  ]
+}
