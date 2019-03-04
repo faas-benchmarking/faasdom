@@ -14,6 +14,16 @@ Some necessary packages:
 sudo apt-get install apt-transport-https lsb-release software-properties-common dirmngr -y
 ```
 
+.NET SDK (e.g. for blob storage triggers needed, see [https://dotnet.microsoft.com/download/linux-package-manager/ubuntu18-04/sdk-current](https://dotnet.microsoft.com/download/linux-package-manager/ubuntu18-04/sdk-current)):
+
+```shell
+wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo add-apt-repository universe
+sudo apt-get update
+sudo apt-get install dotnet-sdk-2.2
+```
+
 ## Azure CLI
 
 Install the Azure CLI:

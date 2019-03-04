@@ -17,7 +17,7 @@ echo "  #---------------------------------------#"
 echo "  | Installing Requirements for Azure CLI |"
 echo "  #---------------------------------------#"
 
-# Azure CLI
+# https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function-azure-cli
 
 sudo apt-get install apt-transport-https lsb-release software-properties-common dirmngr -y 2>&1 >/dev/null
 
@@ -27,6 +27,67 @@ else
     echo "    [${RED}ERROR${NC}] Could not install requirements for Azure CLI"
     exit 0
 fi
+
+# https://dotnet.microsoft.com/download/linux-package-manager/ubuntu18-04/sdk-current
+
+wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb 2>&1 >/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "    [${GREEN}OK${NC}] Microsoft key added."
+else
+    echo "    [${RED}ERROR${NC}] Could not add Microsoft Key."
+    exit 0
+fi
+
+sudo dpkg -i packages-microsoft-prod.deb 2>&1 >/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "    [${GREEN}OK${NC}] Microsoft key installed."
+else
+    echo "    [${RED}ERROR${NC}] Could not install Microsoft Key."
+    exit 0
+fi
+
+rm packages-microsoft-prod.deb 2>&1 >/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "    [${GREEN}OK${NC}] Cleaned up."
+else
+    echo "    [${RED}ERROR${NC}] Could not clean up."
+fi
+
+sudo add-apt-repository universe 2>&1 >/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "    [${GREEN}OK${NC}] Microsoft 'universe' repository added."
+else
+    echo "    [${RED}ERROR${NC}] Could not add Microsoft 'universe' repository."
+    exit 0
+fi
+
+sudo apt-get update 2>&1 >/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "    [${GREEN}OK${NC}] Updated apt...."
+else
+    echo "    [${RED}ERROR${NC}] Apt update failed."
+    exit 0
+fi
+
+sudo apt-get install dotnet-sdk-2.2 2>&1 >/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "    [${GREEN}OK${NC}] Installed .NET SDK Tools."
+else
+    echo "    [${RED}ERROR${NC}] Could not install .NET SDK Tools."
+    exit 0
+fi
+
+echo "  #---------------------------------------#"
+echo "  |              Azure CLI                |"
+echo "  #---------------------------------------#"
+
+# Azure CLI
 
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" | sudo tee /etc/apt/sources.list.d/azure-cli.list 2>&1 >/dev/null
 
