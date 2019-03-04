@@ -4,9 +4,9 @@ This document gives a short overview of all functions and what they do and how t
 
 ## wordcount
 
-The function (wordcount)[/wordcount] counts the number of words in a given text.
+The function [wordcount](wordcount) counts the number of words in a given text.
 
-It is deployed at: (https://wordcount-first-example.azurewebsites.net/api/wordcount)[https://wordcount-first-example.azurewebsites.net/api/wordcount]
+It is deployed at: [https://wordcount-first-example.azurewebsites.net/api/wordcount](https://wordcount-first-example.azurewebsites.net/api/wordcount)
 
 Request example (curl):
 
