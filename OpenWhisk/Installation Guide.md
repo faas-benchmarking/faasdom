@@ -34,7 +34,7 @@ Then on the graphical GUI choose:
 - password
 - repeat password
 
-TODO: configure CloudDB for OpenWhisk
+TODO: configure CouchDB for OpenWhisk
 
 ## Build
 
