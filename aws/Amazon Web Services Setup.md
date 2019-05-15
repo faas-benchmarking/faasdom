@@ -17,7 +17,7 @@ This document shows you how to install the [AWS CLI](https://docs.aws.amazon.com
 ## Install AWS CLI (for Ubuntu/Debian)
 
 see: [https://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html](https://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html)
-script: [function_script_setup.sh](function_script_setup.sh)
+script: [aws_init.sh](aws_init.sh)
 
 #### Install the AWS CLI
 `sudo apt-get install awscli -y`
