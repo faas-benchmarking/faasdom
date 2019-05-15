@@ -38,9 +38,9 @@ First of all you have to install [Node.js](https://nodejs.org/) and [npm](https:
 Then for each cloud provider you need to setup their CLI and maybe other packages:
 
   - For AWS see: [Amazon Web Services Setup.md](aws/Amazon%20Web%20Services%20Setup.md)
-  - For Azure see: [Microsoft Azure Setup.md](azure/Microsoft Azure Setup.md)
-  - For Google see: [Google Cloud Setup.md](google/Google Cloud Setup.md)
-  - For IBM see: [IBM Cloud Setup.md](ibm/IBM Cloud Setup.md)
+  - For Azure see: [Microsoft Azure Setup.md](azure/Microsoft%20Azure%20Setup.md)
+  - For Google see: [Google Cloud Setup.md](google/Google%20Cloud%20Setup.md)
+  - For IBM see: [IBM Cloud Setup.md](ibm/IBM%20Cloud%20Setup.md)
 
 To start the main application (in the folder [main](main/)) first install the required node packages with
 
