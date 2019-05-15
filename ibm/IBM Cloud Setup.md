@@ -33,15 +33,15 @@ cd Bluemix_CLI/
  - Choose your location
 
 #### Create an organization
-`ibmcloud account org-create functionOrg`
+`ibmcloud account org-create <YOUR_ORGANIZATION>`
 
 #### Create a space
-`ibmcloud cf create-space functionSpace -o functionOrg`
+`ibmcloud cf create-space <YOUR_SPACE> -o <YOUR_ORGANIZATION>`
 
 Hint: Creates a space but sometime cannot add the manager, recommended to do on the platform in the browser.
 
 #### Set default organization and space
-`ibmcloud target -o functionOrg -s functionSpace`
+`ibmcloud target -o <YOUR_ORGANIZATION> -s <YOUR_SPACE> `
 
 Save them to the file [config.json](../main/config.json) into the object `ibm`, `organization` resp `space`.
 
