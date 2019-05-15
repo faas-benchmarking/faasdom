@@ -1,0 +1,47 @@
+{
+    "global": {
+        "memory": 128,
+        "timeout": 120
+    },
+
+    "aws": {
+        "arn_role": "PLACEHOLDER",
+        "output": "json",
+        "region": "eu-central-1",
+        "region_options": ["us-east-2", "us-east-1", "us-west-1", "us-west-2", "ap-east-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "ca-central-1", "cn-north-1", "cn-northwest-1", "eu-central-1", "eu-west-1", "eu-west-2", "eu-west-3", "eu-north-1", "sa-east-1"],
+        "timeout_metric": "s",
+        "timeout_format": "/\\d+/g",
+        "timeout_max": 900
+    },
+
+    "azure": {
+        "resourcegroupname": "PLACEHOLDER",
+        "storagename":  "PLACEHOLDER",
+        "region": "westeurope",
+        "possible_regions": ["eastasia", "eastus", "westeurope", "westus"],
+        "timeout_metric": "00:00:00",
+        "timeout_format": "hh:mm:ss",
+        "timeout_max": 600
+    },
+
+    "google": {
+        "project": "PLACEHOLDER",
+        "region": "europe-west1",
+        "region_options": ["us-central1", "us-east1", "europe-west1", "europe-west2", "asia-east2", "asia-northeast1"],
+        "timeout_metric": "s",
+        "timeout_format": "/\\d+s/g",
+        "timeout_max": 540,
+        "timeout_appendix": "s",
+        "memory_appendix": "MB"
+    },
+
+    "ibm": {
+        "organization": "PLACEHOLDER",
+        "space": "PLACEHOLDER",
+        "region": "eu-de",
+        "region_options": ["au-syd", "jp-tok", "eu-de", "eu-gb", "us-south", "us-east"],
+        "timeout_metric": "ms",
+        "timeout_format": "/\\d+/g",
+        "timeout_max": 600
+    }
+}
