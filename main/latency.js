@@ -1,6 +1,27 @@
 const request = require('request');
 const fs = require('fs');
 
+const Influx = require('influx');
+
+const influx = new Influx.InfluxDB({
+  host: 'localhost', // db
+  port: 8086,
+  database: 'results', // process.env.INFLUXDB_DB
+  username: 'benchmark-suite',
+  password: 'benchmark',
+  schema: [
+    {
+      measurement: 'latency',
+      fields: {
+        ms: Influx.FieldType.INTEGER
+      },
+      tags: ['test', 'provider', 'language']
+    }
+  ]
+});
+
+influx
+
 const AWS = 'aws';
 const AZURE = 'azure';
 const GOOGLE = 'google';
@@ -14,12 +35,6 @@ const DOTNET = 'dotnet';
 const providers = [AWS, AZURE, GOOGLE, IBM];
 const languages = [NODE, PYTHON, GO, DOTNET];
 
-const colorReset = '\x1b[0m';
-const colorFgRed = '\x1b[31m';
-const colorFgGreen = '\x1b[32m';
-const colorFgYellow = '\x1b[33m';
-const colorFgWhite = '\x1b[37m';
-
 var start = undefined;
 
 var rawdata = fs.readFileSync('latency_urls.json');
@@ -27,7 +42,7 @@ var urls = JSON.parse(rawdata);
 
 function pushURL(provider, language, url) {
   if(providers.includes(provider) && languages.includes(language)) {
-    urls.push({provider: provider, language: language, url: url, latest: colorFgWhite + '0' + colorReset, mean: 0});
+    urls.push({provider: provider, language: language, url: url, latest: '0', mean: 0});
     fs.writeFile('latency_urls.json', JSON.stringify(urls), function(err) {
       if (err) {
         console.log(err);
@@ -50,29 +65,32 @@ function resetURLs() {
 }
 
 async function getLatency() {
-
   for(let i = 0; i<urls.length; i++) {
+    console.log(urls[i].url);
     request.get({
       url : urls[i].url,
       time : true
     },function(err, response){
-        urls[i].latest = colorResult(response.elapsedTime);
+        insertIntoDB(response.elapsedTime, urls[i].language, urls[i].provider)
+        urls[i].latest = response.elapsedTime;
     });
   }
-
 }
 
-function colorResult(result) {
-  let formattedResult = '';
-  if(result <= 101) {
-    formattedResult = colorFgGreen;
-  } else if(result <= 501) {
-    formattedResult = colorFgYellow;
-  } else {
-    formattedResult = colorFgRed;
-  }
-  formattedResult += result + colorReset;
-  return formattedResult;
+function insertIntoDB(ms, language, provider) {
+  influx.writePoints([
+    {
+      measurement: 'latency',
+      tags: {
+        test: 'secondTest',
+        language: language,
+        provider: provider
+      },
+      fields: {
+        ms: ms
+      }
+    }
+  ]);
 }
 
 function printResults() {
@@ -85,40 +103,43 @@ function printResults() {
     var difAsString = dif.toString();
     var difInSeconds = difAsString.substr(0, difAsString.length - 3);
 
-    let lastAWSNode = (urls.find(x => x.provider == AWS && x.language == NODE) ? urls.find(x => x.provider == AWS && x.language == NODE).latest : colorFgWhite + '-' + colorReset);
-    let lastAWSPython = (urls.find(x => x.provider == AWS && x.language == PYTHON) ? urls.find(x => x.provider == AWS && x.language == PYTHON).latest : colorFgWhite + '-' + colorReset);
-    let lastAWSGo = (urls.find(x => x.provider == AWS && x.language == GO) ? urls.find(x => x.provider == AWS && x.language == GO).latest : colorFgWhite + '-' + colorReset);
-    let lastAWSDotnet = (urls.find(x => x.provider == AWS && x.language == DOTNET) ? urls.find(x => x.provider == AWS && x.language == DOTNET).latest : colorFgWhite + '-' + colorReset);
+    let lastAWSNode = (urls.find(x => x.provider == AWS && x.language == NODE) ? urls.find(x => x.provider == AWS && x.language == NODE).latest : '-');
+    let lastAWSPython = (urls.find(x => x.provider == AWS && x.language == PYTHON) ? urls.find(x => x.provider == AWS && x.language == PYTHON).latest : '-');
+    let lastAWSGo = (urls.find(x => x.provider == AWS && x.language == GO) ? urls.find(x => x.provider == AWS && x.language == GO).latest : '-');
+    let lastAWSDotnet = (urls.find(x => x.provider == AWS && x.language == DOTNET) ? urls.find(x => x.provider == AWS && x.language == DOTNET).latest : '-');
 
-    let lastAzureNode = (urls.find(x => x.provider == AZURE && x.language == NODE) ? urls.find(x => x.provider == AZURE && x.language == NODE).latest : colorFgWhite + '-' + colorReset);
-    let lastAzurePython = (urls.find(x => x.provider == AZURE && x.language == PYTHON) ? urls.find(x => x.provider == AZURE && x.language == PYTHON).latest : colorFgWhite + '-' + colorReset);
-    let lastAzureDotnet = (urls.find(x => x.provider == AZURE && x.language == DOTNET) ? urls.find(x => x.provider == AZURE && x.language == DOTNET).latest : colorFgWhite + '-' + colorReset);
+    let lastAzureNode = (urls.find(x => x.provider == AZURE && x.language == NODE) ? urls.find(x => x.provider == AZURE && x.language == NODE).latest : '-');
+    //let lastAzurePython = (urls.find(x => x.provider == AZURE && x.language == PYTHON) ? urls.find(x => x.provider == AZURE && x.language == PYTHON).latest : '-');
+    let lastAzureDotnet = (urls.find(x => x.provider == AZURE && x.language == DOTNET) ? urls.find(x => x.provider == AZURE && x.language == DOTNET).latest : '-');
 
-    let lastGoogleNode = (urls.find(x => x.provider == GOOGLE && x.language == NODE) ? urls.find(x => x.provider == GOOGLE && x.language == NODE).latest : colorFgWhite + '-' + colorReset);
-    let lastGooglePython = (urls.find(x => x.provider == GOOGLE && x.language == PYTHON) ? urls.find(x => x.provider == GOOGLE && x.language == PYTHON).latest : colorFgWhite + '-' + colorReset);
-    let lastGoogleGo = (urls.find(x => x.provider == GOOGLE && x.language == GO) ? urls.find(x => x.provider == GOOGLE && x.language == GO).latest : colorFgWhite + '-' + colorReset);
+    let lastGoogleNode = (urls.find(x => x.provider == GOOGLE && x.language == NODE) ? urls.find(x => x.provider == GOOGLE && x.language == NODE).latest : '-');
+    let lastGooglePython = (urls.find(x => x.provider == GOOGLE && x.language == PYTHON) ? urls.find(x => x.provider == GOOGLE && x.language == PYTHON).latest : '-');
+    let lastGoogleGo = (urls.find(x => x.provider == GOOGLE && x.language == GO) ? urls.find(x => x.provider == GOOGLE && x.language == GO).latest : '-');
 
-    let lastIBMNode = (urls.find(x => x.provider == IBM && x.language == NODE) ? urls.find(x => x.provider == IBM && x.language == NODE).latest : colorFgWhite + '-' + colorReset);
-    let lastIBMPython = (urls.find(x => x.provider == IBM && x.language == PYTHON) ? urls.find(x => x.provider == IBM && x.language == PYTHON).latest : colorFgWhite + '-' + colorReset);
-    let lastIBMGo = (urls.find(x => x.provider == IBM && x.language == GO) ? urls.find(x => x.provider == IBM && x.language == GO).latest : colorFgWhite + '-' + colorReset);
-    let lastIBMDotnet = (urls.find(x => x.provider == IBM && x.language == DOTNET) ? urls.find(x => x.provider == IBM && x.language == DOTNET).latest : colorFgWhite + '-' + colorReset);
+    let lastIBMNode = (urls.find(x => x.provider == IBM && x.language == NODE) ? urls.find(x => x.provider == IBM && x.language == NODE).latest : '-');
+    let lastIBMPython = (urls.find(x => x.provider == IBM && x.language == PYTHON) ? urls.find(x => x.provider == IBM && x.language == PYTHON).latest : '-');
+    let lastIBMGo = (urls.find(x => x.provider == IBM && x.language == GO) ? urls.find(x => x.provider == IBM && x.language == GO).latest : '-');
+    let lastIBMDotnet = (urls.find(x => x.provider == IBM && x.language == DOTNET) ? urls.find(x => x.provider == IBM && x.language == DOTNET).latest : '-');
 
-    process.stdout.write('\033c');
+    let result = '';
 
-    process.stdout.write("#==================================================================#\n");
-    process.stdout.write("‖ Language |         Cloud Providers - Latency        Time: " + ' '.repeat(4 - difInSeconds.toString().length) + difInSeconds.toString() + " s ‖\n");
-    process.stdout.write("‖          |-------------------------------------------------------‖\n");
-    process.stdout.write("‖          |     AWS     |    Azure    |   Google    |     IBM     ‖\n");
-    process.stdout.write("‖----------|-------------------------------------------------------‖\n");
-    process.stdout.write("‖  Node.js | " + ' '.repeat(17 - lastAWSNode.toString().length) + lastAWSNode.toString() + " ms | " + ' '.repeat(17 - lastAzureNode.toString().length) + lastAzureNode.toString() + " ms | " + ' '.repeat(17 - lastGoogleNode.toString().length) + lastGoogleNode.toString() + " ms | " + ' '.repeat(17 - lastIBMNode.toString().length) + lastIBMNode.toString() + " ms ‖\n");
-    process.stdout.write("‖----------|-------------------------------------------------------‖\n");
-    process.stdout.write("‖  Python  | " + ' '.repeat(17 - lastAWSPython.toString().length) + lastAWSPython.toString() + " ms | " + ' '.repeat(17 - lastAzurePython.toString().length) + lastAzurePython.toString() + " ms | " + ' '.repeat(17 - lastGooglePython.toString().length) + lastGooglePython.toString() + " ms | " + ' '.repeat(17 - lastIBMPython.toString().length) + lastIBMPython.toString() + " ms ‖\n");
-    process.stdout.write("‖----------|-------------------------------------------------------‖\n");
-    process.stdout.write("‖  Go      | " + ' '.repeat(17 - lastAWSGo.toString().length) + lastAWSGo.toString() + " ms |             | " + ' '.repeat(17 - lastGoogleGo.toString().length) + lastGoogleGo.toString() + " ms | " + ' '.repeat(17 - lastIBMGo.toString().length) + lastIBMGo.toString() + " ms ‖\n");
-    process.stdout.write("‖----------|-------------------------------------------------------‖\n");
-    process.stdout.write("‖  .NET    | " + ' '.repeat(17 - lastAWSDotnet.toString().length) + lastAWSDotnet.toString() + " ms | " + ' '.repeat(17 - lastAzureDotnet.toString().length) + lastAzureDotnet.toString() + " ms |             | " + ' '.repeat(17 - lastIBMDotnet.toString().length) + lastIBMDotnet.toString() + " ms ‖\n");
-    process.stdout.write("#==================================================================#\n");
+    result += "#==================================================================#\n<br>";
+    result += "‖ Language | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cloud Providers - Latency &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Time: " + '&nbsp;'.repeat(4 - difInSeconds.toString().length) + difInSeconds.toString() + " s ‖\n<br>";
+    result += "‖ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |-------------------------------------------------------‖\n<br>";
+    result += "‖ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; AWS &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp; Azure &nbsp;&nbsp; | &nbsp; Google &nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; IBM &nbsp;&nbsp;&nbsp; ‖\n<br>";
+    result += "‖----------|-------------------------------------------------------‖\n<br>";
+    result += "‖ &nbsp;Node.js | " + '&nbsp;'.repeat(8 - lastAWSNode.toString().length) + lastAWSNode.toString() + " ms | " + '&nbsp;'.repeat(8 - lastAzureNode.toString().length) + lastAzureNode.toString() + " ms | " + '&nbsp;'.repeat(8 - lastGoogleNode.toString().length) + lastGoogleNode.toString() + " ms | " + '&nbsp;'.repeat(8 - lastIBMNode.toString().length) + lastIBMNode.toString() + " ms ‖\n<br>";
+    result += "‖----------|-------------------------------------------------------‖\n<br>";
+    result += "‖ &nbsp;Python &nbsp;| " + '&nbsp;'.repeat(8 - lastAWSPython.toString().length) + lastAWSPython.toString() + " ms | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | " + '&nbsp;'.repeat(8 - lastGooglePython.toString().length) + lastGooglePython.toString() + " ms | " + '&nbsp;'.repeat(8 - lastIBMPython.toString().length) + lastIBMPython.toString() + " ms ‖\n<br>";
+    result += "‖----------|-------------------------------------------------------‖\n<br>";
+    result += "‖ &nbsp;Go &nbsp;&nbsp;&nbsp;&nbsp; | " + '&nbsp;'.repeat(8 - lastAWSGo.toString().length) + lastAWSGo.toString() + " ms | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | " + '&nbsp;'.repeat(8 - lastGoogleGo.toString().length) + lastGoogleGo.toString() + " ms | " + '&nbsp;'.repeat(8 - lastIBMGo.toString().length) + lastIBMGo.toString() + " ms ‖\n<br>";
+    result += "‖----------|-------------------------------------------------------‖\n<br>";
+    result += "‖ &nbsp;.NET &nbsp;&nbsp; | " + '&nbsp;'.repeat(8 - lastAWSDotnet.toString().length) + lastAWSDotnet.toString() + " ms | " + '&nbsp;'.repeat(8 - lastAzureDotnet.toString().length) + lastAzureDotnet.toString() + " ms | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | " + '&nbsp;'.repeat(8 - lastIBMDotnet.toString().length) + lastIBMDotnet.toString() + " ms ‖\n<br>";
+    result += "#==================================================================#\n<br>";
 
+    // Azure Python: " + '&nbsp;'.repeat(8 - lastAzurePython.toString().length) + lastAzurePython.toString() + " ms
+
+    return result;
 }
 
 module.exports = { getLatency, printResults, pushURL, resetURLs };
