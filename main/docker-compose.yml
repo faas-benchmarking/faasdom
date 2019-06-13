@@ -1,0 +1,74 @@
+version: '3.3'
+
+services:
+  aws-cli:
+    image: mikesir87/aws-cli
+    container_name: aws-cli
+
+  azure-cli:
+    image: microsoft/azure-cli
+    container_name: azure-cli
+
+  google-cli:
+    image: google/cloud-sdk
+    container_name: google-cli
+
+  ibm-cli:
+    image: ibmcom/ibm-cloud-developer-tools-amd64
+    container_name: ibm-cli
+
+  ubuntu-zip:
+    image: bschitter/ubuntu-with-zip
+    container_name: ubuntu-zip
+
+  dotnet:
+    image: mcr.microsoft.com/dotnet/core/sdk
+    container_name: dotnet
+
+  golang:
+    image: golang
+    container_name: golang
+
+  db:
+    image: influxdb:latest
+    container_name: influxdb
+    env_file:
+      - env.influx
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
+    volumes:
+      - influx:/var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    env_file:
+      - env.grafana
+    links:
+      - db
+
+  app:
+    build: .
+    image: bschitter/benchmark-suite-serverless-computing
+    container_name: app
+    depends_on:
+      - db
+      - grafana
+      - aws-cli
+      - azure-cli
+      - google-cli
+      - ibm-cli
+      - ubuntu-zip
+      - dotnet
+      - golang
+    ports:
+      - "3001:3001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  influx:
