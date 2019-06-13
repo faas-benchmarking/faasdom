@@ -3,40 +3,12 @@
 // python3.6 -m venv .env
 // source .env/bin/activate
 
-const readline = require('readline');
 const latencyModule = require("./latency.js");
-const inquirer = require('inquirer');
 const fs = require('fs');
 const execAwait = require('await-exec')
 const { exec } = require('child-process-promise');
-
-
-/** Colors */
-let colorReset = "\x1b[0m"
-let colorBright = "\x1b[1m"
-let colorDim = "\x1b[2m"
-let colorUnderscore = "\x1b[4m"
-let colorBlink = "\x1b[5m"
-let colorReverse = "\x1b[7m"
-let colorHidden = "\x1b[8m"
-
-let colorFgBlack = "\x1b[30m"
-let colorFgRed = "\x1b[31m"
-let colorFgGreen = "\x1b[32m"
-let colorFgYellow = "\x1b[33m"
-let colorFgBlue = "\x1b[34m"
-let colorFgMagenta = "\x1b[35m"
-let colorFgCyan = "\x1b[36m"
-let colorFgWhite = "\x1b[37m"
-
-let colorBgBlack = "\x1b[40m"
-let colorBgRed = "\x1b[41m"
-let colorBgGreen = "\x1b[42m"
-let colorBgYellow = "\x1b[43m"
-let colorBgBlue = "\x1b[44m"
-let colorBgMagenta = "\x1b[45m"
-let colorBgCyan = "\x1b[46m"
-let colorBgWhite = "\x1b[47m"
+const express = require('express');
+const app = express();
 
 /** constants with providers and languages */
 const AWS = 'aws';
@@ -59,312 +31,65 @@ const tests = [LATENCY, FACTORS];
 /** variable for config data */
 var config;
 
-/** inquirer question objects */
-var providerQuestion = {
-	type: 'checkbox',
-	message: 'Select Cloud Providers you want to deploy',
-	name: 'providers',
-	choices: [
-		{	name: 'Amazon Web Services' },
-		{ name: 'Microsoft Azure' },
-		{ name: 'Google Cloud' },
-		{	name: 'IBM Cloud'	}
-	],
-	validate: function(answer) {
-		if (answer.length < 1) {
-			return 'You must choose at least one cloud provider.';
-		}
-		return true;
+var currentLogStatus = '';
+var runningStatus = false;
+var latencyRunningInterval;
+var latencyPrintingInterval;
+
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+
+app.get('/', function(req, res, next) {
+	res.render('index', {data: ''});
+});
+
+app.get('/deploy', async function(req, res, next) {
+	runningStatus = true;
+	currentLogStatus = '';
+	// TODO: make generic
+	if(req.query.latency == 'true') {
+		deployLatency(req.query);
+	} else if(req.query.factors == 'true') {
+		deployFactors(req.query);
+	} else {
+		console.log('invalid test');
 	}
-};
+	res.send({data: currentLogStatus, running: runningStatus});
+});
 
-var languageQuestion = {
-	type: 'checkbox',
-	message: 'Select Langues you want to deploy',
-	name: 'languages',
-	choices: [
-		{ name: 'Node.js' },
-		{ name: 'Python' },
-		{	name: 'Go' },
-		{ name: '.NET' }
-	],
-	validate: function(answer) {
-		if (answer.length < 1) {
-			return 'You must choose at least one programming language.';
-		}
-		return true;
-	}
-}
+//TODO: make generic for all tests --> rename to run
+app.get('/run', function(req, res, next) {
+	runningStatus = true;
+	currentLogStatus = '';
+	latencyRunningInterval = setInterval(function(){latencyModule.getLatency()}, 5000);
+	latencyPrintingInterval = setInterval(function(){currentLogStatus = latencyModule.printResults()}, 5000);
+	res.send({data: currentLogStatus, running: runningStatus});
+});
 
-
-start();
+app.get('/stop', function(req, res, next) {
+	runningStatus = false;
+	currentLogStatus = '';
+	clearInterval(latencyRunningInterval);
+	clearInterval(latencyPrintingInterval);
+	res.send({data: currentLogStatus, running: runningStatus});
+});
 
 
-/** main function */
-async function start() {
-	printOptions();
-	loadConfig();
-	const ans = await waitForUserInput("\n  --> ");
-	let providers;
-	let languages;
-	switch (ans) {
-		case '1':
-			console.log( colorFgYellow + ' INFO: Not yet implemented.' + colorReset);
-			start();
-			break;
-		case '2':
-			console.log( colorFgYellow + ' INFO: Not yet implemented.' + colorReset);
-			start();
-			break;
-		case '3':
-			console.log( colorFgYellow + ' INFO: Not yet implemented.' + colorReset);
-			start();
-			break;
-		case '4':
-			console.log( colorFgYellow + ' INFO: Not yet implemented.' + colorReset);
-			start();
-			break;
-		case '5':
-			console.log( colorFgYellow + ' INFO: Not yet implemented.' + colorReset);
-			start();
-			break;
-		case '6':
-			console.log( colorFgYellow + ' INFO: Not yet implemented.' + colorReset);
-			start();
-			break;
-		case '7':
-			inquirer.prompt([providerQuestion])
-			.then(async answers => {
-				providers = answers;
-				inquirer.prompt([languageQuestion])
-				.then(async answers => {
-					languages = answers;
-					console.log('');
-					console.log(colorFgYellow + '  Deploying Latency Test...' + colorReset);
+app.get('/cleanup', function(req, res, next) {
+	runningStatus = true;
+	currentLogStatus = '';
+	cleanup();
+	res.send({data: currentLogStatus, running: runningStatus});
+});
 
-					if(providers.providers.includes('Amazon Web Services')) {
+app.get('/status', function(req, res, next) {
+	res.send({data: currentLogStatus, running: runningStatus});
+});
 
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'Amazon Web Services' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(AWS, NODE, LATENCY, 'node_latency', 'node_latency', 'node_latency', 'nodejs8.10', 'index.handler', '../aws/src/node/node_latency/', 'Node.js', '', '');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(AWS, PYTHON, LATENCY, 'python_latency', 'python_latency', 'python_latency', 'python3.6', 'function.my_handler', '../aws/src/python/python_latency/', 'Python', '', '');
-						}
-						if(languages.languages.includes('Go')) {
-							await deployFunction(AWS, GO, LATENCY, 'go_latency', 'go_latency', 'go_latency', 'go1.x', 'latency', '../aws/src/go/go_latency/', 'Go', '', '');
-						}
-						if(languages.languages.includes('.NET')) {
-							await deployFunction(AWS, DOTNET, LATENCY, 'dotnet_latency', 'dotnet_latency', 'dotnet_latency', 'dotnetcore2.1', 'Latency::Latency.LatencyHandler::HandleFunction', '../aws/src/dotnet/Latency/', '.NET', '', '');
-						}
-					}
-					if(providers.providers.includes('Microsoft Azure')) {
-
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'Microsoft Azure' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(AZURE, NODE, LATENCY, 'node-latency', '', '', 'node', '', '../azure/src/node/node_latency', 'Node.js', '', '');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(AZURE, PYTHON, LATENCY, 'python-latency', '', '', 'python', '', '../azure/src/python/python_latency', 'Python', '', '');
-						}
-						if(languages.languages.includes('Go')) {
-							console.log(colorFgYellow + '    SKIP:' + colorReset + ' No Go runtime.');
-						}
-						if(languages.languages.includes('.NET')) {
-							await deployFunction(AZURE, DOTNET, LATENCY, 'dotnet-latency', '', '', 'dotnet', '', '../azure/src/dotnet/dotnet_latency', '.NET', '', '');
-						}	
-
-					}
-					if(providers.providers.includes('Google Cloud')) {
-
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'Google Cloud' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(GOOGLE, NODE, LATENCY, 'node_latency', '', '', 'nodejs8', '', '../google/src/node/latency', 'Node.js', '', '');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(GOOGLE, PYTHON, LATENCY, 'python_latency', '', '', 'python37', '', '../google/src/python/latency', 'Python', '', '');
-						}
-						if(languages.languages.includes('Go')) {
-							await deployFunction(GOOGLE, GO, LATENCY, 'Go_latency', '', '', 'go111', '', '../google/src/go/latency', 'Go', '', '');
-						}
-						if(languages.languages.includes('.NET')) {
-							console.log(colorFgYellow + '    SKIP:' + colorReset + ' No .NET runtime.');
-						}
-
-					}
-					if(providers.providers.includes('IBM Cloud')) {
-
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'IBM Cloud' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(IBM, NODE, LATENCY, 'node_latency', 'node_latency', '', 'nodejs:10', '', '../ibm/src/node/latency/', 'Node.js', ' ', 'json');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(IBM, PYTHON, LATENCY, 'python_latency', 'python_latency', '', 'python:3.7', '', '../ibm/src/python/latency/main.py', 'Python', ' ', 'json');
-						}
-						if(languages.languages.includes('Go')) {
-							await deployFunction(IBM, GO, LATENCY, 'go_latency', 'go_latency', '', 'go:1.11', '', '../ibm/src/go/latency/latency.go', 'Go', ' ', 'json');
-						}
-						if(languages.languages.includes('.NET')) {
-							await deployFunction(IBM, DOTNET, LATENCY, 'dotnet_latency', 'dotnet_latency', '', 'dotnet:2.2', '', '../ibm/src/dotnet/Latency/', '.NET', ' --main Latency::Latency.LatencyDotnet::Main', 'json')
-						}
-					}
-
-					console.log(' ');
-					console.log(colorFgGreen + '  Latency Test deployed.' + colorReset);
-					console.log(' ');
-
-					start();
-
-				});
-			});
-			
-			break;
-		case '8':
-			// TODO: only exit to menu, destory intervals
-			let running = setInterval(function(){latencyModule.getLatency()}, 1000);
-			let printing = setInterval(function(){latencyModule.printResults()}, 500);
-			process.stdin.setRawMode(true);
-			process.stdin.resume();
-			process.stdin.on('data', process.exit.bind(process, 0));
-			break;
-		case '9':
-			inquirer.prompt([providerQuestion
-				])
-				.then(async answers => {
-					providers = answers;
-				inquirer
-				.prompt([languageQuestion
-				])
-				.then(async answers => {
-					languages = answers;
-					console.log('');
-					console.log(colorFgYellow + '  Deploying CPU Test (factors)...' + colorReset);
-
-					if(providers.providers.includes('Amazon Web Services')) {
-
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'Amazon Web Services' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(AWS, NODE, FACTORS, 'node_factors', 'node_factors', 'node_factors', 'nodejs8.10', 'index.handler', '../aws/src/node/node_factors/', 'Node.js', '', '');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(AWS, PYTHON, FACTORS, 'python_factors', 'python_factors', 'python_factors', 'python3.6', 'function.my_handler', '../aws/src/python/python_factors/', 'Python', '', '');
-						}
-						if(languages.languages.includes('Go')) {
-							await deployFunction(AWS, GO, FACTORS, 'go_factors', 'go_factors', 'go_factors', 'go1.x', 'factors', '../aws/src/go/go_factors/', 'Go', '', '');
-						}
-						if(languages.languages.includes('.NET')) {
-							await deployFunction(AWS, DOTNET, FACTORS, 'dotnet_factors', 'dotnet_factors', 'dotnet_factors', 'dotnetcore2.1', 'Factors::Factors.FactorsHandler::HandleFunction', '../aws/src/dotnet/Factors/', '.NET', '', '');
-						}
-					}
-					if(providers.providers.includes('Microsoft Azure')) {
-
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'Microsoft Azure' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(AZURE, NODE, FACTORS, 'node-factors', '', '', 'node', '', '../azure/src/node/node_factors', 'Node.js', '', '');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(AZURE, PYTHON, FACTORS, 'python-factors', '', '', 'python', '', '../azure/src/python/python_factors', 'Python', '', '');
-						}
-						if(languages.languages.includes('Go')) {
-							console.log(colorFgYellow + '    SKIP:' + colorReset + ' No Go runtime.');
-						}
-						if(languages.languages.includes('.NET')) {
-							await deployFunction(AZURE, DOTNET, FACTORS, 'dotnet-factors', '', '', 'dotnet', '', '../azure/src/dotnet/dotnet_factors', '.NET', '', '');
-						}
-					}
-					if(providers.providers.includes('Google Cloud')) {
-
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'Google Cloud' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(GOOGLE, NODE, FACTORS, 'node_factors', '', '', 'nodejs8', '', '../google/src/node/factors', 'Node.js', '', '');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(GOOGLE, PYTHON, FACTORS, 'python_factors', '', '', 'python37', '', '../google/src/python/factors', 'Python', '', '');
-						}
-						if(languages.languages.includes('Go')) {
-							await deployFunction(GOOGLE, GO, FACTORS, 'Go_factors', '', '', 'go111', '', '../google/src/go/factors', 'Go', '', '');
-						}
-						if(languages.languages.includes('Go')) {
-							console.log(colorFgYellow + '    SKIP:' + colorReset + ' No .NET runtime.');
-						}
-					}
-					if(providers.providers.includes('IBM Cloud')) {
-
-						console.log(' ');
-						console.log('  ' + colorUnderscore + 'IBM Cloud' + colorReset);
-						console.log(' ');
-
-						if(languages.languages.includes('Node.js')) {
-							await deployFunction(IBM, NODE, FACTORS, 'node_factors', 'node_factors', '', 'nodejs:10', '', '../ibm/src/node/factors/', 'Node.js', ' ', 'json');
-						}
-						if(languages.languages.includes('Python')) {
-							await deployFunction(IBM, PYTHON, FACTORS, 'python_factors', 'python_factors', '', 'python:3.7', '', '../ibm/src/python/factors/main.py', 'Python', ' ', 'json');
-						}
-						if(languages.languages.includes('Go')) {
-							await deployFunction(IBM, GO, FACTORS, 'go_factors', 'go_factors', '', 'go:1.11', '', '../ibm/src/go/factors/factors.go', 'Go', ' ', 'json');
-						}
-						if(languages.languages.includes('.NET')) {
-							await deployFunction(IBM, DOTNET, FACTORS, 'dotnet_factors', 'dotnet_factors', '', 'dotnet:2.2', '', '../ibm/src/dotnet/Factors/', '.NET', ' --main Factors::Factors.FactorsDotnet::Main', 'json');
-						}
-					}
-
-					console.log(' ');
-					console.log(colorFgGreen + '  CPU Test (factors) deployed.' + colorReset);
-					console.log(' ');
-
-					start();
-
-				});
-				});
-			break;
-		case '10':
-			console.log( colorFgYellow + ' INFO: Not yet implemented.' + colorReset);
-			break;
-		case '11':
-			cleanup();
-			break;
-		case 'q':
-			process.exit(1);
-			break;
-		default:
-			console.log( colorFgRed + colorBright + ' ERROR: Invalid Input: ' + ans + colorReset);
-			start();
-			break;
-	}
-}
-
-/** Wait for user to select option from the menu */
-function waitForUserInput(query) {
-	const rl = readline.createInterface({
-			input: process.stdin,
-			output: process.stdout,
-	});
-	return new Promise(resolve => rl.question(query, ans => {
-			rl.close();
-			resolve(ans);
-	}))
-}
+loadConfig();
+app.listen(3001, function () {
+	console.log('Example app listening on port 3001!')
+});
 
 /** load configurations from file */
 function loadConfig() {
@@ -372,20 +97,149 @@ function loadConfig() {
 	config = JSON.parse(config_file);
 }
 
-/** Overview menu printing */
-function printOptions() {
-	console.log('#==============================================================================#');
-	console.log('‖                          Serverless Benchmark Suite                          ‖');
-	console.log('#==============================================================================#');
-	console.log(' ');
-	console.log('  What do you want to do? (enter q to exit)');
-	console.log('  ----------------------------------------------------------------------------  ');
-	console.log('  1) ...                                7) Deploy Latency Test');
-	console.log('  2) ...                                8) Run Latency Test');
-	console.log('  3) ...                                9) Deploy CPU Test (factors)');
-	console.log('  4) ...                               10) Run CPU Test (factors)')
-	console.log('  5) ...                               11) Cleanup all (' + colorFgRed + 'CAUTION!' + colorReset + ' deletes all ');
-	console.log('  6) ...                                   functions & gateways in all clouds!)');
+/** Deploy function for latency*/
+async function deployLatency(params) {
+	currentLogStatus += '<h4>Deploying Latency Test...</h4>';
+
+	if(params.aws == 'true') {
+		currentLogStatus += '<h5>Amazon Web Services</h5>';
+		if(params.node == 'true') {
+			await deployFunction(AWS, NODE, LATENCY, 'node_latency', 'node_latency', 'node_latency', 'nodejs8.10', 'index.handler', '/aws/src/node/node_latency/', 'Node.js', '', '');
+		}
+		if(params.python == 'true') {
+			await deployFunction(AWS, PYTHON, LATENCY, 'python_latency', 'python_latency', 'python_latency', 'python3.6', 'function.my_handler', '/aws/src/python/python_latency/', 'Python', '', '');
+		}
+		if(params.go == 'true') {
+			await deployFunction(AWS, GO, LATENCY, 'go_latency', 'go_latency', 'go_latency', 'go1.x', 'latency', '/aws/src/go/go_latency/', 'Go', '', '');
+		}
+		if(params.dotnet == 'true') {
+			await deployFunction(AWS, DOTNET, LATENCY, 'dotnet_latency', 'dotnet_latency', 'dotnet_latency', 'dotnetcore2.1', 'Latency::Latency.LatencyHandler::HandleFunction', '/aws/src/dotnet/Latency/', '.NET', '', '');
+		}
+	}
+	if(params.azure == 'true') {
+		currentLogStatus += '<h5>Microsoft Azure</h5>';
+		if(params.node == 'true') {
+			await deployFunction(AZURE, NODE, LATENCY, 'node-latency', '', '', 'node', '', '/azure/src/node/node_latency', 'Node.js', '', '');
+		}
+		if(params.python == 'true') {
+			// TODO: Only on Linux OS
+			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No Python runtime</li>'
+			//await deployFunction(AZURE, PYTHON, LATENCY, 'python-latency', '', '', 'python', '', '/azure/src/python/python_latency', 'Python', '', '');
+		}
+		if(params.go == 'true') {
+			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No Go runtime</li>';
+		}
+		if(params.dotnet == 'true') {
+			await deployFunction(AZURE, DOTNET, LATENCY, 'dotnet-latency', '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_latency', '.NET', '', '');
+		}
+
+	}
+	if(params.google == 'true') {
+		currentLogStatus += '<h5>Google Cloud</h5>';
+		if(params.node == 'true') {
+			await deployFunction(GOOGLE, NODE, LATENCY, 'node_latency', '', '', 'nodejs8', '', '/google/src/node/latency', 'Node.js', '', '');
+		}
+		if(params.python == 'true') {
+			await deployFunction(GOOGLE, PYTHON, LATENCY, 'python_latency', '', '', 'python37', '', '/google/src/python/latency', 'Python', '', '');
+		}
+		if(params.go == 'true') {
+			await deployFunction(GOOGLE, GO, LATENCY, 'Go_latency', '', '', 'go111', '', '/google/src/go/latency', 'Go', '', '');
+		}
+		if(params.dotnet == 'true') {
+			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No .NET runtime</li>';
+		}
+
+	}
+	if(params.ibm == 'true') {
+		currentLogStatus += '<h5>IBM Cloud</h5>';
+		if(params.node == 'true') {
+			await deployFunction(IBM, NODE, LATENCY, 'node_latency', 'node_latency', '', 'nodejs:10', '', '/ibm/src/node/latency/', 'Node.js', ' ', 'json');
+		}
+		if(params.python == 'true') {
+			await deployFunction(IBM, PYTHON, LATENCY, 'python_latency', 'python_latency', '', 'python:3.7', '', '/ibm/src/python/latency/main.py', 'Python', ' ', 'json');
+		}
+		if(params.go == 'true') {
+			await deployFunction(IBM, GO, LATENCY, 'go_latency', 'go_latency', '', 'go:1.11', '', '/ibm/src/go/latency/latency.go', 'Go', ' ', 'json');
+		}
+		if(params.dotnet == 'true') {
+			await deployFunction(IBM, DOTNET, LATENCY, 'dotnet_latency', 'dotnet_latency', '', 'dotnet:2.2', '', '/ibm/src/dotnet/Latency/', '.NET', ' --main Latency::Latency.LatencyDotnet::Main', 'json')
+		}
+	}
+
+	currentLogStatus += '<h4>Latency Test deployed</h4>';
+	runningStatus = false;
+}
+
+/** Deploy function factors */
+async function deployFactors(params) {
+	currentLogStatus += '<h4>Deploying CPU Test (Factors)...</h4>';
+
+	if(params.aws == 'true') {
+		currentLogStatus += '<h5>Amazon Web Services</h5>';
+		if(params.node == 'true') {
+			await deployFunction(AWS, NODE, FACTORS, 'node_factors', 'node_factors', 'node_factors', 'nodejs8.10', 'index.handler', '/aws/src/node/node_factors/', 'Node.js', '', '');
+		}
+		if(params.python == 'true') {
+			await deployFunction(AWS, PYTHON, FACTORS, 'python_factors', 'python_factors', 'python_factors', 'python3.6', 'function.my_handler', '/aws/src/python/python_factors/', 'Python', '', '');
+		}
+		if(params.go == 'true') {
+			await deployFunction(AWS, GO, FACTORS, 'go_factors', 'go_factors', 'go_factors', 'go1.x', 'factors', '/aws/src/go/go_factors/', 'Go', '', '');
+		}
+		if(params.dotnet == 'true') {
+			await deployFunction(AWS, DOTNET, FACTORS, 'dotnet_factors', 'dotnet_factors', 'dotnet_factors', 'dotnetcore2.1', 'Factors::Factors.FactorsHandler::HandleFunction', '/aws/src/dotnet/Factors/', '.NET', '', '');
+		}
+	}
+	if(params.azure == 'true') {
+		currentLogStatus += '<h5>Microsoft Azure</h5>';
+		if(params.node == 'true') {
+			await deployFunction(AZURE, NODE, FACTORS, 'node-factors', '', '', 'node', '', '/azure/src/node/node_factors', 'Node.js', '', '');
+		}
+		if(params.python == 'true') {
+			// TODO: Only on Linux OS
+			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No Python runtime</li>';
+			//await deployFunction(AZURE, PYTHON, FACTORS, 'python-factors', '', '', 'python', '', '/azure/src/python/python_factors', 'Python', '', '');
+		}
+		if(params.go == 'true') {
+			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No Go runtime</li>';
+		}
+		if(params.dotnet == 'true') {
+			await deployFunction(AZURE, DOTNET, FACTORS, 'dotnet-factors', '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_factors', '.NET', '', '');
+		}
+	}
+	if(params.google == 'true') {
+		currentLogStatus += '<h5>Google Cloud</h5>';
+		if(params.node == 'true') {
+			await deployFunction(GOOGLE, NODE, FACTORS, 'node_factors', '', '', 'nodejs8', '', '/google/src/node/factors', 'Node.js', '', '');
+		}
+		if(params.python == 'true') {
+			await deployFunction(GOOGLE, PYTHON, FACTORS, 'python_factors', '', '', 'python37', '', '/google/src/python/factors', 'Python', '', '');
+		}
+		if(params.go == 'true') {
+			await deployFunction(GOOGLE, GO, FACTORS, 'Go_factors', '', '', 'go111', '', '/google/src/go/factors', 'Go', '', '');
+		}
+		if(params.dotnet == 'true') {
+			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No .NET runtime</li>';
+		}
+	}
+	if(params.ibm == 'true') {
+		currentLogStatus += '<h5>IBM Cloud</h5>';
+		if(params.node == 'true') {
+			await deployFunction(IBM, NODE, FACTORS, 'node_factors', 'node_factors', '', 'nodejs:10', '', '/ibm/src/node/factors/', 'Node.js', ' ', 'json');
+		}
+		if(params.python == 'true') {
+			await deployFunction(IBM, PYTHON, FACTORS, 'python_factors', 'python_factors', '', 'python:3.7', '', '/ibm/src/python/factors/main.py', 'Python', ' ', 'json');
+		}
+		if(params.go == 'true') {
+			await deployFunction(IBM, GO, FACTORS, 'go_factors', 'go_factors', '', 'go:1.11', '', '/ibm/src/go/factors/factors.go', 'Go', ' ', 'json');
+		}
+		if(params.dotnet == 'true') {
+			await deployFunction(IBM, DOTNET, FACTORS, 'dotnet_factors', 'dotnet_factors', '', 'dotnet:2.2', '', '/ibm/src/dotnet/Factors/', '.NET', ' --main Factors::Factors.FactorsDotnet::Main', 'json');
+		}
+	}
+
+	currentLogStatus += '<h4>CPU Test (factors) deployed</h4>';
+	runningStatus = false;
+
 }
 
 /** Deploy a function */
@@ -393,77 +247,103 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 	if(providers.includes(provider) && language.includes(language)) {
 
 		let url = '';
+		
+		let dockerMountPoint = '/app';
 
 		if(provider == AWS) {
+
+			let dockerPrefix = 'docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' mikesir87/aws-cli ';
+
 			if(language == NODE) {
-				await execAwait('cd ' + srcPath + ' && npm install && zip -r -0 ' + functionName + '.zip * && cd ../../../../main');
-				srcPath = 'fileb://' + srcPath + functionName + '.zip';
+				await execAwait('docker run --rm -v serverless-data:' + dockerMountPoint + ' node npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath);
+				await execAwait("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'");
+				srcPath = 'fileb://' + dockerMountPoint + srcPath + functionName + '.zip';
 			} else if(language == PYTHON) {
-				await execAwait('cd ' + srcPath + ' && zip -r -0 ' + functionName + '.zip * && cd ../../../../main');
-				srcPath = 'fileb://' + srcPath + functionName + '.zip';
+				await execAwait("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'");
+				srcPath = 'fileb://' + dockerMountPoint + srcPath + functionName + '.zip';
 			} else if(language == GO) {
-				await execAwait('cd ' + srcPath + ' && go build * && zip -r -0 ' + functionName + '.zip * --exclude "*.go" && cd ../../../../main');
-				srcPath = 'fileb://' + srcPath + functionName + '.zip';
+				await execAwait("docker run --rm -v serverless-data:" + dockerMountPoint + " golang /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; go clean; go get github.com/aws/aws-lambda-go/lambda github.com/aws/aws-lambda-go/events; go build *.go'");
+				await execAwait("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip * --exclude \"*.go\"'")
+				srcPath = 'fileb://' + dockerMountPoint + srcPath + functionName + '.zip';
 			} else if(language == DOTNET) {
-				await execAwait('cd ' + srcPath + ' && dotnet build && dotnet lambda package -c Release -o ' + functionName + '.zip -f netcoreapp2.1 && cd ../../../../main');
-				srcPath = 'fileb://' + srcPath + functionName + '.zip';
+				await execAwait('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk /bin/sh -c \'apt-get update; apt-get install zip -y; cd ' + dockerMountPoint + srcPath + '; dotnet build; dotnet tool install -g Amazon.Lambda.Tools; dotnet lambda package -C Release -o ' + functionName + '.zip -f netcoreapp2.1\'');
+				srcPath = 'fileb://' + dockerMountPoint + srcPath + functionName + '.zip';
 			}
 
-			await execAwait('aws lambda create-function --function-name ' + functionName + ' --runtime ' + runtime + ' --role ' + config.aws.arn_role + ' --memory-size ' + config.global.memory + ' --handler ' + handler + ' --zip-file ' + srcPath + ' --region ' + config.aws.region + ' --timeout ' + config.global.timeout);
-			let lambdaarn = await exec('aws lambda list-functions --query "Functions[?FunctionName==\\`' + functionName + '\\`].FunctionArn" --output text --region ' + config.aws.region);
+			await execAwait('docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' mikesir87/aws-cli aws lambda create-function --function-name ' + functionName + ' --runtime ' + runtime + ' --role ' + config.aws.arn_role + ' --memory-size ' + config.global.memory + ' --handler ' + handler + ' --zip-file ' + srcPath + ' --region ' + config.aws.region + ' --timeout ' + config.global.timeout);
+			let lambdaarn = await exec(dockerPrefix + 'aws lambda list-functions --query "Functions[?FunctionName==\\`' + functionName + '\\`].FunctionArn" --output text --region ' + config.aws.region);
 			lambdaarn = lambdaarn.stdout.replace('\n', '');
-			await execAwait('aws apigateway create-rest-api --name "' + APIName + '" --description "Api for ' + functionName + '" --region ' + config.aws.region);
-			let apiid = await exec('aws apigateway get-rest-apis --query "items[?name==\\`' + APIName + '\\`].id" --output text --region ' + config.aws.region);
+			await execAwait(dockerPrefix + 'aws apigateway create-rest-api --name "' + APIName + '" --description "Api for ' + functionName + '" --region ' + config.aws.region);
+			let apiid = await exec(dockerPrefix + 'aws apigateway get-rest-apis --query "items[?name==\\`' + APIName + '\\`].id" --output text --region ' + config.aws.region);
 			apiid = apiid.stdout.replace('\n', '');
-			let parentresourceid = await exec('aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/\\`].id" --output text --region ' + config.aws.region);
+			let parentresourceid = await exec(dockerPrefix + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/\\`].id" --output text --region ' + config.aws.region);
 			parentresourceid = parentresourceid.stdout.replace('\n', '');
-			await execAwait('aws apigateway create-resource --rest-api-id ' + apiid + ' --parent-id ' + parentresourceid + ' --path-part ' + APIPath + ' --region ' + config.aws.region);
-			let resourceid = await exec('aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/' + APIPath + '\\`].id" --output text --region ' + config.aws.region);
+			await execAwait(dockerPrefix + 'aws apigateway create-resource --rest-api-id ' + apiid + ' --parent-id ' + parentresourceid + ' --path-part ' + APIPath + ' --region ' + config.aws.region);
+			let resourceid = await exec(dockerPrefix + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/' + APIPath + '\\`].id" --output text --region ' + config.aws.region);
 			resourceid = resourceid.stdout.replace('\n', '');
-			await exec('aws apigateway put-method --rest-api-id ' + apiid + ' --resource-id ' + resourceid + ' --http-method ANY --authorization-type NONE --region ' + config.aws.region);
-			await exec('aws apigateway put-integration --rest-api-id ' + apiid + ' --resource-id ' + resourceid + ' --http-method ANY --type AWS_PROXY --integration-http-method POST --uri arn:aws:apigateway:' + config.aws.region + ':lambda:path/2015-03-31/functions/' + lambdaarn + '/invocations --region ' + config.aws.region);
-			await execAwait('aws apigateway create-deployment --rest-api-id ' + apiid + ' --stage-name test --region ' + config.aws.region);
-			let apiarn = await exec('echo ' + lambdaarn + ' | sed -e "s/lambda/execute-api/" -e "s/function:' + functionName + '/' + apiid + '/"');
-			apiarn = apiarn.stdout.replace('\n', '');
-			await execAwait('aws lambda add-permission --function-name ' + functionName + ' --statement-id ' + functionName + ' --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "' + apiarn + '/*/*/' + APIPath + '" --region ' + config.aws.region);
+			await exec(dockerPrefix + 'aws apigateway put-method --rest-api-id ' + apiid + ' --resource-id ' + resourceid + ' --http-method ANY --authorization-type NONE --region ' + config.aws.region);
+			await exec(dockerPrefix + 'aws apigateway put-integration --rest-api-id ' + apiid + ' --resource-id ' + resourceid + ' --http-method ANY --type AWS_PROXY --integration-http-method POST --uri arn:aws:apigateway:' + config.aws.region + ':lambda:path/2015-03-31/functions/' + lambdaarn + '/invocations --region ' + config.aws.region);
+			await execAwait(dockerPrefix + 'aws apigateway create-deployment --rest-api-id ' + apiid + ' --stage-name test --region ' + config.aws.region);
+			let apiarn = lambdaarn.replace('lambda', 'execute-api');
+			apiarn = apiarn.replace('function:' + functionName, apiid);
+			await execAwait(dockerPrefix + 'aws lambda add-permission --function-name ' + functionName + ' --statement-id ' + functionName + ' --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "' + apiarn + '/*/*/' + APIPath + '" --region ' + config.aws.region);
 			url = 'https://' + apiid + '.execute-api.' + config.aws.region + '.amazonaws.com/test/' + APIPath;
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Deployed ' + languageName + ' function.');
-		} 
-		
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
+        } 
+        
 		else if(provider == AZURE) {
-			if(language == NODE) {
-				await execAwait('cd ' + srcPath + ' && npm install && cd ../../../../main');
-			}
-			await execAwait('az functionapp create --resource-group ' + config.azure.resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + ' --storage-account ' + config.azure.storagename + ' --runtime ' + runtime + ' --os-type Linux');
-			await execAwait('cd ' + srcPath + ' && func azure functionapp publish ' + functionName + ' && cd ../../../../main');
-			url = 'https://' + functionName + '.azurewebsites.net/api/' + test;
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Deployed ' + languageName + ' function.');
+
+			let dockerPrefix = 'docker run --rm -v azure-secrets:/root/.azure -v serverless-data:' + dockerMountPoint + ' microsoft/azure-cli ';
+
+			let rnd = Math.floor(Math.random()*(999-100+1)+100);
+			let resourcegroupname = functionName + '-rg';
+			let storagename = functionName.replace(/\-/g, '') + 'storage';
+			await execAwait(dockerPrefix + 'az group create --location westeurope --name ' + resourcegroupname).catch(r => {console.error('ERROR!!!')});
+			await execAwait(dockerPrefix + 'az storage account create --name ' + storagename + ' --resource-group ' + resourcegroupname + ' --sku Standard_LRS');
+			await execAwait(dockerPrefix + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + rnd + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --os-type Windows');
+			// old one, with azure-functions-core-tools
+			//await execAwait('cd ' + srcPath + ' && func azure functionapp publish ' + functionName + rnd + ' && cd ../../../../main');
+			await execAwait(dockerPrefix + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip');
+			url = 'https://' + functionName + rnd + '.azurewebsites.net/api/' + test;
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
 		}
-		
+
 		else if(provider == GOOGLE) {
-			await execAwait('gcloud functions deploy ' + functionName + ' --region=' + config.google.region + ' --memory=' + config.global.memory + config.google.memory_appendix + ' --timeout=' + config.global.timeout + config.google.timeout_appendix + ' --runtime=' + runtime + ' --trigger-http --source=' + srcPath);
+
+			let dockerPrefix = 'docker run --rm -v google-secrets:/root/.config/gcloud -v serverless-data:' + dockerMountPoint + ' google/cloud-sdk ';
+
+			await execAwait(dockerPrefix + 'gcloud functions deploy ' + functionName + ' --region=' + config.google.region + ' --memory=' + config.global.memory + config.google.memory_appendix + ' --timeout=' + config.global.timeout + config.google.timeout_appendix + ' --runtime=' + runtime + ' --trigger-http --source=' + dockerMountPoint + srcPath);
 			url = 'https://' + config.google.region + '-' + config.google.project + '.cloudfunctions.net/' + functionName;
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Deployed ' + languageName + ' function.');
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
 		}
 		
 		else if(provider == IBM) {
+
+			let dockerPrefix = 'docker run --rm -v ibm-secrets:/root/.bluemix -v serverless-data:' + dockerMountPoint + ' ibmcom/ibm-cloud-developer-tools-amd64 ';
+
 			if(language == NODE) {
-				await execAwait('cd ' + srcPath + ' && npm install && zip -r -0 ' + functionName + '.zip * && cd ../../../../main');
+				await execAwait('docker run --rm -v serverless-data:' + dockerMountPoint + ' node npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath);
+				await execAwait("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'");
 				srcPath = srcPath + functionName + '.zip';
 			} else if(language == DOTNET) {
-				await execAwait('cd ' + srcPath + ' && dotnet publish -c Release -o out && cd out && zip -r -0 ../' + functionName + '.zip * && cd ../../../../../main');
+				await execAwait('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + 'out');
+				await execAwait('docker run --rm -v serverless-data:' + dockerMountPoint + ' bschitter/ubuntu-with-zip zip -r -0 -j ' + dockerMountPoint + srcPath + functionName + '.zip ' + dockerMountPoint + srcPath + 'out');
 				srcPath = srcPath + functionName + '.zip';
 			}
-			await execAwait('ibmcloud fn action create ' + functionName + ' ' + srcPath + mainMethod + ' --kind ' + runtime + ' --memory ' + config.global.memory + ' --timeout ' +  config.global.timeout + '000 --web true && ibmcloud fn api create /' + APIName + ' get ' + functionName + ' --response-type ' + responseType);
+
+			await execAwait(dockerPrefix + 'ibmcloud fn action create ' + functionName + ' ' + dockerMountPoint + srcPath + mainMethod + ' --kind ' + runtime + ' --memory ' + config.global.memory + ' --timeout ' +  config.global.timeout + '000 --web true');
+			await execAwait(dockerPrefix + 'ibmcloud fn api create /' + APIName + ' get ' + functionName + ' --response-type ' + responseType);
 			url = 'https://eu-de.functions.cloud.ibm.com/api/v1/web/' + config.ibm.organization + '_' + config.ibm.space + '/default/' + APIName + '.' + responseType;
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Deployed ' + languageName + ' function.');
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
 		}
 
 
 		if(test == LATENCY) {
 			latencyModule.pushURL(provider, language, url);
+			console.log(url);
 		} else if(test == FACTORS) {
-			//TODO: implement
+			// TODO: similar to latency urls
+			console.log(url);
 		}
 
 	}
@@ -472,122 +352,112 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 /** Cleans up (deletes) all functions and gateways on each cloud */
 async function cleanup() {
 
-	console.log(' ');
-	console.log('  Cleaning Up...');
+	currentLogStatus += '<h4>Cleaning Up...</h4>';
 
 	let allFunctions = await loadDeployedFunctions();
-
 	latencyModule.resetURLs();
 
-	console.log(' ');
-	console.log('  ' + colorUnderscore + 'Amazon Web Services' + colorReset);
-	console.log(' ');
-
+	currentLogStatus += '<h5>Amazon Web Services</h5>';
 	if(allFunctions.awsFunctions.length == 0 && allFunctions.awsGateways.length == 0) {
-		console.log(colorFgYellow + '    SKIP:' + colorReset + ' Nothing to clean up.');
+		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 	}
-
 	for(let i = 0; i<allFunctions.awsFunctions.length; i++) {
 		try {
-			await execAwait('aws lambda delete-function --function-name ' + allFunctions.awsFunctions[i]);
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Function "' + allFunctions.awsFunctions[i] + '" deleted.');
+			await execAwait('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda delete-function --function-name ' + allFunctions.awsFunctions[i]);
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Function "' + allFunctions.awsFunctions[i] + '" deleted</li>';
 		} catch(err) {
-			console.log(colorFgRed + '    ERROR:' + colorReset + ' Function "' + allFunctions.awsFunctions[i] + '" could not be deleted.');
+			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function "' + allFunctions.awsFunctions[i] + '" could not be deleted</li>';
 		}
 	}
-
 	for(let i = 0; i<allFunctions.awsGateways.length; i++) {
+		if(i>0) {
+			await new Promise(resolve => setTimeout(resolve, 30000));
+		}
 		try {
-			await execAwait('aws apigateway delete-rest-api --rest-api-id ' + allFunctions.awsGateways[i]);
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' API with ID "' + allFunctions.awsGateways[i] + '"  deleted.');
+			await execAwait('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway delete-rest-api --rest-api-id ' + allFunctions.awsGateways[i]);
+			currentLogStatus += '<li><span style="color:green">INFO:</span> API with ID "' + allFunctions.awsGateways[i] + '" deleted</li>';
 		} catch(err) {
-			console.log(colorFgRed + '    ERROR:' + colorReset + ' API with ID "' + allFunctions.awsGateways[i] + '" could not be deleted.');
+			currentLogStatus += '<li><span style="color:red">ERROR:</span> API with ID "' + allFunctions.awsGateways[i] + '" could not be deleted</li>';
 		}
 	}
 
-	console.log(' ');
-	console.log('  ' + colorUnderscore + 'Microsoft Azure' + colorReset);
-	console.log(' ');
-
-	if(allFunctions.azureFunctions.length == 0) {
-		console.log(colorFgYellow + '    SKIP:' + colorReset + ' Nothing to clean up.');
+	currentLogStatus += '<h5>Microsoft Azure</h5>';
+	if(allFunctions.azureResourceGroups.length == 0) {
+		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 	}
-
-	for(let i = 0; i<allFunctions.azureFunctions.length; i++) {
+	for(let i = 0; i<allFunctions.azureResourceGroups.length; i++) {
 		try {
-			await execAwait('az functionapp delete --name ' + allFunctions.azureFunctions[i] + ' --resource-group ' + config.azure.resourcegroupname);
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Function App "' + allFunctions.azureFunctions[i] + '" deleted.');
+			await execAwait('docker run --rm -v azure-secrets:/root/.azure microsoft/azure-cli az group delete --name ' + allFunctions.azureResourceGroups[i] + ' --yes');
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Function App in RG "' + allFunctions.azureResourceGroups[i] + '" deleted</li>';
 		} catch(err) {
-			console.log(colorFgRed + '    ERROR:' + colorReset + ' Function App "' + allFunctions.azureFunctions[i] + '" could not be deleted.');
+			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function App in RG "' + allFunctions.azureResourceGroups[i] + '" could not be deleted</li>';
 		}
 	}
 
-	console.log(' ');
-	console.log('  ' + colorUnderscore + 'Google Cloud' + colorReset);
-	console.log(' ');
-
+	currentLogStatus += '<h5>Google Cloud</h5>';
 	if(allFunctions.googleFunctions.length == 0) {
-		console.log(colorFgYellow + '    SKIP:' + colorReset + ' Nothing to clean up.');
+		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 	}
-
 	for(let i = 0; i<allFunctions.googleFunctions.length; i++) {
 		try {
-			await execAwait('gcloud functions delete ' + allFunctions.googleFunctions[i] + ' --region ' + config.google.region + ' --quiet');
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Function "' + allFunctions.googleFunctions[i] + '" deleted.');
+			await execAwait('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk gcloud functions delete ' + allFunctions.googleFunctions[i] + ' --region ' + config.google.region + ' --quiet');
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Function "' + allFunctions.googleFunctions[i] + '" deleted</li>';
 		} catch(err) {
-			console.log(colorFgRed + '    ERROR:' + colorReset + ' Function "' + allFunctions.googleFunctions[i] + '" could not be deleted.');
+			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function "' + allFunctions.googleFunctions[i] + '" could not be deleted</li>';
 		}
 	}
 
-	console.log(' ');
-	console.log('  ' + colorUnderscore + 'IBM Cloud' + colorReset);
-	console.log(' ');
-
+	currentLogStatus += '<h5>IBM Cloud</h5>';
 	if(allFunctions.ibmFunctions.length == 0 && allFunctions.ibmGateways.length == 0) {
-		console.log(colorFgYellow + '    SKIP:' + colorReset + ' Nothing to clean up.');
+		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 	}
-
 	for(let i = 0; i<allFunctions.ibmGateways.length; i++) {
 		try {
-			await execAwait('ibmcloud fn api delete / /' + allFunctions.ibmGateways[i]);
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" deleted.');
+			await execAwait('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn api delete / /' + allFunctions.ibmGateways[i]);
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" deleted</li>';
 		} catch(err) {
-			console.log(colorFgRed + '    ERROR:' + colorReset + ' Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" could not be deleted.');
+			currentLogStatus += '<li><span style="color:red">ERROR:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" could not b deleted</li>';
 		}
 	}
-
 	for(let i = 0; i<allFunctions.ibmFunctions.length; i++) {
 		try {
-			await execAwait('ibmcloud fn action delete ' + allFunctions.ibmFunctions[i]);
-			console.log(colorFgGreen + '    INFO:' + colorReset + ' Action "' + allFunctions.ibmFunctions[i] + '" deleted.');
+			await execAwait('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn action delete ' + allFunctions.ibmFunctions[i]);
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Action "' + allFunctions.ibmFunctions[i] + '" deleted</li>';
 		} catch(err) {
-			console.log(colorFgRed + '    ERROR:' + colorReset + ' Action "' + allFunctions.ibmFunctions[i] + '" could not be deleted.');
+			currentLogStatus += '<li><span style="color:red">ERROR:</span> Action "' + allFunctions.ibmFunctions[i] + '" could not be deleted</li>';
 		}
 	}
 
-	console.log(' ');
+	currentLogStatus += '<h4>Cleanup finished</h4>';
+	runningStatus = false;
 
-	start();
 }
 
 /** Loads all deployed functions on all cloud, used by cleanup process */
 async function loadDeployedFunctions() {
 
-	let awsFunctions = [], awsGateways = [], googleFunctions = [], azureFunctions = [], ibmFunctions = [], ibmGateways = [];
+	let awsFunctions = [], awsGateways = [], googleFunctions = [], azureResourceGroups = [], ibmFunctions = [], ibmGateways = [];
 
-	let awslambda = await exec('aws lambda list-functions');
-  awslambda = JSON.parse(awslambda.stdout);
+	let awslambda = await exec('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions');
+  	awslambda = JSON.parse(awslambda.stdout);
 	for(let i = 0; i<awslambda.Functions.length; i++) {
 		awsFunctions.push(awslambda.Functions[i].FunctionName);
 	}
-
-	let awsapi = await exec('aws apigateway get-rest-apis');
+	let awsapi = await exec('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway get-rest-apis');
 	awsapi = JSON.parse(awsapi.stdout);
 	for(let i = 0; i<awsapi.items.length; i++) {
 		awsGateways.push(awsapi.items[i].id);
 	}
 
-	let googlefunctions = await exec('gcloud functions list');
+	let azureresourcegroups = await exec('docker run --rm -v azure-secrets:/root/.azure microsoft/azure-cli az group list');
+	azureresourcegroups = JSON.parse(azureresourcegroups.stdout);
+	for(let i = 0; i<azureresourcegroups.length; i++) {
+		if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors')) {
+			azureResourceGroups.push(azureresourcegroups[i].name);
+		}
+	}
+
+	let googlefunctions = await exec('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk gcloud functions list');
 	googlefunctions = googlefunctions.stdout;
 	let array = googlefunctions.split('\n');
 	array.pop();
@@ -599,13 +469,7 @@ async function loadDeployedFunctions() {
 		googleFunctions.push(elements[0]);
 	}
 
-	let azurefunctions = await exec('az functionapp list');
-	azurefunctions = JSON.parse(azurefunctions.stdout);
-	for(let i = 0; i<azurefunctions.length; i++) {
-		azureFunctions.push(azurefunctions[i].name);
-	}
-
-	let ibmapi = await exec('ibmcloud fn api list');
+	let ibmapi = await exec('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn api list');
 	ibmapi = ibmapi.stdout;
 	let array2 = ibmapi.split('\n');
 	array2.pop();
@@ -618,8 +482,7 @@ async function loadDeployedFunctions() {
 		let parts = elements[3].split('/');
 		ibmFunctions.push(parts[parts.length-1])
 	}
-
-	let ibmactions = await exec('ibmcloud fn action list');
+	let ibmactions = await exec('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn action list');
 	ibmactions = ibmactions.stdout;
 	let array3 = ibmactions.split('\n');
 	array3.pop();
@@ -632,5 +495,5 @@ async function loadDeployedFunctions() {
 		ibmGateways.push(parts[2])
 	}
 
-	return {awsFunctions, awsGateways, googleFunctions, azureFunctions, ibmFunctions, ibmGateways};
+	return {awsFunctions, awsGateways, googleFunctions, azureResourceGroups, ibmFunctions, ibmGateways};
 }
