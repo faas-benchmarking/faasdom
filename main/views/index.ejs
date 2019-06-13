@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Benchmark Suite for Serverless Computing</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">    
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Benchmark Suite for Serverless Computing</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        </div>
+    </nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6" style="padding-top: 15px; padding-bottom: 15px">
+            <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Tests</h5>
+                      <p class="card-text">Deploy a test for each cloud and language</p>
+                      <div class="row" style="padding-bottom: 10px">
+                          <div class="col-4">
+                              <b>Test:</b>
+                              <div class="radio">
+                                  <label><input id="latencyTest" type="radio" name="test" checked>Latency</label>
+                                </div>
+                                <div class="radio">
+                                  <label><input id="factorsTest" type="radio" name="test">CPU (Factors)</label>
+                                </div>
+                          </div>
+                          <div class="col-4">
+                              <b>Clouds:</b>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="amazon">
+                                  <label class="form-check-label" for="amazon">Amazon Web Services</label>
+                                </div>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="azure">
+                                  <label class="form-check-label" for="azure">Microsoft Azure</label>
+                                </div>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="google">
+                                  <label class="form-check-label" for="google">Google Cloud</label>
+                                </div>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="ibm">
+                                  <label class="form-check-label" for="ibm">IBM Cloud</label>
+                                </div>
+                          </div>
+                          <div class="col-4">
+                              <b>Languages:</b>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="node">
+                                  <label class="form-check-label" for="node">Node.js</label>
+                                </div>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="python">
+                                  <label class="form-check-label" for="python">Python</label>
+                                </div>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="go">
+                                  <label class="form-check-label" for="go">Go</label>
+                                </div>
+                                <div class="form-check">
+                                  <input type="checkbox" class="form-check-input" id="dotnet">
+                                  <label class="form-check-label" for="dotnet">.NET</label>
+                                </div>
+                          </div>
+
+                      </div>
+                      <button id='deployButton' type="button" class="btn btn-primary" style="margin: 5px">Deploy</button>
+                      <button id='runButton' type="button" class="btn btn-primary" style="margin: 5px">Run</button>
+                      <button id='stopButton' type="button" class="btn btn-primary" style="margin: 5px">Stop</button>
+                      <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup All</button>
+                    </div>
+                  </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6" style="padding-top: 15px; padding-bottom: 15px">
+        <button id="clearButton" type="button" class="btn btn-primary" style="margin: 5px">Clear Output</button>
+        <div id="result" class="console"><%= data %></div>
+  </div>
+  
+</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script>
+$('#deployButton').click(function deploy(){
+
+  if(!($("#amazon").prop('checked') || $("#azure").prop('checked') || $("#google").prop('checked') || $("#ibm").prop('checked')) || 
+     !($("#node").prop('checked') || $("#python").prop('checked') || $("#go").prop('checked') || $("#dotnet").prop('checked'))) {
+    $("#result").html($("#result").html() + '<span style="color:red">Please choose at least one cloud provider and one language if you want to deploy.</span><br>');
+    return;
+  }
+
+  $.ajax({url: 'deploy', type: 'get',data: {
+    latency: $("#latencyTest").prop('checked'),
+    factors: $("#factorsTest").prop('checked'),
+    aws: $("#amazon").prop('checked'), 
+    azure: $("#azure").prop('checked'),
+    google: $("#google").prop('checked'),
+    ibm: $("#ibm").prop('checked'),
+    node: $("#node").prop('checked'),
+    python: $("#python").prop('checked'),
+    go: $("#go").prop('checked'),
+    dotnet: $("#dotnet").prop('checked')
+  }, success:function(res){
+      $("#result").html(res.data);
+      update();
+  }});
+});
+
+$('#runButton').click(function cleanup(){
+
+  if($("#factorsTest").prop('checked')) {
+    $("#result").html($("#result").html() + '<span style="color:red">Not yet implemented.</span><br>');
+    return;
+  }
+
+  $.ajax({url: 'run', type: 'get', success:function(res){
+      $("#result").html(res.data);
+      update();
+  }});
+});
+
+$('#stopButton').click(function cleanup(){
+  $.ajax({url: 'stop', type: 'get', success:function(res){
+
+  }});
+});
+
+$('#cleanupButton').click(function cleanup(){
+  $.ajax({url: 'cleanup', type: 'get', success:function(res){
+      $("#result").html(res.data);
+      update();
+  }});
+});
+
+function update() {
+  $.ajax({url: 'status', type: 'get', success:function(res){
+      console.log('update...');
+      $("#result").html(res.data);
+      if(res.running) {
+        setTimeout(function(){update();}, 5000);
+      }
+  }});
+}
+
+$('#clearButton').click(function clear() {
+  $("#result").html('');
+});
+</script>
+
+</html>
