@@ -15,8 +15,6 @@
     },
 
     "azure": {
-        "resourcegroupname": "PLACEHOLDER",
-        "storagename":  "PLACEHOLDER",
         "region": "westeurope",
         "possible_regions": ["eastasia", "eastus", "westeurope", "westus"],
         "timeout_metric": "00:00:00",
