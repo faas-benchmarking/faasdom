@@ -94,9 +94,31 @@ To start the main application (in the folder [main](main/)) run:
 docker-compose pull && docker-compose up -d db grafana app
 ```
 
+To stop and remove containers run:
+
+```bash
+docker-compose down
+```
+
+To delete all images:
+
+```bash
+docker rmi $(docker images -q)
+```
+
+To delete all volumes:
+
+```bash
+docker volume rm $(docker volume ls -q)
+```
+
 
 ## Troubleshooting
 
 #### Azure
 
 The way Azure functions are deployed it is currently not possible to choose Linux as runtime OS, because it is still in preview.
+
+#### IBM
+
+Sometimes when deleting a function the ibmcloud CLI will fail to load the resources and therefore the program will not correctly delete the resources.
