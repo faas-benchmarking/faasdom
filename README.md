@@ -19,7 +19,7 @@ and in the following programming languages:
   - [Go](https://golang.org/)
   - [.NET Core](https://dotnet.microsoft.com/)
 
-The basic idea is that you setup accounts and CLIs (command line interfaces) for the above mentioned cloud providers. Afterwards you can deploy and run various tests and see how they perform on each cloud and/or programming language.
+The basic idea is that you can deploy and run various tests and see how they perform on each cloud and/or programming language.
 
 ### Available tests
 
@@ -31,56 +31,72 @@ The basic idea is that you setup accounts and CLIs (command line interfaces) for
 
 **Info:** All guides and scripts are targeted for Ubuntu but other operating systems follow a similar process.
 
-First of all you have to install [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/)
+### Install:
 
-`sudo apt-get install nodejs npm`
+- docker [https://docs.docker.com/install/](https://docs.docker.com/install/)
+- docker-compose [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
 
-Then for each cloud provider you need to setup their CLI and maybe other packages:
+For Ubuntu 18.04 you can do the following:
+
+```bash
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-compose
+
+# add your user to the docker group if you don't want to run it always with sudo (requires logout and login)
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
+### Configure
+
+For each cloud provider you need to create an account and maybe setup some things:
 
   - For AWS see: [Amazon Web Services Setup.md](aws/Amazon%20Web%20Services%20Setup.md)
   - For Azure see: [Microsoft Azure Setup.md](azure/Microsoft%20Azure%20Setup.md)
   - For Google see: [Google Cloud Setup.md](google/Google%20Cloud%20Setup.md)
   - For IBM see: [IBM Cloud Setup.md](ibm/IBM%20Cloud%20Setup.md)
 
-To start the main application (in the folder [main](main/)) first install the required node packages with
+You also need to create some docker volumes and login into the cloud CLIs, so they can be used in a docker container.
+In this case they will even be used from another docker container (so called docker in docker or DinD).
+For this you will need to do the following steps:
 
-`npm install`
+```bash
+# create 5 volumes, 1 for app data and 4 for each clouds secrets
+docker volume create serverless-data
+docker volume create aws-secrets
+docker volume create google-secrets
+docker volume create ibm-secrets
+docker volume create azure-secrets
 
-and then
+# copy all data into the docker volume (IMPORTANT: run from the root directory!)
+docker run -v serverless-data:/data --name helper bschitter/ubuntu-with-zip
+docker cp . helper:/data
+docker rm helper
 
-`node .`
+# mount the volumes and login with the cloud provider
+docker run --rm -tiv aws-secrets:/root/.aws mikesir87/aws-cli aws configure
+docker run --rm -tiv azure-secrets:/root/.azure microsoft/azure-cli az login
+docker run --rm -tiv google-secrets:/root/.config/gcloud google/cloud-sdk gcloud init
+docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud login
 
-to start it.
+# with ibm you also have to set the region -r, the API endpoint --cf-api, the organization -o and the space -s
+docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud target -r <YOUR_REGION> --cf-api https://api.<YOUR_REGION>.bluemix.net -o <YOUR_ORGANIZATION> -s <YOUR_SPACE>
+```
+
+To start the main application (in the folder [main](main/)) run:
+
+```bash
+docker-compose pull && docker-compose up -d db grafana app
+```
+
 
 ## Troubleshooting
 
-#### Cleanup
-
-The cleanup of AWS Api Gateways can fail. This is due to a maximum of 1 deletion of a REST API every 30 seconds. This cannot be changed. See: [https://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html](https://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html)
-
 #### Azure
 
-The first time you deploy an Azure Function it can take a very long time and even fail due to a timeout. Be patient.
-Might also be due to an update of the Azure Functions Core Tools.
-
-#### ZIP
-
-If you don't have it already, please install the package `zip`. It is used to zip and package applications.
-`sudo apt-get install zip`
-
-#### Python & Azure
-
-The Azure CLI can throw errors if you use the wrong version of python. If that happens, create a virtual environment and launch then the app.
-```
-python3.6 -m venv .env
-source .env/bin/activate
-```
-
-#### Go
-
-To use Go and AWS you need to install the `golang` package:
-`sudo apt-get install golang`
-
-#### .NET
-
-To build and publish .NET applications (used by AWS, Azure and IBM) you need the .NET SDK. See: [https://dotnet.microsoft.com/download/linux-package-manager/ubuntu18-04/sdk-current](https://dotnet.microsoft.com/download/linux-package-manager/ubuntu18-04/sdk-current)
+The way Azure functions are deployed it is currently not possible to choose Linux as runtime OS, because it is still in preview.
