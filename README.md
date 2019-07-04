@@ -74,7 +74,7 @@ docker volume create google-secrets
 docker volume create ibm-secrets
 docker volume create azure-secrets
 
-# copy all data into the docker volume (IMPORTANT: run from the root directory!)
+# copy all data into the docker volume (IMPORTANT: run from the project root directory!)
 docker run -v serverless-data:/data --name helper bschitter/ubuntu-with-zip
 docker cp . helper:/data
 docker rm helper
@@ -101,7 +101,7 @@ To stop and remove containers run:
 docker-compose down
 ```
 
-To copy the app data again to the docker volume run (**IMPORTANT**: run from the root directory!):
+To copy the app data again to the docker volume run (**IMPORTANT**: run from the project root directory!):
 ```bash
 docker volume rm serverless-data && docker volume create serverless-data && docker run -v serverless-data:/data --name helper bschitter/ubuntu-with-zip && docker cp . helper:/data && docker rm helper
 ```
