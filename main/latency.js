@@ -45,7 +45,7 @@ function pushURL(provider, language, url) {
     urls.push({provider: provider, language: language, url: url, latest: '0', mean: 0});
     fs.writeFile('latency_urls.json', JSON.stringify(urls), function(err) {
       if (err) {
-        console.log(err);
+        console.error(err);
         process.exit(0);
       }
     });
@@ -57,7 +57,7 @@ function pushURL(provider, language, url) {
 function resetURLs() {
   fs.writeFile('latency_urls.json', '[]', function(err) {
     if (err) {
-      console.log(err);
+      console.error(err);
       process.exit(0);
     }
   });
@@ -90,7 +90,10 @@ function insertIntoDB(ms, language, provider) {
         ms: ms
       }
     }
-  ]);
+  ])
+  .catch((err) => {
+    console.error('Could not write to DB!');
+  });
 }
 
 function printResults() {
