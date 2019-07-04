@@ -34,6 +34,9 @@
                                 <div class="radio">
                                   <label><input id="factorsTest" type="radio" name="test">CPU (Factors)</label>
                                 </div>
+                                <div class="radio">
+                                  <label><input id="memoryTest" type="radio" name="test">Memory</label>
+                                </div>
                           </div>
                           <div class="col-4">
                               <b>Clouds:</b>
@@ -105,6 +108,7 @@ $('#deployButton').click(function deploy(){
   $.ajax({url: 'deploy', type: 'get',data: {
     latency: $("#latencyTest").prop('checked'),
     factors: $("#factorsTest").prop('checked'),
+    memory: $("#memoryTest").prop('checked'),
     aws: $("#amazon").prop('checked'), 
     azure: $("#azure").prop('checked'),
     google: $("#google").prop('checked'),
@@ -150,7 +154,7 @@ function update() {
       console.log('update...');
       $("#result").html(res.data);
       if(res.running) {
-        setTimeout(function(){update();}, 5000);
+        setTimeout(function(){update();}, 1000);
       }
   }});
 }
