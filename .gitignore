@@ -9,6 +9,9 @@ aws/src/node/node_latency/node_latency.zip
 aws/src/node/node_factors/node_modules
 aws/src/node/node_factors/node_factors.zip
 
+aws/src/node/node_memory/node_modules
+aws/src/node/node_memory/node_memory.zip
+
 aws/src/go/go_latency/latency
 aws/src/go/go_latency/go_latency.zip
 
