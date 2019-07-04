@@ -1,10 +1,17 @@
 const now = require('performance-now');
+var fs = require("fs");
 
 exports.handler = function(event, context, callback) {
+
+  var cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+  var instanceId = fs.readFileSync('/proc/self/cgroup', 'utf-8');
+  var meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
+  var uptime = fs.readFileSync('/proc/uptime', 'utf-8');
+
   var res ={
       "statusCode": 200,
       "headers": {
-          "Content-Type": "*/*"
+          "Content-Type": "application/json"
       }
   };
 
@@ -13,7 +20,13 @@ exports.handler = function(event, context, callback) {
   let result = factors(n);
   let end = now();
   
-  res.body = JSON.stringify({ 'n': n, 'result': result, 'time(ms)': (end-start).toFixed(3) });
+  res.body = JSON.stringify({
+    payload: { 'n': n, 'result': result, 'time(ms)': (end-start).toFixed(3) },
+    id: instanceId,
+    cpu: cpuinfo,
+    mem: meminfo,
+    uptime: uptime
+  });
   callback(null, res);
 };
 

@@ -53,10 +53,15 @@ namespace Factors
             int statusCode = (int)HttpStatusCode.OK;
             string body = result;
 
+            string instanceId = File.ReadAllText("/proc/self/cgroup");
+            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
+            string meminfo = File.ReadAllText("/proc/meminfo");
+            string uptime = File.ReadAllText("/proc/uptime");
+
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = statusCode,
-                Body = body,
+                Body = "{ \"payload\": " + body + ", \"id\": " + instanceId + ", \"cpu\": " + cpuinfo + ",  \"mem\": " + meminfo + ",  \"uptime\": " + uptime + "}",
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
