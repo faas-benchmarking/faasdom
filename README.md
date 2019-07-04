@@ -100,6 +100,11 @@ To stop and remove containers run:
 docker-compose down
 ```
 
+To copy the app data again to the docker volume run (**IMPORTANT**: run from the root directory!):
+```bash
+docker volume rm serverless-data && docker volume create serverless-data && docker run -v serverless-data:/data --name helper bschitter/ubuntu-with-zip && docker cp . helper:/data && docker rm helper
+```
+
 To delete all images:
 
 ```bash
