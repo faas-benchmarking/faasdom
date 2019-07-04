@@ -25,6 +25,7 @@ The basic idea is that you can deploy and run various tests and see how they per
 
   - **Latency test:** measures the latency of a very simple function
   - **CPU test (factors):** calculates the factors of a big number iteratively to benchmark the CPU performance
+  - **Memory test:** uses up as much memory as possible to see how much the function can actually use
   - more tests will follow soon...
 
 ## Getting started
