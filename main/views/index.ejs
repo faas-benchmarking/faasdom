@@ -82,6 +82,7 @@
                       <button id='runButton' type="button" class="btn btn-primary" style="margin: 5px">Run</button>
                       <button id='stopButton' type="button" class="btn btn-primary" style="margin: 5px">Stop</button>
                       <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup All</button>
+                      <button id='deleteLogFileButton' type="button" class="btn btn-danger" style="margin: 5px">Delete Log File</button>
                     </div>
                   </div>
     </div>
@@ -144,6 +145,13 @@ $('#stopButton').click(function cleanup(){
 
 $('#cleanupButton').click(function cleanup(){
   $.ajax({url: 'cleanup', type: 'get', success:function(res){
+      $("#result").html(res.data);
+      update();
+  }});
+});
+
+$('#deleteLogFileButton').click(function cleanup(){
+  $.ajax({url: 'deleteLogFile', type: 'get', success:function(res){
       $("#result").html(res.data);
       update();
   }});

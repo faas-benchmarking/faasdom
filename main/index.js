@@ -53,7 +53,7 @@ app.get('/deploy', async function(req, res, next) {
 	} else if(req.query.memory == 'true') {
 		deploy(req.query, MEMORY, 'Memory', 'Memory');
 	} else {
-		console.log('invalid test');
+		console.error('invalid test');
 	}
 	res.send({data: currentLogStatus, running: runningStatus});
 });
@@ -83,6 +83,26 @@ app.get('/cleanup', function(req, res, next) {
 	res.send({data: currentLogStatus, running: runningStatus});
 });
 
+app.get('/deleteLogFile', function(req, res, next) {
+	runningStatus = true;
+	currentLogStatus = '<h4>Deleting Log File...</h4>';
+	try {
+		if(fs.existsSync('./error.log')) {
+			fs.unlinkSync('./error.log');
+			currentLogStatus += '<h4>Log File was deleted.</h4>';
+			runningStatus = false;
+		} else {
+			currentLogStatus += '<h4 style="color:orange">Log File already deleted.</h4>';
+			runningStatus = false;
+		}
+	} catch(err) {
+		console.error(err);
+		currentLogStatus += '<h4 style="color:red">Log File could not be deleted.</h4>';
+		runningStatus = false;
+	}
+	res.send({data: currentLogStatus, running: runningStatus});
+});
+
 app.get('/status', function(req, res, next) {
 	res.send({data: currentLogStatus, running: runningStatus});
 });
@@ -103,6 +123,13 @@ function execShellCommand(cmd) {
 	return new Promise((resolve, reject) => {
 		exec(cmd, (error, stdout, stderr) => {
 	  		if (error) {
+				let errorMsg = 'TIME: ' + (new Date(Date.now() - ((new Date()).getTimezoneOffset() * 60000))).toISOString() + '\n';
+				errorMsg += 'ERROR: ' + error;
+				errorMsg += 'STDOUT: ' + stdout + (stdout? '' : '\n');
+				errorMsg += 'STDERR: ' + stderr + (stderr? '' : '\n');
+				errorMsg += '----------------------------------------------------------------------------------------------------\n';
+				console.error(errorMsg);
+				fs.appendFileSync('./error.log', errorMsg);
 				reject();
 	  		}		
 	  		resolve(stdout? stdout : stderr);
@@ -201,7 +228,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Run npm install */
 				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -211,7 +237,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Zip function */
 				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'").catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -224,7 +249,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Zip function */
 				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'").catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -237,7 +261,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Build go */
 				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " golang /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; go clean; go get github.com/aws/aws-lambda-go/lambda github.com/aws/aws-lambda-go/events; go build *.go'").catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -247,7 +270,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Zip function */
 				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip * --exclude \"*.go\"'").catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -260,7 +282,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Build and zip function */
 				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk /bin/sh -c \'apt-get update; apt-get install zip -y; cd ' + dockerMountPoint + srcPath + '; dotnet build; dotnet tool install -g Amazon.Lambda.Tools; dotnet lambda package -C Release -o ' + functionName + '.zip -f netcoreapp2.1\'').catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -273,7 +294,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create lambda function */
 			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' mikesir87/aws-cli aws lambda create-function --function-name ' + functionName + ' --runtime ' + runtime + ' --role ' + config.aws.arn_role + ' --memory-size ' + config.global.memory + ' --handler ' + handler + ' --zip-file ' + srcPath + ' --region ' + config.aws.region + ' --timeout ' + config.global.timeout).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating lambda function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -283,7 +303,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** get the ARN of lambda */
 			let lambdaarn = await execShellCommand(dockerPrefix + 'aws lambda list-functions --query "Functions[?FunctionName==\\`' + functionName + '\\`].FunctionArn" --output text --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while getting the ARN of the lambda function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -294,7 +313,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create Api */
 			await execShellCommand(dockerPrefix + 'aws apigateway create-rest-api --name "' + APIName + '" --description "Api for ' + functionName + '" --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating REST API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -304,7 +322,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** get the ID of the API */
 			let apiid = await execShellCommand(dockerPrefix + 'aws apigateway get-rest-apis --query "items[?name==\\`' + APIName + '\\`].id" --output text --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while getting the REST API ID. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -315,7 +332,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** get the parent ID of the API */
 			let parentresourceid = await execShellCommand(dockerPrefix + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/\\`].id" --output text --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while getting the parent ID of the API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -326,7 +342,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create resource on API */
 			await execShellCommand(dockerPrefix + 'aws apigateway create-resource --rest-api-id ' + apiid + ' --parent-id ' + parentresourceid + ' --path-part ' + APIPath + ' --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating resource on API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -336,7 +351,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** get the resource ID */
 			let resourceid = await execShellCommand(dockerPrefix + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/' + APIPath + '\\`].id" --output text --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while getting the resource ID of the API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -347,7 +361,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create Method on resource */
 			await execShellCommand(dockerPrefix + 'aws apigateway put-method --rest-api-id ' + apiid + ' --resource-id ' + resourceid + ' --http-method ANY --authorization-type NONE --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating resource on API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -357,7 +370,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Link API to lambda function */
 			await execShellCommand(dockerPrefix + 'aws apigateway put-integration --rest-api-id ' + apiid + ' --resource-id ' + resourceid + ' --http-method ANY --type AWS_PROXY --integration-http-method POST --uri arn:aws:apigateway:' + config.aws.region + ':lambda:path/2015-03-31/functions/' + lambdaarn + '/invocations --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while linking API to lambda. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -367,7 +379,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create deployment */
 			await execShellCommand(dockerPrefix + 'aws apigateway create-deployment --rest-api-id ' + apiid + ' --stage-name test --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating deployment. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -380,7 +391,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Give lambda API permission */
 			await execShellCommand(dockerPrefix + 'aws lambda add-permission --function-name ' + functionName + ' --statement-id ' + functionName + ' --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "' + apiarn + '/*/*/' + APIPath + '" --region ' + config.aws.region).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while giving lambda the API permission. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -402,7 +412,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create a resource group */
 			await execShellCommand(dockerPrefix + 'az group create --location westeurope --name ' + resourcegroupname).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating resource group. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -412,7 +421,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create a storage account */
 			await execShellCommand(dockerPrefix + 'az storage account create --name ' + storagename + ' --resource-group ' + resourcegroupname + ' --sku Standard_LRS').catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating storage account. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -422,7 +430,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create a function app */
 			await execShellCommand(dockerPrefix + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + rnd + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --os-type Windows').catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating function app. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -435,7 +442,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Deploy a function */
 			await execShellCommand(dockerPrefix + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip').catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -453,7 +459,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Deploy function */
 			await execShellCommand(dockerPrefix + 'gcloud functions deploy ' + functionName + ' --region=' + config.google.region + ' --memory=' + config.global.memory + config.google.memory_appendix + ' --timeout=' + config.global.timeout + config.google.timeout_appendix + ' --runtime=' + runtime + ' --trigger-http --source=' + dockerMountPoint + srcPath).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -473,7 +478,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Run npm install */
 				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -483,7 +487,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Zip function */
 				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'").catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -496,7 +499,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Build function */
 				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + 'out').catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -506,7 +508,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				/** Zipping function */
 				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' bschitter/ubuntu-with-zip zip -r -0 -j ' + dockerMountPoint + srcPath + functionName + '.zip ' + dockerMountPoint + srcPath + 'out').catch((err) => {
 					error = true;
-					console.error(err);
 					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
 				if(error) {
@@ -519,7 +520,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create Action */
 			await execShellCommand(dockerPrefix + 'ibmcloud fn action create ' + functionName + ' ' + dockerMountPoint + srcPath + mainMethod + ' --kind ' + runtime + ' --memory ' + config.global.memory + ' --timeout ' +  config.global.timeout + '000 --web true').catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -529,7 +529,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			/** Create API */
 			await execShellCommand(dockerPrefix + 'ibmcloud fn api create /' + APIName + ' get ' + functionName + ' --response-type ' + responseType).catch((err) => {
 				error = true;
-				console.error(err);
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
@@ -548,6 +547,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			// TODO: similar to latency urls
 			console.log(url);
 		} else {
+			// TODO: similar to latency urls
 			console.log(url);
 		}
 
@@ -572,7 +572,6 @@ async function cleanup() {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Function "' + allFunctions.awsFunctions[i] + '" deleted</li>';
 		})
 		.catch((err) => {
-			console.error(err);
 			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function "' + allFunctions.awsFunctions[i] + '" could not be deleted</li>';
 		});
 	}
@@ -585,7 +584,6 @@ async function cleanup() {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> API with ID "' + allFunctions.awsGateways[i] + '" deleted</li>';
 		})
 		.catch((err) => {
-			console.error(err);
 			currentLogStatus += '<li><span style="color:red">ERROR:</span> API with ID "' + allFunctions.awsGateways[i] + '" could not be deleted</li>';
 		});
 	}
@@ -600,7 +598,6 @@ async function cleanup() {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Function App in RG "' + allFunctions.azureResourceGroups[i] + '" deleted</li>';
 		})
 		.catch((err) => {
-			console.error(err);
 			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function App in RG "' + allFunctions.azureResourceGroups[i] + '" could not be deleted</li>';
 		});
 	}
@@ -615,7 +612,6 @@ async function cleanup() {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Function "' + allFunctions.googleFunctions[i] + '" deleted</li>';
 		})
 		.catch((err) => {
-			console.error(err);
 			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function "' + allFunctions.googleFunctions[i] + '" could not be deleted</li>';
 		});
 	}
@@ -630,7 +626,6 @@ async function cleanup() {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" deleted</li>';
 		})
 		.catch((err) => {
-			console.error(err);
 			currentLogStatus += '<li><span style="color:red">ERROR:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" could not b deleted</li>';
 		});
 	}
@@ -640,7 +635,6 @@ async function cleanup() {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Action "' + allFunctions.ibmFunctions[i] + '" deleted</li>';
 		})
 		.catch((err) => {
-			console.error(err);
 			currentLogStatus += '<li><span style="color:red">ERROR:</span> Action "' + allFunctions.ibmFunctions[i] + '" could not be deleted</li>';
 		});
 	}
@@ -663,7 +657,6 @@ async function loadDeployedFunctions() {
 		}
 	})
 	.catch((err) => {
-		console.error(err);
 		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
 	});
 
@@ -676,7 +669,6 @@ async function loadDeployedFunctions() {
 		}
 	})
 	.catch((err) => {
-		console.error(err);
 		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
 	});
 
@@ -690,7 +682,6 @@ async function loadDeployedFunctions() {
 		}
 	})
 	.catch((err) => {
-		console.error(err);
 		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing Azure resource groups</li>';
 	});
 
@@ -709,7 +700,6 @@ async function loadDeployedFunctions() {
 		}
 	})
 	.catch((err) => {
-		console.error(err);
 		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing Google Cloud functions</li>';
 	});
 
@@ -729,7 +719,6 @@ async function loadDeployedFunctions() {
 		}
 	})
 	.catch((err) => {
-		console.error(err);
 		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
 	});
 
@@ -748,7 +737,6 @@ async function loadDeployedFunctions() {
 		}
 	})
 	.catch((err) => {
-		console.error(err);
 		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
 	});
 
