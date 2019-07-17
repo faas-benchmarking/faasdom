@@ -78,11 +78,17 @@
                           </div>
 
                       </div>
-                      <button id='deployButton' type="button" class="btn btn-primary" style="margin: 5px">Deploy</button>
-                      <button id='runButton' type="button" class="btn btn-primary" style="margin: 5px">Run</button>
-                      <button id='stopButton' type="button" class="btn btn-primary" style="margin: 5px">Stop</button>
-                      <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup All</button>
-                      <button id='deleteLogFileButton' type="button" class="btn btn-danger" style="margin: 5px">Delete Log File</button>
+                      <div class="row">
+                        <button id='deployButton' type="button" class="btn btn-primary" style="margin: 5px">Deploy</button>
+                        <button id='runButton' type="button" class="btn btn-primary" style="margin: 5px">Run</button>
+                        <button id='stopButton' type="button" class="btn btn-primary" style="margin: 5px">Stop</button>
+                        <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup All</button>
+                      </div> 
+                      <hr>
+                      <div class="row">
+                        <button id='showLogFileButton' type="button" class="btn btn-primary" style="margin: 5px">Show Error Log</button>
+                        <button id='cleanupLogFileButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup Error Log</button>
+                      </div>
                     </div>
                   </div>
     </div>
@@ -150,8 +156,12 @@ $('#cleanupButton').click(function cleanup(){
   }});
 });
 
-$('#deleteLogFileButton').click(function cleanup(){
-  $.ajax({url: 'deleteLogFile', type: 'get', success:function(res){
+$('#showLogFileButton').click(function cleanup(){
+  window.open('logfile', '_blank');
+});
+
+$('#cleanupLogFileButton').click(function cleanup(){
+  $.ajax({url: 'cleanupLogFile', type: 'get', success:function(res){
       $("#result").html(res.data);
       update();
   }});

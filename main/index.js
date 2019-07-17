@@ -83,21 +83,25 @@ app.get('/cleanup', function(req, res, next) {
 	res.send({data: currentLogStatus, running: runningStatus});
 });
 
-app.get('/deleteLogFile', function(req, res, next) {
+app.get('/logfile', function(req, res, next) {
+	let log = fs.readFileSync("./error.log");
+	let html = '<!DOCTYPE html><html><body>';
+	html += log.toString();
+	html += '</body></html>';
+	html = html.replace(/\n/g, '<br>');
+	res.send(html);
+});
+
+app.get('/cleanupLogFile', function(req, res, next) {
 	runningStatus = true;
 	currentLogStatus = '<h4>Deleting Log File...</h4>';
 	try {
-		if(fs.existsSync('./error.log')) {
-			fs.unlinkSync('./error.log');
-			currentLogStatus += '<h4>Log File was deleted.</h4>';
-			runningStatus = false;
-		} else {
-			currentLogStatus += '<h4 style="color:orange">Log File already deleted.</h4>';
-			runningStatus = false;
-		}
+		fs.writeFileSync('./error.log', '');
+		currentLogStatus += '<h4>Log File was cleaned up.</h4>';
+		runningStatus = false;
 	} catch(err) {
 		console.error(err);
-		currentLogStatus += '<h4 style="color:red">Log File could not be deleted.</h4>';
+		currentLogStatus += '<h4 style="color:red">Log File could not be cleaned up.</h4>';
 		runningStatus = false;
 	}
 	res.send({data: currentLogStatus, running: runningStatus});
