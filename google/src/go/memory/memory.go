@@ -1,28 +1,24 @@
-package main
+package function
 
 import (
+    "fmt"
+    "net/http"
     "strconv"
     "io/ioutil"
     "log"
+    "encoding/json"
 )
 
 type Message struct {
     Payload string
+    N string
     Success bool
-    Instance_id string
-    Machine_id string
     Cpu string
     Mem string
     Uptime string
 }
 
-func Main(params map[string]interface{}) map[string]interface{} {
-
-    buf1, err := ioutil.ReadFile("/proc/self/cgroup")
-	if err != nil {
-		log.Fatal(err)
-    }
-    instance_id := string(buf1)
+func Go_memory(w http.ResponseWriter, r *http.Request) {
 
     buf2, err := ioutil.ReadFile("/proc/cpuinfo")
 	if err != nil {
@@ -42,14 +38,8 @@ func Main(params map[string]interface{}) map[string]interface{} {
     }
     uptime := string(buf4)
 
-    buf5, err := ioutil.ReadFile("/sys/class/dmi/id/product_uuid")
-	if err != nil {
-		log.Fatal(err)
-    }
-    machine_id := string(buf5)
-
-    n, ok := params["n"].(string)
-    if !ok {
+    n := r.URL.Query().Get("n")
+    if len(n) == 0 {
         n = "55"
     }
     n_num, err := strconv.Atoi(n)
@@ -63,13 +53,14 @@ func Main(params map[string]interface{}) map[string]interface{} {
     msg := make(map[string]interface{})
     msg["payload"] = "memory test"
     msg["n"] = strconv.Itoa(n_num)
-    msg["success"] = ok
-    msg["instance_id"] = instance_id
-    msg["machine_id"] = machine_id
+    msg["success"] = true
     msg["cpu"] = cpuinfo
     msg["mem"] = meminfo
     msg["uptime"] = uptime
 
-    return msg
+    b, err := json.Marshal(msg)
+
+    fmt.Fprint(w, string(b))
+    
 
  }
