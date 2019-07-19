@@ -166,9 +166,7 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 			await deployFunction(AZURE, NODE, func, 'node-' + func, '', '', 'node', '', '/azure/src/node/node_' + func, 'Node.js', '', '');
 		}
 		if(params.python == 'true') {
-			// TODO: Only on Linux OS
-			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No Python runtime</li>'
-			//await deployFunction(AZURE, PYTHON, func, 'python-' + func, '', '', 'python', '', '/azure/src/python/python_' + func, 'Python', '', '');
+			await deployFunction(AZURE, PYTHON, func, 'python-' + func, '', '', 'python', '', '/azure/src/python/python_' + func, 'Python', '', '');
 		}
 		if(params.go == 'true') {
 			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No Go runtime</li>';
@@ -432,17 +430,14 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** Create a function app */
-			await execShellCommand(dockerPrefix + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + rnd + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --os-type Windows').catch((err) => {
+			await execShellCommand(dockerPrefix + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + rnd + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --os-type Linux').catch((err) => {
 				error = true;
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating function app. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
 				return;
 			}
-
-			// old one, with azure-functions-core-tools
-			//await execShellCommand('cd ' + srcPath + ' && func azure functionapp publish ' + functionName + rnd + ' && cd ../../../../main');
-
+			
 			/** Deploy a function */
 			await execShellCommand(dockerPrefix + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip').catch((err) => {
 				error = true;
