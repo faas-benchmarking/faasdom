@@ -630,7 +630,7 @@ async function cleanup() {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" deleted</li>';
 		})
 		.catch((err) => {
-			currentLogStatus += '<li><span style="color:red">ERROR:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" could not b deleted</li>';
+			currentLogStatus += '<li><span style="color:red">ERROR:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" could not be deleted</li>';
 		});
 	}
 	for(let i = 0; i<allFunctions.ibmFunctions.length; i++) {
