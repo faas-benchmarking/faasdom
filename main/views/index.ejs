@@ -26,7 +26,7 @@
                       <h5 class="card-title">Tests</h5>
                       <p class="card-text">Deploy a test for each cloud and language</p>
                       <div class="row" style="padding-bottom: 10px">
-                          <div class="col-4">
+                          <div class="col-3">
                               <b>Test:</b>
                               <div class="radio">
                                   <label><input id="latencyTest" type="radio" name="test" checked>Latency</label>
@@ -38,7 +38,25 @@
                                   <label><input id="memoryTest" type="radio" name="test">Memory</label>
                                 </div>
                           </div>
-                          <div class="col-4">
+                          <div class="col-3">
+                            <b>Memory (MB):</b>
+                            <div class="radio" id="memory">
+                                <label><input id="memory128" value="128" type="radio" name="ram" checked>128</label>
+                              </div>
+                              <div class="radio">
+                                <label><input id="memory256" value="256" type="radio" name="ram">256</label>
+                              </div>
+                              <div class="radio">
+                                <label><input id="memory512" value="512" type="radio" name="ram">512</label>
+                              </div>
+                              <div class="radio">
+                                <label><input id="memory1024" value="1024" type="radio" name="ram">1024</label>
+                              </div>
+                              <div class="radio">
+                                <label><input id="memory2048" value="2048" type="radio" name="ram">2048</label>
+                              </div>
+                        </div>
+                          <div class="col-3">
                               <b>Clouds:</b>
                                 <div class="form-check">
                                   <input type="checkbox" class="form-check-input" id="amazon">
@@ -57,7 +75,7 @@
                                   <label class="form-check-label" for="ibm">IBM Cloud</label>
                                 </div>
                           </div>
-                          <div class="col-4">
+                          <div class="col-3">
                               <b>Languages:</b>
                                 <div class="form-check">
                                   <input type="checkbox" class="form-check-input" id="node">
@@ -116,6 +134,7 @@ $('#deployButton').click(function deploy(){
     latency: $("#latencyTest").prop('checked'),
     factors: $("#factorsTest").prop('checked'),
     memory: $("#memoryTest").prop('checked'),
+    ram: document.querySelector('input[name="ram"]:checked').value,
     aws: $("#amazon").prop('checked'), 
     azure: $("#azure").prop('checked'),
     google: $("#google").prop('checked'),
