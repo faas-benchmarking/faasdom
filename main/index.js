@@ -719,7 +719,8 @@ async function loadDeployedFunctions() {
 			row = row.replace(/\s+/g, ' ');
 			let elements = row.split(' ');
 			let parts = elements[3].split('/');
-			ibmFunctions.push(parts[parts.length-1])
+			console.log(parts[parts.length-1]);
+			ibmGateways.push(parts[parts.length-1])
 		}
 	})
 	.catch((err) => {
@@ -737,7 +738,7 @@ async function loadDeployedFunctions() {
 			row = row.replace(/\s+/g, ' ');
 			let elements = row.split(' ');
 			let parts = elements[0].split('/');
-			ibmGateways.push(parts[2])
+			ibmFunctions.push(parts[2])
 		}
 	})
 	.catch((err) => {
