@@ -437,9 +437,9 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			if(error) {
 				return;
 			}
-			
+
 			/** Deploy a function */
-			await execShellCommand(dockerPrefix + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip').catch((err) => {
+			await execShellCommand(dockerPrefix + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip --timeout ' + config.global.timeout).catch((err) => {
 				error = true;
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
