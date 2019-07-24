@@ -148,44 +148,44 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 	if(params.aws == 'true') {
 		currentLogStatus += '<h5>Amazon Web Services</h5>';
 		if(params.node == 'true') {
-			await deployFunction(AWS, NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs8.10', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '');
+			await deployFunction(AWS, NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs8.10', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram);
 		}
 		if(params.python == 'true') {
-			await deployFunction(AWS, PYTHON, func, 'python_' + func, 'python_' + func, 'python_' + func, 'python3.6', 'function.my_handler', '/aws/src/python/python_' + func + '/', 'Python', '', '');
+			await deployFunction(AWS, PYTHON, func, 'python_' + func, 'python_' + func, 'python_' + func, 'python3.6', 'function.my_handler', '/aws/src/python/python_' + func + '/', 'Python', '', '', params.ram);
 		}
 		if(params.go == 'true') {
-			await deployFunction(AWS, GO, func, 'go_' + func, 'go_' + func, 'go_' + func, 'go1.x', func, '/aws/src/go/go_' + func + '/', 'Go', '', '');
+			await deployFunction(AWS, GO, func, 'go_' + func, 'go_' + func, 'go_' + func, 'go1.x', func, '/aws/src/go/go_' + func + '/', 'Go', '', '', params.ram);
 		}
 		if(params.dotnet == 'true') {
-			await deployFunction(AWS, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, 'dotnet_' + func, 'dotnetcore2.1', funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Handler::HandleFunction', '/aws/src/dotnet/' + funcFirstUpperCase + '/', '.NET', '', '');
+			await deployFunction(AWS, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, 'dotnet_' + func, 'dotnetcore2.1', funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Handler::HandleFunction', '/aws/src/dotnet/' + funcFirstUpperCase + '/', '.NET', '', '', params.ram);
 		}
 	}
 	if(params.azure == 'true') {
 		currentLogStatus += '<h5>Microsoft Azure</h5>';
 		if(params.node == 'true') {
-			await deployFunction(AZURE, NODE, func, 'node-' + func, '', '', 'node', '', '/azure/src/node/node_' + func, 'Node.js', '', '');
+			await deployFunction(AZURE, NODE, func, 'node-' + func, '', '', 'node', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram);
 		}
 		if(params.python == 'true') {
-			await deployFunction(AZURE, PYTHON, func, 'python-' + func, '', '', 'python', '', '/azure/src/python/python_' + func, 'Python', '', '');
+			await deployFunction(AZURE, PYTHON, func, 'python-' + func, '', '', 'python', '', '/azure/src/python/python_' + func, 'Python', '', '', params.ram);
 		}
 		if(params.go == 'true') {
 			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No Go runtime</li>';
 		}
 		if(params.dotnet == 'true') {
-			await deployFunction(AZURE, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '');
+			await deployFunction(AZURE, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '', params.ram);
 		}
 
 	}
 	if(params.google == 'true') {
 		currentLogStatus += '<h5>Google Cloud</h5>';
 		if(params.node == 'true') {
-			await deployFunction(GOOGLE, NODE, func, 'node_' + func, '', '', 'nodejs8', '', '/google/src/node/' + func, 'Node.js', '', '');
+			await deployFunction(GOOGLE, NODE, func, 'node_' + func, '', '', 'nodejs8', '', '/google/src/node/' + func, 'Node.js', '', '', params.ram);
 		}
 		if(params.python == 'true') {
-			await deployFunction(GOOGLE, PYTHON, func, 'python_' + func, '', '', 'python37', '', '/google/src/python/' + func, 'Python', '', '');
+			await deployFunction(GOOGLE, PYTHON, func, 'python_' + func, '', '', 'python37', '', '/google/src/python/' + func, 'Python', '', '', params.ram);
 		}
 		if(params.go == 'true') {
-			await deployFunction(GOOGLE, GO, func, 'Go_' + func, '', '', 'go111', '', '/google/src/go/' + func, 'Go', '', '');
+			await deployFunction(GOOGLE, GO, func, 'Go_' + func, '', '', 'go111', '', '/google/src/go/' + func, 'Go', '', '', params.ram);
 		}
 		if(params.dotnet == 'true') {
 			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No .NET runtime</li>';
@@ -195,16 +195,16 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 	if(params.ibm == 'true') {
 		currentLogStatus += '<h5>IBM Cloud</h5>';
 		if(params.node == 'true') {
-			await deployFunction(IBM, NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json');
+			await deployFunction(IBM, NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram);
 		}
 		if(params.python == 'true') {
-			await deployFunction(IBM, PYTHON, func, 'python_' + func, 'python_' + func, '', 'python:3.7', '', '/ibm/src/python/' + func + '/main.py', 'Python', ' ', 'json');
+			await deployFunction(IBM, PYTHON, func, 'python_' + func, 'python_' + func, '', 'python:3.7', '', '/ibm/src/python/' + func + '/main.py', 'Python', ' ', 'json', params.ram);
 		}
 		if(params.go == 'true') {
-			await deployFunction(IBM, GO, func, 'go_' + func, 'go_' + func, '', 'go:1.11', '', '/ibm/src/go/' + func + '/' + func + '.go', 'Go', ' ', 'json');
+			await deployFunction(IBM, GO, func, 'go_' + func, 'go_' + func, '', 'go:1.11', '', '/ibm/src/go/' + func + '/' + func + '.go', 'Go', ' ', 'json', params.ram);
 		}
 		if(params.dotnet == 'true') {
-			await deployFunction(IBM, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, '', 'dotnet:2.2', '', '/ibm/src/dotnet/' + funcFirstUpperCase + '/', '.NET', ' --main ' + funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Dotnet::Main', 'json')
+			await deployFunction(IBM, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, '', 'dotnet:2.2', '', '/ibm/src/dotnet/' + funcFirstUpperCase + '/', '.NET', ' --main ' + funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Dotnet::Main', 'json', params.ram)
 		}
 	}
 
@@ -213,7 +213,7 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 }
 
 /** Deploy a function */
-async function deployFunction(provider, language, test, functionName, APIName, APIPath, runtime, handler, srcPath, languageName, mainMethod, responseType, callback) {
+async function deployFunction(provider, language, test, functionName, APIName, APIPath, runtime, handler, srcPath, languageName, mainMethod, responseType, ram) {
 	if(providers.includes(provider) && language.includes(language)) {
 
 		let url = '';
@@ -294,7 +294,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** Create lambda function */
-			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' mikesir87/aws-cli aws lambda create-function --function-name ' + functionName + ' --runtime ' + runtime + ' --role ' + config.aws.arn_role + ' --memory-size ' + params.ram + ' --handler ' + handler + ' --zip-file ' + srcPath + ' --region ' + config.aws.region + ' --timeout ' + config.global.timeout).catch((err) => {
+			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' mikesir87/aws-cli aws lambda create-function --function-name ' + functionName + ' --runtime ' + runtime + ' --role ' + config.aws.arn_role + ' --memory-size ' + ram + ' --handler ' + handler + ' --zip-file ' + srcPath + ' --region ' + config.aws.region + ' --timeout ' + config.global.timeout).catch((err) => {
 				error = true;
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating lambda function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
@@ -456,7 +456,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let dockerPrefix = 'docker run --rm -v google-secrets:/root/.config/gcloud -v serverless-data:' + dockerMountPoint + ' google/cloud-sdk ';
 
 			/** Deploy function */
-			await execShellCommand(dockerPrefix + 'gcloud functions deploy ' + functionName + ' --region=' + config.google.region + ' --memory=' + params.ram + config.google.memory_appendix + ' --timeout=' + config.global.timeout + config.google.timeout_appendix + ' --runtime=' + runtime + ' --trigger-http --source=' + dockerMountPoint + srcPath).catch((err) => {
+			await execShellCommand(dockerPrefix + 'gcloud functions deploy ' + functionName + ' --region=' + config.google.region + ' --memory=' + ram + config.google.memory_appendix + ' --timeout=' + config.global.timeout + config.google.timeout_appendix + ' --runtime=' + runtime + ' --trigger-http --source=' + dockerMountPoint + srcPath).catch((err) => {
 				error = true;
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
@@ -517,7 +517,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** Create Action */
-			await execShellCommand(dockerPrefix + 'ibmcloud fn action create ' + functionName + ' ' + dockerMountPoint + srcPath + mainMethod + ' --kind ' + runtime + ' --memory ' + params.ram + ' --timeout ' +  config.global.timeout + '000 --web true').catch((err) => {
+			await execShellCommand(dockerPrefix + 'ibmcloud fn action create ' + functionName + ' ' + dockerMountPoint + srcPath + mainMethod + ' --kind ' + runtime + ' --memory ' + ram + ' --timeout ' +  config.global.timeout + '000 --web true').catch((err) => {
 				error = true;
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
