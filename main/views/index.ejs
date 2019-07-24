@@ -26,7 +26,7 @@
                       <h5 class="card-title">Tests</h5>
                       <p class="card-text">Deploy a test for each cloud and language</p>
                       <div class="row" style="padding-bottom: 10px">
-                          <div class="col-3">
+                          <div class="col-2">
                               <b>Test:</b>
                               <div class="radio">
                                   <label><input id="latencyTest" type="radio" name="test" checked>Latency</label>
@@ -38,7 +38,7 @@
                                   <label><input id="memoryTest" type="radio" name="test">Memory</label>
                                 </div>
                           </div>
-                          <div class="col-3">
+                          <div class="col-2">
                             <b>Memory (MB):</b>
                             <div class="radio" id="memory">
                                 <label><input id="memory128" value="128" type="radio" name="ram" checked>128</label>
@@ -56,6 +56,12 @@
                                 <label><input id="memory2048" value="2048" type="radio" name="ram">2048</label>
                               </div>
                         </div>
+                        <div class="col-2">
+                          <b>Timeout (s):</b>
+                          <div>
+                              <input id="timeout" value="60" type="number" name="timeout" style="max-width: 50px">
+                            </div>
+                      </div>
                           <div class="col-3">
                               <b>Clouds:</b>
                                 <div class="form-check">
@@ -124,6 +130,8 @@
 <script>
 $('#deployButton').click(function deploy(){
 
+  console.log($('#timeout').val());
+
   if(!($("#amazon").prop('checked') || $("#azure").prop('checked') || $("#google").prop('checked') || $("#ibm").prop('checked')) || 
      !($("#node").prop('checked') || $("#python").prop('checked') || $("#go").prop('checked') || $("#dotnet").prop('checked'))) {
     $("#result").html($("#result").html() + '<span style="color:red">Please choose at least one cloud provider and one language if you want to deploy.</span><br>');
@@ -135,6 +143,7 @@ $('#deployButton').click(function deploy(){
     factors: $("#factorsTest").prop('checked'),
     memory: $("#memoryTest").prop('checked'),
     ram: document.querySelector('input[name="ram"]:checked').value,
+    timeout: $('#timeout').val(),
     aws: $("#amazon").prop('checked'), 
     azure: $("#azure").prop('checked'),
     google: $("#google").prop('checked'),
