@@ -122,6 +122,10 @@ docker volume rm $(docker volume ls -q)
 
 ## Troubleshooting
 
+#### AWS
+
+- For AWS you currently have to select the region you want to delete the functions from when hitting the button "Cleanup All".
+
 #### IBM
 
 - Sometimes when deleting a function the ibmcloud CLI will fail to load the resources and therefore the program will not correctly delete the resources. This mostly happens always the first time after you didn't use it for some time.
