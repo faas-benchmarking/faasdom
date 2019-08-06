@@ -121,10 +121,7 @@ docker volume rm $(docker volume ls -q)
 
 ## Troubleshooting
 
-#### Azure
-
-The way Azure functions are deployed it is currently not possible to choose Linux as runtime OS, because it is still in preview.
-
 #### IBM
 
-Sometimes when deleting a function the ibmcloud CLI will fail to load the resources and therefore the program will not correctly delete the resources.
+- Sometimes when deleting a function the ibmcloud CLI will fail to load the resources and therefore the program will not correctly delete the resources. This mostly happens always the first time after you didn't used it for some time.
+- IBM Cloud uses an authentication token which expires. After some time you will need to login and configure it again. See section [Configuration](#configuration)
