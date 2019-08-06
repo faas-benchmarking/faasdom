@@ -679,7 +679,7 @@ async function loadDeployedFunctions() {
 	.then((stdout) => {
 		let azureresourcegroups = JSON.parse(stdout);
 		for(let i = 0; i<azureresourcegroups.length; i++) {
-			if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('memory')) {
+			if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem')) {
 				azureResourceGroups.push(azureresourcegroups[i].name);
 			}
 		}
