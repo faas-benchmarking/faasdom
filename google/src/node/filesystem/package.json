@@ -1,0 +1,15 @@
+{
+    "name": "google-node-filesystem",
+    "description": "Simple filesystem test for Google Cloud Functions. Write 10'000 10kB files and read them.",
+    "version": "0.0.1",
+    "main": "index.js",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Bschitter/benchmark-suite-serverless-computing.git"
+    },
+    "author": "Pascal Maissen <pascal.maissen@unifr.ch>",
+    "license": "ISC",
+    "dependencies": {
+      "performance-now": "^2.1.0"
+    }
+  }
