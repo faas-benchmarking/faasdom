@@ -37,6 +37,9 @@
                                 <div class="radio">
                                   <label><input id="memoryTest" type="radio" name="test">Memory</label>
                                 </div>
+                                <div class="radio">
+                                  <label><input id="filesystemTest" type="radio" name="test">Filesystem</label>
+                                </div>
                           </div>
                           <div class="col-2">
                             <b>Memory (MB):</b>
@@ -142,6 +145,7 @@ $('#deployButton').click(function deploy(){
     latency: $("#latencyTest").prop('checked'),
     factors: $("#factorsTest").prop('checked'),
     memory: $("#memoryTest").prop('checked'),
+    filesystem: $("#filesystemTest").prop('checked'),
     ram: document.querySelector('input[name="ram"]:checked').value,
     timeout: $('#timeout').val(),
     aws: $("#amazon").prop('checked'), 

@@ -23,6 +23,7 @@ const DOTNET = 'dotnet';
 const LATENCY = 'latency';
 const FACTORS = 'factors';
 const MEMORY = 'memory';
+const FILESYSTEM = 'filesystem';
 
 const providers = [AWS, AZURE, GOOGLE, IBM];
 const languages = [NODE, PYTHON, GO, DOTNET];
@@ -52,7 +53,10 @@ app.get('/deploy', async function(req, res, next) {
 		deploy(req.query, FACTORS, 'Factors', 'CPU');
 	} else if(req.query.memory == 'true') {
 		deploy(req.query, MEMORY, 'Memory', 'Memory');
-	} else {
+	} else if(req.query.filesystem == 'true') {
+		deploy(req.query, FILESYSTEM, 'Filesystem', 'Filesystem');
+	} 
+	else {
 		console.error('invalid test');
 	}
 	res.send({data: currentLogStatus, running: runningStatus});
