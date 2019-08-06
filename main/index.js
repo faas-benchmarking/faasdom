@@ -47,6 +47,10 @@ app.get('/', function(req, res, next) {
 app.get('/deploy', async function(req, res, next) {
 	runningStatus = true;
 	currentLogStatus = '';
+	config.aws.region = req.query.awslocation;
+	config.azure.region = req.query.azurelocation;
+	config.google.region = req.query.googlelocation;
+	config.ibm.region = req.query.ibmlocation;
 	if(req.query.latency == 'true') {
 		deploy(req.query, LATENCY, 'Latency', 'Latency');
 	} else if(req.query.factors == 'true') {
@@ -83,6 +87,7 @@ app.get('/stop', function(req, res, next) {
 app.get('/cleanup', function(req, res, next) {
 	runningStatus = true;
 	currentLogStatus = '';
+	config.aws.region = req.query.awslocation;
 	cleanup();
 	res.send({data: currentLogStatus, running: runningStatus});
 });
@@ -416,7 +421,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let storagename = functionName.replace(/\-/g, '') + 'storage';
 
 			/** Create a resource group */
-			await execShellCommand(dockerPrefix + 'az group create --location westeurope --name ' + resourcegroupname).catch((err) => {
+			await execShellCommand(dockerPrefix + 'az group create --location ' + config.azure.region + ' --name ' + resourcegroupname).catch((err) => {
 				error = true;
 				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while creating resource group. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
@@ -519,6 +524,15 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 				srcPath = srcPath + functionName + '.zip';
 			}
+			/** Set location, organization, space */
+			
+			await execShellCommand(dockerPrefix + 'ibmcloud target -r ' + config.ibm.region + ' --cf-api https://api.' + config.ibm.region + '.bluemix.net -o ' + config.ibm.organization + ' -s ' + config.ibm.space).catch((err) => {
+				error = true;
+				currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while deploying API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+			});
+			if(error) {
+				return;
+			}
 
 			/** Create Action */
 			await execShellCommand(dockerPrefix + 'ibmcloud fn action create ' + functionName + ' ' + dockerMountPoint + srcPath + mainMethod + ' --kind ' + runtime + ' --memory ' + ram + ' --timeout ' +  timeout + '000 --web true').catch((err) => {
@@ -538,7 +552,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				return;
 			}
 
-			url = 'https://eu-de.functions.cloud.ibm.com/api/v1/web/' + config.ibm.organization + '_' + config.ibm.space + '/default/' + APIName + '.' + responseType;
+			url = 'https://' + config.ibm.region + '.functions.cloud.ibm.com/api/v1/web/' + config.ibm.organization + '_' + config.ibm.space + '/default/' + APIName + '.' + responseType;
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
 		}
 
@@ -570,7 +584,7 @@ async function cleanup() {
 		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 	}
 	for(let i = 0; i<allFunctions.awsFunctions.length; i++) {
-		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda delete-function --function-name ' + allFunctions.awsFunctions[i])
+		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda delete-function --function-name ' + allFunctions.awsFunctions[i] + ' --region ' + config.aws.region)
 		.then((stdout) => {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> Function "' + allFunctions.awsFunctions[i] + '" deleted</li>';
 		})
@@ -582,7 +596,7 @@ async function cleanup() {
 		if(i>0) {
 			await new Promise(resolve => setTimeout(resolve, 30000));
 		}
-		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway delete-rest-api --rest-api-id ' + allFunctions.awsGateways[i])
+		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway delete-rest-api --rest-api-id ' + allFunctions.awsGateways[i] + ' --region ' + config.aws.region)
 		.then((stdout) => {
 			currentLogStatus += '<li><span style="color:green">INFO:</span> API with ID "' + allFunctions.awsGateways[i] + '" deleted</li>';
 		})
@@ -652,7 +666,7 @@ async function loadDeployedFunctions() {
 
 	let awsFunctions = [], awsGateways = [], googleFunctions = [], azureResourceGroups = [], ibmFunctions = [], ibmGateways = [];
 
-	await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions')
+	await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions --region ' + config.aws.region)
 	.then((stdout) => {
 		let awslambda = JSON.parse(stdout);
 		for(let i = 0; i<awslambda.Functions.length; i++) {
@@ -664,7 +678,7 @@ async function loadDeployedFunctions() {
 	});
 
 
-	await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway get-rest-apis')
+	await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway get-rest-apis --region ' + config.aws.region)
 	.then((stdout) => {
 		let awsapi = JSON.parse(stdout);
 		for(let i = 0; i<awsapi.items.length; i++) {

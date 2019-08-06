@@ -106,6 +106,75 @@
 
                       </div>
                       <div class="row">
+                        <div class="col-6">
+                          <b>AWS Location:</b><br>
+                          <select id="awslocation">
+                            <option value="us-east-2">us-east-2, US East (Ohio)</option>
+                            <option value="us-east-1">us-east-1, US East (N. Virginia)</option>
+                            <option value="us-west-1">us-west-1, US West (N. California)</option>
+                            <option value="us-west-2">us-west-2, US West (Oregon)</option>
+                            <option value="ap-east-1">ap-east-1, Asia Pacific (Hong Kong)</option>
+                            <option value="ap-south-1">ap-south-1, Asia Pacific (Mumbai)</option>
+                            <option value="ap-northeast-2">ap-northeast-2, Asia Pacific (Seoul)</option>
+                            <option value="ap-southeast-1">ap-southeast-1, Asia Pacific (Singapore)</option>
+                            <option value="ap-southeast-2">ap-southeast-2, Asia Pacific (Sydney)</option>
+                            <option value="ap-northeast-1">ap-northeast-1, Asia Pacific (Tokyo)</option>
+                            <option value="ca-central-1">ca-central-1, Canada (Central)</option>
+                            <option value="cn-north-1">cn-north-1, China (Beijing)</option>
+                            <option value="cn-northwest-1">cn-northwest-1, China (Ningxia)</option>
+                            <option value="eu-central-1" selected>eu-central-1, EU (Frankfurt)</option>
+                            <option value="eu-west-1">eu-west-1, EU (Ireland)</option>
+                            <option value="eu-west-2">eu-west-2, EU (London)</option>
+                            <option value="eu-west-3">eu-west-3, EU (Paris)</option>
+                            <option value="eu-north-1">eu-north-1, EU (Stockholm)</option>
+                            <option value="me-south-1">me-south-1, Middle East (Bahrain)</option>
+                            <option value="sa-east-1">sa-east-1, South America (Sao Paulo)</option>
+                          </select>
+                        </div>
+                        <div class="col-6">
+                            <b>Azure Location:</b><br>
+                            <select id="azurelocation">
+                              <option value="australiaeast">Australia East, New South Wales</option>
+                              <option value="eastasia">East Asia, Hong Kong</option>
+                              <option value="eastus">East US, Virginia</option>
+                              <option value="eastus2">East US 2, Virginia</option>
+                              <option value="northeurope">North Europe, Ireland</option>
+                              <option value="southcentralus">South Central US, Texas</option>
+                              <option value="southeastasia">Southeast Asia, Singapore</option>
+                              <option value="uksouth">UK South, London</option>
+                              <option value="westeurope" selected>West Europe, Netherlands</option>
+                              <option value="westus">West US, California</option>
+                              <option value="westus2">West US 2, Washington</option>
+                            </select>
+                          </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                          <div class="col-6">
+                            <b>Google Location:</b><br>
+                            <select id="googlelocation">
+                              <option value="us-central1">us-central1, Iowa</option>
+                              <option value="us-east1">us-east1, South Carolina</option>
+                              <option value="us-east4">us-east4, Northern Virginia</option>
+                              <option value="europe-west1" selected>europe-west1, Belgium</option>
+                              <option value="europe-west2">europe-west2, London</option>
+                              <option value="asia-east2">asia-east2, Hong Kong</option>
+                              <option value="asia-northeast1">asia-northeast1, Tokyo</option>
+                            </select>
+                          </div>
+                          <div class="col-6">
+                              <b>IBM Location:</b><br>
+                              <select id="ibmlocation">
+                                <option value="jp-tok">jp-tok, Tokyo</option>
+                                <option value="eu-de" selected>eu-de, Frankfurt</option>
+                                <option value="eu-gb">eu-gb, London</option>
+                                <option value="us-south">us-south, Dallas</option>
+                                <option value="us-east">us-east, Washington, D.C.</option>
+                              </select>
+                            </div>
+                        </div>
+                      <br>
+                      <div class="row">
                         <button id='deployButton' type="button" class="btn btn-primary" style="margin: 5px">Deploy</button>
                         <button id='runButton' type="button" class="btn btn-primary" style="margin: 5px">Run</button>
                         <button id='stopButton' type="button" class="btn btn-primary" style="margin: 5px">Stop</button>
@@ -133,8 +202,6 @@
 <script>
 $('#deployButton').click(function deploy(){
 
-  console.log($('#timeout').val());
-
   if(!($("#amazon").prop('checked') || $("#azure").prop('checked') || $("#google").prop('checked') || $("#ibm").prop('checked')) || 
      !($("#node").prop('checked') || $("#python").prop('checked') || $("#go").prop('checked') || $("#dotnet").prop('checked'))) {
     $("#result").html($("#result").html() + '<span style="color:red">Please choose at least one cloud provider and one language if you want to deploy.</span><br>');
@@ -155,7 +222,11 @@ $('#deployButton').click(function deploy(){
     node: $("#node").prop('checked'),
     python: $("#python").prop('checked'),
     go: $("#go").prop('checked'),
-    dotnet: $("#dotnet").prop('checked')
+    dotnet: $("#dotnet").prop('checked'),
+    awslocation: $('#awslocation').val(),
+    azurelocation: $('#azurelocation').val(),
+    googlelocation: $('#googlelocation').val(),
+    ibmlocation: $('#ibmlocation').val()
   }, success:function(res){
       $("#result").html(res.data);
       update();
@@ -182,7 +253,7 @@ $('#stopButton').click(function cleanup(){
 });
 
 $('#cleanupButton').click(function cleanup(){
-  $.ajax({url: 'cleanup', type: 'get', success:function(res){
+  $.ajax({url: 'cleanup', type: 'get', data: {awslocation: $('#awslocation').val()}, success:function(res){
       $("#result").html(res.data);
       update();
   }});
