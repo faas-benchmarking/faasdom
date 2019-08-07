@@ -4,6 +4,9 @@ import os
 
 def my_handler(event, context):
 
+    if not os.path.exists("/tmp/test"):
+        os.makedirs("/tmp/test")
+
     f=open("/proc/self/cgroup", "r")
     if f.mode == 'r':
         insatnceId =f.read()
@@ -31,7 +34,7 @@ def my_handler(event, context):
         
     startWrite = time.time()
     for i in range(0,10000):
-        filehandle = open('/tmp/'+str(i)+'.txt', 'w')
+        filehandle = open('/tmp/test/'+str(i)+'.txt', 'w')
         filehandle.write(text)
         filehandle.close()
     
@@ -39,13 +42,13 @@ def my_handler(event, context):
     
     startRead = time.time()
     for i in range(0,10000):
-        filehandle = open('/tmp/'+str(i)+'.txt', 'r')
+        filehandle = open('/tmp/test/'+str(i)+'.txt', 'r')
         test = filehandle.read()
         filehandle.close()
     
     endRead = time.time()
     
-    files = os.listdir("/tmp")
+    files = os.listdir("/tmp/test")
     
     return {
     'statusCode': 200,
