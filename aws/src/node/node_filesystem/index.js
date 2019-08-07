@@ -13,20 +13,24 @@ exports.handler = async (event, context, callback) => {
     for(let i = 0; i<10240; i++) {
         text += 'A';
     }
+
+    if(!fs.existsSync('/tmp/test')){
+        fs.mkdirSync('/tmp/test');
+    }
     
     let startWrite = now();
     for(let i = 0; i<10000; i++) {
-        fs.writeFileSync('/tmp/'+i+'.txt', text, 'utf-8');
+        fs.writeFileSync('/tmp/test/'+i+'.txt', text, 'utf-8');
     }
     let endWrite = now();
     
     let startRead = now();
     for(let i = 0; i<10000; i++) {
-        var test = fs.readFileSync('/tmp/'+i+'.txt', 'utf-8');
+        var test = fs.readFileSync('/tmp/test/'+i+'.txt', 'utf-8');
     }
     let endRead = now();
     
-    let files = fs.readdirSync('/tmp');
+    let files = fs.readdirSync('/tmp/test');
     
     const res = {
         statusCode: 200,
