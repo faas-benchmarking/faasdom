@@ -59,14 +59,12 @@ app.get('/deploy', async function(req, res, next) {
 		deploy(req.query, MEMORY, 'Memory', 'Memory');
 	} else if(req.query.filesystem == 'true') {
 		deploy(req.query, FILESYSTEM, 'Filesystem', 'Filesystem');
-	} 
-	else {
+	} else {
 		console.error('invalid test');
 	}
 	res.send({data: currentLogStatus, running: runningStatus});
 });
 
-//TODO: make generic for all tests --> rename to run
 app.get('/run', function(req, res, next) {
 	runningStatus = true;
 	currentLogStatus = '';
@@ -666,6 +664,7 @@ async function loadDeployedFunctions() {
 
 	let awsFunctions = [], awsGateways = [], googleFunctions = [], azureResourceGroups = [], ibmFunctions = [], ibmGateways = [];
 
+	// TODO: fix aws location, show always all functions and gateways
 	await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions --region ' + config.aws.region)
 	.then((stdout) => {
 		let awslambda = JSON.parse(stdout);
