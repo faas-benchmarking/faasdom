@@ -418,6 +418,36 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let resourcegroupname = functionName + '-rg';
 			let storagename = functionName.replace(/\-/g, '') + 'storage';
 
+			if(language == NODE) {
+
+				//TODO: implement
+
+			} else if(language == PYTHON) {
+
+				// TODO: implement
+
+			} else if(language == DOTNET) {
+
+				/** Build function */
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + '/out').catch((err) => {
+					error = true;
+					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+				});
+				if(error) {
+					return;
+				}
+
+				/** Zipping function */
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' bschitter/ubuntu-with-zip /bin/sh -c \'cd ' + dockerMountPoint + srcPath + '/out && zip -r -0 ' + dockerMountPoint + srcPath + '/' + functionName +  '.zip *\'').catch((err) => {
+					error = true;
+					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+				});
+				if(error) {
+					return;
+				}
+
+			}
+
 			/** Create a resource group */
 			await execShellCommand(dockerPrefix + 'az group create --location ' + config.azure.region + ' --name ' + resourcegroupname).catch((err) => {
 				error = true;
