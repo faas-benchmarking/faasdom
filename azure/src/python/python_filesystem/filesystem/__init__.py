@@ -2,11 +2,14 @@ import logging
 import json
 import time
 import os
+import shutil
 
 import azure.functions as func
 
-
 def main(req: func.HttpRequest) -> func.HttpResponse:
+
+    if os.path.exists("/tmp/test"):
+        shutil.rmtree("/tmp/test")
 
     if not os.path.exists("/tmp/test"):
         os.makedirs("/tmp/test")
@@ -31,13 +34,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         uptime =f.read()
     f.close()
     
+    n, size = 10000, 10240
+
+    if req.params.get('n') != None:
+        n = int(req.params.get('n'))
+    else:
+        n = 10000
+
+    if req.params.get('size') != None:
+        size = int(req.params.get('size'))
+    else:
+        size = 10240
+
     text = ""
     
-    for i in range(1, 10240):
+    for i in range(1, size):
         text += "A"
         
     startWrite = time.time()
-    for i in range(0,10000):
+    for i in range(0,n):
         filehandle = open('/tmp/test/'+str(i)+'.txt', 'w')
         filehandle.write(text)
         filehandle.close()
@@ -45,7 +60,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     endWrite = time.time()
     
     startRead = time.time()
-    for i in range(0,10000):
+    for i in range(0,n):
         filehandle = open('/tmp/test/'+str(i)+'.txt', 'r')
         test = filehandle.read()
         filehandle.close()
@@ -54,4 +69,26 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     
     files = os.listdir("/tmp/test")
 
-    return func.HttpResponse('{"payload": {"test": "filesystem test", "timeWrite(ms)": ' + str((endWrite-startWrite)*1000) + ', "timeRead(ms)": ' + str((endRead-startRead)*1000) +'}, "success": ' + str(len(files) == 10000) + ', n":' + str(len(files)) + ',"instanceId": ' + instanceId + ',"cpu": ' + cpuinfo + ', "mem": ' + meminfo + ', "uptime": ' + uptime + '}')
+    return func.HttpResponse(
+        json.dumps({
+            'success': len(files) == n,
+            'payload': {
+                "test": "filesystem test",
+                "n": len(files),
+                "size": size,
+                "timeWrite(ms)": (endWrite-startWrite)*1000,
+                "timeRead(ms)": (endRead-startRead)*1000
+            },
+            'metrics': {
+                'machineId': '',
+                'instanceId': instanceId,
+                'cpu': cpuinfo,
+                'mem': meminfo,
+                'uptime': uptime
+            }
+        }),
+        status_code=200,
+        headers={
+            'Content-Type': 'application/json'
+        }
+    )
