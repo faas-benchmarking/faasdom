@@ -10,6 +10,7 @@
   "author": "Pascal Maissen <pascal.maissen@unifr.ch>",
   "license": "ISC",
   "dependencies": {
-    "performance-now": "^2.1.0"
+    "performance-now": "^2.1.0",
+    "rimraf": "^2.6.3"
   }
 }
