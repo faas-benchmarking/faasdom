@@ -1,8 +1,12 @@
 import json
 import time
 import os
+import shutil
 
 def my_handler(event, context):
+
+    if os.path.exists("/tmp/test"):
+        shutil.rmtree("/tmp/test")
 
     if not os.path.exists("/tmp/test"):
         os.makedirs("/tmp/test")
@@ -26,14 +30,28 @@ def my_handler(event, context):
     if f.mode == 'r':
         uptime =f.read()
     f.close()
+
+    n, size = 10000, 10240
+
+    if event.get('queryStringParameters') is not None:
+        if 'n' in event['queryStringParameters']:
+            n = int(event['queryStringParameters']['n'])
+    else:
+        n = 10000
+
+    if event.get('queryStringParameters') is not None:
+        if 'size' in event['queryStringParameters']:
+            size = int(event['queryStringParameters']['size'])
+    else:
+        size = 10240
     
     text = ""
     
-    for i in range(1, 10240):
+    for i in range(1, size):
         text += "A"
         
     startWrite = time.time()
-    for i in range(0,10000):
+    for i in range(0,n):
         filehandle = open('/tmp/test/'+str(i)+'.txt', 'w')
         filehandle.write(text)
         filehandle.close()
@@ -41,7 +59,7 @@ def my_handler(event, context):
     endWrite = time.time()
     
     startRead = time.time()
-    for i in range(0,10000):
+    for i in range(0,n):
         filehandle = open('/tmp/test/'+str(i)+'.txt', 'r')
         test = filehandle.read()
         filehandle.close()
@@ -51,17 +69,25 @@ def my_handler(event, context):
     files = os.listdir("/tmp/test")
     
     return {
-    'statusCode': 200,
-    'headers': {
-           'Content-Type': 'application/json'
-       },
-    'body': json.dumps({
-        'payload': {"test": "filesystem test", "timeWrite(ms)": (endWrite-startWrite)*1000, "timeRead(ms)": (endRead-startRead)*1000},
-        'success': len(files) == 10000,
-        'n': len(files),
-        'instanceId': insatnceId,
-        'cpu': cpuinfo,
-        'mem': meminfo,
-        'uptime': uptime
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps({
+            'success': len(files) == n,
+            'payload': {
+                "test": "filesystem test",
+                "n": len(files),
+                "size": size,
+                "timeWrite(ms)": (endWrite-startWrite)*1000,
+                "timeRead(ms)": (endRead-startRead)*1000
+            },
+            'metrics': {
+                'machineId': '',
+                'instanceId': insatnceId,
+                'cpu': cpuinfo,
+                'mem': meminfo,
+                'uptime': uptime
+            }
         })
     }
