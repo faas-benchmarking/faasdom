@@ -154,6 +154,10 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 
 	if(params.aws == 'true') {
 		currentLogStatus += '<h5>Amazon Web Services</h5>';
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '<ul stlye="list-style-position: outside">';
+		}
+
 		if(params.node == 'true') {
 			await deployFunction(AWS, NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs8.10', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram, params.timeout);
 		}
@@ -166,9 +170,18 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 		if(params.dotnet == 'true') {
 			await deployFunction(AWS, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, 'dotnet_' + func, 'dotnetcore2.1', funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Handler::HandleFunction', '/aws/src/dotnet/' + funcFirstUpperCase + '/', '.NET', '', '', params.ram, params.timeout);
 		}
+
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '</ul>';
+		}
+
 	}
 	if(params.azure == 'true') {
 		currentLogStatus += '<h5>Microsoft Azure</h5>';
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '<ul stlye="list-style-position: outside">';
+		}
+
 		if(params.node == 'true') {
 			await deployFunction(AZURE, NODE, func, 'node-' + func, '', '', 'node', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
 		}
@@ -182,9 +195,17 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 			await deployFunction(AZURE, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '', params.ram, params.timeout);
 		}
 
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '</ul>';
+		}
+
 	}
 	if(params.google == 'true') {
 		currentLogStatus += '<h5>Google Cloud</h5>';
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '<ul stlye="list-style-position: outside">';
+		}
+
 		if(params.node == 'true') {
 			await deployFunction(GOOGLE, NODE, func, 'node_' + func, '', '', 'nodejs8', '', '/google/src/node/' + func, 'Node.js', '', '', params.ram, params.timeout);
 		}
@@ -198,9 +219,17 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 			currentLogStatus += '<li><span style="color:orange">SKIP:</span> No .NET runtime</li>';
 		}
 
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '</ul>';
+		}
+
 	}
 	if(params.ibm == 'true') {
 		currentLogStatus += '<h5>IBM Cloud</h5>';
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '<ul stlye="list-style-position: outside">';
+		}
+
 		if(params.node == 'true') {
 			await deployFunction(IBM, NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
 		}
@@ -212,6 +241,10 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 		}
 		if(params.dotnet == 'true') {
 			await deployFunction(IBM, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, '', 'dotnet:2.2', '', '/ibm/src/dotnet/' + funcFirstUpperCase + '/', '.NET', ' --main ' + funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Dotnet::Main', 'json', params.ram, params.timeout)
+		}
+
+		if(params.node == 'true' || params.python == 'true' || params.go == 'true' || params.dotnet == 'true') {
+			currentLogStatus += '</ul>';
 		}
 	}
 
@@ -407,7 +440,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			url = 'https://' + apiid + '.execute-api.' + config.aws.region + '.amazonaws.com/test/' + APIPath;
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
         } 
         
 		else if(provider == AZURE) {
@@ -508,7 +541,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			url = 'https://' + functionName + rnd + '.azurewebsites.net/api/' + test;
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
 		}
 
 		else if(provider == GOOGLE) {
@@ -525,7 +558,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			url = 'https://' + config.google.region + '-' + config.google.project + '.cloudfunctions.net/' + functionName;
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
 		}
 		
 		else if(provider == IBM) {
@@ -604,19 +637,18 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			url = 'https://' + config.ibm.region + '.functions.cloud.ibm.com/api/v1/web/' + config.ibm.organization + '_' + config.ibm.space + '/default/' + APIName + '.' + responseType;
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function</li>';
+			currentLogStatus += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
 		}
 
+		console.log(url);
+		currentLogStatus += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
 
 		if(test == LATENCY) {
 			latencyModule.pushURL(provider, language, url);
-			console.log(url);
 		} else if(test == FACTORS) {
 			// TODO: similar to latency urls
-			console.log(url);
 		} else {
 			// TODO: similar to latency urls
-			console.log(url);
 		}
 
 	}
