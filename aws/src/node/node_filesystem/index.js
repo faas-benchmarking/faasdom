@@ -1,5 +1,6 @@
 var fs = require("fs");
 var now = require('performance-now');
+var rimraf = require("rimraf");
 
 exports.handler = async (event, context, callback) => {
     
@@ -8,10 +9,28 @@ exports.handler = async (event, context, callback) => {
     var meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
     var uptime = fs.readFileSync('/proc/uptime', 'utf-8');
     
+    var n, size;
+
+    if(event.queryStringParameters && event.queryStringParameters.n) {
+        n = event.queryStringParameters.n;
+    } else {
+        n = 10000;
+    }
+
+    if(event.queryStringParameters && event.queryStringParameters.size) {
+        size = event.queryStringParameters.size;
+    } else {
+        size = 10240;
+    }
+
     var text = '';
     
-    for(let i = 0; i<10240; i++) {
+    for(let i = 0; i<size; i++) {
         text += 'A';
+    }
+
+    if(fs.existsSync('/tmp/test')){
+        rimraf.sync('/tmp/test');
     }
 
     if(!fs.existsSync('/tmp/test')){
@@ -19,13 +38,13 @@ exports.handler = async (event, context, callback) => {
     }
     
     let startWrite = now();
-    for(let i = 0; i<10000; i++) {
+    for(let i = 0; i<n; i++) {
         fs.writeFileSync('/tmp/test/'+i+'.txt', text, 'utf-8');
     }
     let endWrite = now();
     
     let startRead = now();
-    for(let i = 0; i<10000; i++) {
+    for(let i = 0; i<n; i++) {
         var test = fs.readFileSync('/tmp/test/'+i+'.txt', 'utf-8');
     }
     let endRead = now();
@@ -38,13 +57,21 @@ exports.handler = async (event, context, callback) => {
            "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            payload: {"test": "filesystem test", "timeWrite(ms)": (endWrite-startWrite).toFixed(3), "timeRead(ms)": (endRead-startRead).toFixed(3)},
-            success: files.length == 10000,
-            n: files.length,
-            id: instanceId,
-            cpu: cpuinfo,
-            mem: meminfo,
-            uptime: uptime
+            success: files.length == n,
+            payload: {
+                "test": "filesystem test",
+                "n": files.length,
+                "size": size,
+                "timeWrite(ms)": (endWrite-startWrite).toFixed(3),
+                "timeRead(ms)": (endRead-startRead).toFixed(3)
+            },
+            metrics: {
+                machineId: '',
+                id: instanceId,
+                cpu: cpuinfo,
+                mem: meminfo,
+                uptime: uptime
+            }
         })
     };
     callback(null, res);
