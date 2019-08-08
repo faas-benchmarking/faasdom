@@ -420,7 +420,23 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			if(language == NODE) {
 
-				//TODO: implement
+				/** Run npm install */
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+					error = true;
+					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+				});
+				if(error) {
+					return;
+				}
+
+				/** Zip function */
+				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'").catch((err) => {
+					error = true;
+					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+				});
+				if(error) {
+					return;
+				}
 
 			} else if(language == PYTHON) {
 
