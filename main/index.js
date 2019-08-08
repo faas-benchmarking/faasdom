@@ -440,7 +440,14 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			} else if(language == PYTHON) {
 
-				// TODO: implement
+				/** Zip function */
+				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/ubuntu-with-zip /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'").catch((err) => {
+					error = true;
+					currentLogStatus += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+				});
+				if(error) {
+					return;
+				}
 
 			} else if(language == DOTNET) {
 
