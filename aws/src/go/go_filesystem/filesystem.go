@@ -37,8 +37,6 @@ type Metrics struct {
 
 func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-    
-
     if _, err := os.Stat("/tmp/test"); !os.IsNotExist(err) {
         os.RemoveAll("/tmp/test")
     }
@@ -77,7 +75,7 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (ev
     if _, ok := event.QueryStringParameters["n"]; ok {
         n, err = strconv.Atoi(event.QueryStringParameters["n"])
         if err != nil {
-                log.Fatal(err)
+            log.Fatal(err)
         }
     } else {
         n = 10000
@@ -86,7 +84,7 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (ev
     if _, ok := event.QueryStringParameters["size"]; ok {
         size, err = strconv.Atoi(event.QueryStringParameters["size"])
         if err != nil {
-                log.Fatal(err)
+            log.Fatal(err)
         }
     } else {
         size = 10240
@@ -114,8 +112,8 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (ev
     startRead := time.Now()
     for i := 0; i < n; i++ {
         buf, err := ioutil.ReadFile("/tmp/test/" + strconv.Itoa(i) + ".txt")
-            if err != nil {
-                    log.Fatal(err)
+        if err != nil {
+            log.Fatal(err)
         }
         test = string(buf)
     }
@@ -158,5 +156,5 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (ev
 }
 
 func main() {
-        lambda.Start(HandleRequest)
+    lambda.Start(HandleRequest)
 }
