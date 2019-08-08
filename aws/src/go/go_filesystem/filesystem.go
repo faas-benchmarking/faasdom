@@ -14,8 +14,8 @@ import (
 
 type Message struct {
     Success bool
-    Payload
-    Metrics
+    Payload Payload
+    Metrics Metrics
 
 }
     
