@@ -12,21 +12,34 @@ import (
 )
 
 type Message struct {
-    Payload
-    N string
     Success bool
+    Payload Payload
+    Metrics Metrics
+
+}
+    
+type Payload struct {
+    Test string
+    N int
+    Size int
+    TimeWrite string
+    TimeRead string
+}
+
+type Metrics struct {
+    MachineId string
+    InstanceId string
     Cpu string
     Mem string
     Uptime string
 }
 
-type Payload struct {
-    Test string
-    TimeWrite string
-    TimeRead string
-}
 
 func Go_filesystem(w http.ResponseWriter, r *http.Request) {
+
+    if _, err := os.Stat("/tmp/test"); !os.IsNotExist(err) {
+        os.RemoveAll("/tmp/test")
+    }
 
     if _, err := os.Stat("/tmp/test"); os.IsNotExist(err) {
         os.Mkdir("/tmp/test", os.ModeDir)
@@ -50,14 +63,35 @@ func Go_filesystem(w http.ResponseWriter, r *http.Request) {
     }
     uptime := string(buf4)
 
+    n := 10000
+    size := 10240
+
+    if r.URL.Query().Get("n") != "" {
+        n, err = strconv.Atoi(r.URL.Query().Get("n"))
+        if err != nil {
+                log.Fatal(err)
+        }
+    } else {
+        n = 10000
+    }
+
+    if r.URL.Query().Get("size") != "" {
+        size, err = strconv.Atoi(r.URL.Query().Get("size"))
+        if err != nil {
+                log.Fatal(err)
+        }
+    } else {
+        size = 10240
+    }
+
     var text string = ""
     
-    for i := 0; i < 10240; i++ {
+    for i := 0; i < size; i++ {
         text += "A"
     }
 
     startWrite := time.Now()
-    for i := 0; i < 10000; i++ {
+    for i := 0; i < n; i++ {
         f, err := os.Create("/tmp/test/" + strconv.Itoa(i) + ".txt")
         if err != nil {
             log.Fatal(err)
@@ -70,7 +104,7 @@ func Go_filesystem(w http.ResponseWriter, r *http.Request) {
     var test string = ""
 
     startRead := time.Now()
-    for i := 0; i < 10000; i++ {
+    for i := 0; i < n; i++ {
         buf, err := ioutil.ReadFile("/tmp/test/" + strconv.Itoa(i) + ".txt")
 	    if err != nil {
 		    log.Fatal(err)
@@ -87,19 +121,27 @@ func Go_filesystem(w http.ResponseWriter, r *http.Request) {
     }
 
     msg := &Message{
+        Success: len(files) == 10000,
         Payload: Payload{
             Test: "filesystem test",
+            N: len(files),
+            Size: size,
             TimeWrite: strconv.FormatInt(int64(elapsedWrite / time.Millisecond), 10),
             TimeRead: strconv.FormatInt(int64(elapsedRead / time.Millisecond), 10),
         },
-        N: strconv.Itoa(len(files)),
-        Success: len(files) == 10000,
-        Cpu: cpuinfo,
-        Mem: meminfo,
-        Uptime: uptime,
+        Metrics: Metrics{
+            MachineId: "",
+            InstanceId: "",
+            Cpu: cpuinfo,
+            Mem: meminfo,
+            Uptime: uptime,
+        },
     }
 
     b, err := json.Marshal(msg)
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(200)
 
     fmt.Fprint(w, string(b))
     
