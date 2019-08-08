@@ -10,6 +10,11 @@ import (
 
 func Main(params map[string]interface{}) map[string]interface{} {
 
+    if _, err := os.Stat("/tmp/test"); !os.IsNotExist(err) {
+        os.RemoveAll("/tmp/test")
+        log.Print("DELETED")
+    }
+
     if _, err := os.Stat("/tmp/test"); os.IsNotExist(err) {
         os.Mkdir("/tmp/test", 0777)
     }
@@ -44,14 +49,35 @@ func Main(params map[string]interface{}) map[string]interface{} {
     }
     machine_id := string(buf5)
 
+    n := 10000
+    size := 10240
+
+    if _, ok := params["n"]; ok {
+        n, err = strconv.Atoi(params["n"].(string))
+        if err != nil {
+            log.Fatal(err)
+        }
+    } else {
+        n = 10000
+    }
+
+    if _, ok := params["size"]; ok {
+        size, err = strconv.Atoi(params["size"].(string))
+        if err != nil {
+            log.Fatal(err)
+        }
+    } else {
+        size = 10240
+    }
+
     var text string = ""
     
-    for i := 0; i < 10240; i++ {
+    for i := 0; i < size; i++ {
         text += "A"
     }
 
     startWrite := time.Now()
-    for i := 0; i < 10000; i++ {
+    for i := 0; i < n; i++ {
         f, err := os.Create("/tmp/test/" + strconv.Itoa(i) + ".txt")
         if err != nil {
             log.Fatal(err)
@@ -64,7 +90,7 @@ func Main(params map[string]interface{}) map[string]interface{} {
     var test string = ""
 
     startRead := time.Now()
-    for i := 0; i < 10000; i++ {
+    for i := 0; i < n; i++ {
         buf, err := ioutil.ReadFile("/tmp/test/" + strconv.Itoa(i) + ".txt")
 	    if err != nil {
 		    log.Fatal(err)
@@ -81,18 +107,19 @@ func Main(params map[string]interface{}) map[string]interface{} {
     }
 
     msg := map[string]interface{}{}
+    msg["success"] = len(files) == n
     msg["payload"] = map[string]string{}
     msg["payload"].(map[string]string)["Test"] = "filesystem test"
-    msg["payload"].(map[string]string)["Test"] = "filesystem test"
+    msg["payload"].(map[string]string)["N"] = strconv.Itoa(len(files))
+    msg["payload"].(map[string]string)["Size"] = strconv.Itoa(size)
     msg["payload"].(map[string]string)["TimeWrite"] = strconv.FormatInt(int64(elapsedWrite / time.Millisecond), 10)
     msg["payload"].(map[string]string)["TimeRead"] = strconv.FormatInt(int64(elapsedRead / time.Millisecond), 10)
-    msg["n"] = strconv.Itoa(len(files))
-    msg["success"] = len(files) == 10000
-    msg["instance_id"] = instance_id
-    msg["machine_id"] = machine_id
-    msg["cpu"] = cpuinfo
-    msg["mem"] = meminfo
-    msg["uptime"] = uptime
+    msg["metrics"] = map[string]string{}
+    msg["metrics"].(map[string]string)["machine_id"] = machine_id
+    msg["metrics"].(map[string]string)["instance_id"] = instance_id
+    msg["metrics"].(map[string]string)["cpu"] = cpuinfo
+    msg["metrics"].(map[string]string)["mem"] = meminfo
+    msg["metrics"].(map[string]string)["uptime"] = uptime
 
     return msg
 
