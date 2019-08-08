@@ -191,6 +191,7 @@
     <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6" style="padding-top: 15px; padding-bottom: 15px">
         <button id="clearButton" type="button" class="btn btn-primary" style="margin: 5px">Clear Output</button>
         <div id="result" class="console"><%= data %></div>
+        <div id="spinner" class="spinner-border text-primary"></div>
   </div>
   
 </div>
@@ -271,17 +272,24 @@ $('#cleanupLogFileButton').click(function cleanup(){
 });
 
 function update() {
+  $('#spinner').show();
   $.ajax({url: 'status', type: 'get', success:function(res){
       console.log('update...');
       $("#result").html(res.data);
       if(res.running) {
         setTimeout(function(){update();}, 1000);
+      } else {
+        $('#spinner').hide();
       }
   }});
 }
 
 $('#clearButton').click(function clear() {
   $("#result").html('');
+});
+
+$(document).ready( function() {
+  $('#spinner').hide();
 });
 </script>
 
