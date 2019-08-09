@@ -10,50 +10,80 @@ namespace Filesystem
         public JObject Main(JObject args)
         {
 
-            System.IO.Directory.CreateDirectory("/tmp/test");
+            if(Directory.Exists("/tmp/test")) {
+                System.IO.Directory.Delete("/tmp/test", true);
+            }
+
+            if(!Directory.Exists("/tmp/test")) {
+                System.IO.Directory.CreateDirectory("/tmp/test");
+            }
             
-            string[] machine_id = File.ReadAllLines("/sys/class/dmi/id/product_uuid");
-            string[] instance_id = File.ReadAllLines("/proc/self/cgroup");
-            string[] cpuinfo = File.ReadAllLines("/proc/cpuinfo");
-            string[] meminfo = File.ReadAllLines("/proc/meminfo");
-            string[] uptime = File.ReadAllLines("/proc/uptime");
+            string machineId = File.ReadAllText("/sys/class/dmi/id/product_uuid");
+            string instanceId = File.ReadAllText("/proc/self/cgroup");
+            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
+            string meminfo = File.ReadAllText("/proc/meminfo");
+            string uptime = File.ReadAllText("/proc/uptime");
+
+            int n = 10000;
+            int size = 10240;
+
+            if(args["n"] != null) {
+                bool parseOk = Int32.TryParse(args["n"].ToString(), out n);
+                if(!parseOk) {
+                    n = 10000;
+                }
+            } else {
+                n = 10000;
+            }
+
+            if(args["size"] != null) {
+                bool parseOk = Int32.TryParse(args["size"].ToString(), out size);
+                if(!parseOk) {
+                    size = 10240;
+                }
+            } else {
+                size = 10240;
+            }
 
             string text = "";
 
-            for(short i = 0; i<10240; i++) {
+            for(short i = 0; i<size; i++) {
                 text += "A";
             }
 
             Stopwatch swWrite = new Stopwatch();
             swWrite.Start();
-            for(short i = 0; i<10000; i++) {
+            for(short i = 0; i<n; i++) {
                 File.WriteAllText("/tmp/test/"+i+".txt", text);
             }
             swWrite.Stop();
 
             Stopwatch swRead = new Stopwatch();
             swRead.Start();
-            for(short i = 0; i<10000; i++) {
+            for(short i = 0; i<n; i++) {
                 string test = File.ReadAllText("/tmp/test/"+i+".txt");
             }
             swRead.Stop();
 
             string[] files = Directory.GetFiles("/tmp/test");
 
+            JObject message = new JObject();
+            message.Add("success", new JValue((files.Length == n).ToString()));
             JObject payload = new JObject();
             payload.Add("test", new JValue("filesystem test"));
+            payload.Add("n", new JValue(files.Length));
+            payload.Add("size", new JValue(size));
             payload.Add("timeWrite(ms)", new JValue(swWrite.Elapsed.TotalMilliseconds));
             payload.Add("timeRead(ms)", new JValue(swRead.Elapsed.TotalMilliseconds));
-
-            JObject message = new JObject();
             message.Add("payload", payload);
-            message.Add("success", new JValue((files.Length == 10000).ToString()));
-            message.Add("n", new JValue(files.Length));
-            message.Add("instance_id", new JValue(string.Join("\n", instance_id)));
-            message.Add("machine_id", new JValue(string.Join("\n", machine_id)));
-            message.Add("cpu", new JValue(string.Join("\n", cpuinfo)));
-            message.Add("mem", new JValue(string.Join("\n", meminfo)));
-            message.Add("uptime", new JValue(string.Join("\n", uptime)));
+            JObject metrics = new JObject();
+            metrics.Add("machine_id", new JValue(string.Join("\n", machineId)));
+            metrics.Add("instance_id", new JValue(string.Join("\n", instanceId)));
+            metrics.Add("cpu", new JValue(string.Join("\n", cpuinfo)));
+            metrics.Add("mem", new JValue(string.Join("\n", meminfo)));
+            metrics.Add("uptime", new JValue(string.Join("\n", uptime)));
+            message.Add("metrics", metrics);
+
             return (message);
             
         }
