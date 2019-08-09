@@ -44,6 +44,11 @@ var currentLogStatusIBMEnd = '';
 var currentLogStatusEnd = '';
 
 var runningStatus = false;
+var runningStatusAWS = false;
+var runningStatusAzure = false;
+var runningStatusGoogle = false;
+var runningStatusIBM = false;
+
 var latencyRunningInterval;
 var latencyPrintingInterval;
 
@@ -125,7 +130,19 @@ app.get('/cleanupLogFile', function(req, res, next) {
 });
 
 app.get('/status', function(req, res, next) {
-	res.send({data: currentLogStatus + currentLogStatusAWS + currentLogStatusAWSEnd + currentLogStatusAzure + currentLogStatusAzureEnd + currentLogStatusGoogle + currentLogStatusGoogleEnd + currentLogStatusIBM + currentLogStatusIBMEnd + currentLogStatusEnd, running: runningStatus});
+	res.send({
+		dataStart: currentLogStatus,
+		dataAWS: currentLogStatusAWS + currentLogStatusAWSEnd,
+		dataAzure: currentLogStatusAzure + currentLogStatusAzureEnd,
+		dataGoogle: currentLogStatusGoogle + currentLogStatusGoogleEnd,
+		dataIBM: currentLogStatusIBM + currentLogStatusIBMEnd,
+		dataEnd: currentLogStatusEnd,
+		running: runningStatus,
+		runningAWS: runningStatusAWS,
+		runningAzure: runningStatusAzure,
+		runningGoogle: runningStatusGoogle,
+		runningIBM: runningStatusIBM
+	});
 });
 
 loadConfig();
@@ -206,6 +223,7 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 		currentLogStatusAWS += '<h5>Amazon Web Services</h5>';
 		currentLogStatusAWS += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAWSEnd += '</ul>';
+		runningStatusAWS = true;
 
 		if(params.node == 'true') {
 			await deployFunction(AWS, NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs8.10', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram, params.timeout);
@@ -219,6 +237,7 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 		if(params.dotnet == 'true') {
 			await deployFunction(AWS, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, 'dotnet_' + func, 'dotnetcore2.1', funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Handler::HandleFunction', '/aws/src/dotnet/' + funcFirstUpperCase + '/', '.NET', '', '', params.ram, params.timeout);
 		}
+		runningStatusAWS = false;
 		resolve();
 	});
 }
@@ -228,6 +247,7 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 		currentLogStatusAzure += '<h5>Microsoft Azure</h5>';
 		currentLogStatusAzure += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAzureEnd += '</ul>';
+		runningStatusAzure = true;
 
 		if(params.node == 'true') {
 			await deployFunction(AZURE, NODE, func, 'node-' + func, '', '', 'node', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
@@ -241,6 +261,7 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 		if(params.dotnet == 'true') {
 			await deployFunction(AZURE, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '', params.ram, params.timeout);
 		}
+		runningStatusAzure = false;
 		resolve();
 	});
 }
@@ -250,6 +271,7 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 		currentLogStatusGoogle += '<h5>Google Cloud</h5>';
 		currentLogStatusGoogle += '<ul stlye="list-style-position: outside">';
 		currentLogStatusGoogleEnd += '</ul>';
+		runningStatusGoogle = true;
 
 		// TODO: make parallel, should work for google
 
@@ -265,6 +287,7 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 		if(params.dotnet == 'true') {
 			currentLogStatusGoogle += '<li><span style="color:orange">SKIP:</span> No .NET runtime</li>';
 		}
+		runningStatusGoogle = false;
 		resolve();
 	});
 }
@@ -274,6 +297,7 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 		currentLogStatusIBM += '<h5>IBM Cloud</h5>';
 		currentLogStatusIBM += '<ul stlye="list-style-position: outside">';
 		currentLogStatusIBMEnd += '</ul>';
+		runningStatusIBM = true;
 
 		if(params.node == 'true') {
 			await deployFunction(IBM, NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
@@ -287,6 +311,7 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 		if(params.dotnet == 'true') {
 			await deployFunction(IBM, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, '', 'dotnet:2.2', '', '/ibm/src/dotnet/' + funcFirstUpperCase + '/', '.NET', ' --main ' + funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Dotnet::Main', 'json', params.ram, params.timeout)
 		}
+		runningStatusIBM = false;
 		resolve();
 	});
 }
