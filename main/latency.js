@@ -1,12 +1,11 @@
 const request = require('request');
 const fs = require('fs');
-
 const Influx = require('influx');
 
 const influx = new Influx.InfluxDB({
-  host: 'localhost', // db
+  host: 'db',
   port: 8086,
-  database: 'results', // process.env.INFLUXDB_DB
+  database: 'results',
   username: 'benchmark-suite',
   password: 'benchmark',
   schema: [
