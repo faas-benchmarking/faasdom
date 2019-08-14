@@ -3,6 +3,7 @@ const fs = require('fs');
 const exec = require('child_process').exec;
 const express = require('express');
 const app = express();
+const now = require('performance-now');
 
 /** constants with providers and languages */
 const AWS = 'aws';
