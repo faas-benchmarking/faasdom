@@ -93,7 +93,7 @@ docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools
 To start the main application (in the folder [main](main/)) run:
 
 ```bash
-docker-compose pull && docker-compose up -d db grafana app
+docker-compose up -d db grafana app
 ```
 
 To stop and remove containers run:
