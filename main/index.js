@@ -167,6 +167,13 @@ function resetLogStatus() {
 	currentLogStatusEnd = '';
 }
 
+/** Convert milliseconds to minutes and seconds */
+function millisToMinutesAndSeconds(millis) {
+	var minutes = Math.floor(millis / 60000);
+	var seconds = ((millis % 60000) / 1000).toFixed(0);
+	return 'in ' + (minutes == 0 ? '' : (minutes + ' min ')) + seconds + ' sec';
+}
+
 /** Executes a shell command and return it as a Promise. */
 function execShellCommand(cmd) {
 	return new Promise((resolve, reject) => {
@@ -273,8 +280,6 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 		currentLogStatusGoogleEnd += '</ul>';
 		runningStatusGoogle = true;
 
-		// TODO: make parallel, should work for google
-
 		if(params.node == 'true') {
 			await deployFunction(GOOGLE, NODE, func, 'node_' + func, '', '', 'nodejs8', '', '/google/src/node/' + func, 'Node.js', '', '', params.ram, params.timeout);
 		}
@@ -327,6 +332,8 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 		let dockerMountPoint = '/app';
 
 		if(provider == AWS) {
+
+			let start = now();
 
 			let dockerPrefix = 'docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' mikesir87/aws-cli ';
 
@@ -504,12 +511,17 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				return;
 			}
 
+			let end = now();
+			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+
 			url = 'https://' + apiid + '.execute-api.' + config.aws.region + '.amazonaws.com/test/' + APIPath;
-			currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
+			currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusAWS += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
         } 
         
 		else if(provider == AZURE) {
+
+			let start = now();
 
 			let dockerPrefix = 'docker run --rm -v azure-secrets:/root/.azure -v serverless-data:' + dockerMountPoint + ' microsoft/azure-cli ';
 
@@ -606,12 +618,17 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				return;
 			}
 
+			let end = now();
+			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+
 			url = 'https://' + functionName + rnd + '.azurewebsites.net/api/' + test;
-			currentLogStatusAzure += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
+			currentLogStatusAzure += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusAzure += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
 		}
 
 		else if(provider == GOOGLE) {
+
+			let start = now();
 
 			let dockerPrefix = 'docker run --rm -v google-secrets:/root/.config/gcloud -v serverless-data:' + dockerMountPoint + ' google/cloud-sdk ';
 
@@ -624,12 +641,17 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				return;
 			}
 
+			let end = now();
+			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+
 			url = 'https://' + config.google.region + '-' + config.google.project + '.cloudfunctions.net/' + functionName;
-			currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
+			currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusGoogle += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
 		}
 		
 		else if(provider == IBM) {
+
+			let start = now();
 
 			let dockerPrefix = 'docker run --rm -v ibm-secrets:/root/.bluemix -v serverless-data:' + dockerMountPoint + ' ibmcom/ibm-cloud-developer-tools-amd64 ';
 
@@ -704,8 +726,11 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				return;
 			}
 
+			let end = now();
+			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+
 			url = 'https://' + config.ibm.region + '.functions.cloud.ibm.com/api/v1/web/' + config.ibm.organization + '_' + config.ibm.space + '/default/' + APIName + '.' + responseType;
-			currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function';
+			currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusIBM += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
 		}
 
@@ -790,9 +815,12 @@ async function cleanupAWS() {
 		}
 
 		for(let i = 0; i<awsFunctions.length; i++) {
+			let start = now();
 			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda delete-function --function-name ' + awsFunctions[i] + ' --region ' + config.aws.region)
 			.then((stdout) => {
-				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Function "' + awsFunctions[i] + '" deleted</li>';
+				let end = now();
+				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Function "' + awsFunctions[i] + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Function "' + awsFunctions[i] + '" could not be deleted</li>';
@@ -800,12 +828,15 @@ async function cleanupAWS() {
 		}
 
 		for(let i = 0; i<awsGateways.length; i++) {
+			let start = now();
 			if(i>0) {
 				await new Promise(resolve => setTimeout(resolve, 30000));
 			}
 			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway delete-rest-api --rest-api-id ' + awsGateways[i] + ' --region ' + config.aws.region)
 			.then((stdout) => {
-				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> API with ID "' + awsGateways[i] + '" deleted</li>';
+				let end = now();
+				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> API with ID "' + awsGateways[i] + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> API with ID "' + awsGateways[i] + '" could not be deleted</li>';
@@ -847,9 +878,12 @@ async function cleanupAzure() {
 			currentLogStatusAzure += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 		}
 		for(let i = 0; i<azureResourceGroups.length; i++) {
+			let start = now();
 			await execShellCommand('docker run --rm -v azure-secrets:/root/.azure microsoft/azure-cli az group delete --name ' + azureResourceGroups[i] + ' --yes')
 			.then((stdout) => {
-				currentLogStatusAzure += '<li><span style="color:green">INFO:</span> Function App in RG "' + azureResourceGroups[i] + '" deleted</li>';
+				let end = now();
+				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+				currentLogStatusAzure += '<li><span style="color:green">INFO:</span> Function App in RG "' + azureResourceGroups[i] + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
 				currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Function App in RG "' + azureResourceGroups[i] + '" could not be deleted</li>';
@@ -896,9 +930,12 @@ async function cleanupGoogle() {
 			currentLogStatusGoogle += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 		}
 		for(let i = 0; i<googleFunctions.length; i++) {
+			let start = now();
 			await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk gcloud functions delete ' + googleFunctions[i] + ' --region ' + config.google.region + ' --quiet')
 			.then((stdout) => {
-				currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Function "' + googleFunctions[i] + '" deleted</li>';
+				let end = now();
+				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+				currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Function "' + googleFunctions[i] + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
 				currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Function "' + googleFunctions[i] + '" could not be deleted</li>';
@@ -965,18 +1002,24 @@ async function cleanupIBM() {
 			currentLogStatusIBM += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 		}
 		for(let i = 0; i<ibmGateways.length; i++) {
+			let start = now();
 			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn api delete / /' + ibmGateways[i])
 			.then((stdout) => {
-				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" deleted</li>';
+				let end = now();
+				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
 				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" could not be deleted</li>';
 			});
 		}
 		for(let i = 0; i<ibmFunctions.length; i++) {
+			let start = now();
 			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn action delete ' + ibmFunctions[i])
 			.then((stdout) => {
-				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Action "' + ibmFunctions[i] + '" deleted</li>';
+				let end = now();
+				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Action "' + ibmFunctions[i] + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
 				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Action "' + ibmFunctions[i] + '" could not be deleted</li>';
