@@ -787,28 +787,31 @@ async function cleanupAWS() {
 
 		let awsFunctions = [], awsGateways = [];
 
-		// TODO: fix aws location, show always all functions and gateways
-		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions --region ' + config.aws.region)
-		.then((stdout) => {
-			let awslambda = JSON.parse(stdout);
-			for(let i = 0; i<awslambda.Functions.length; i++) {
-				awsFunctions.push(awslambda.Functions[i].FunctionName);
-			}
-		})
-		.catch((err) => {
-			currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
-		});
+		for(let i = 0; i<config.aws.region_options.length; i++) {
 
-		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway get-rest-apis --region ' + config.aws.region)
-		.then((stdout) => {
-			let awsapi = JSON.parse(stdout);
-			for(let i = 0; i<awsapi.items.length; i++) {
-				awsGateways.push(awsapi.items[i].id);
-			}
-		})
-		.catch((err) => {
-			currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
-		});
+			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions --region ' + config.aws.region_options[i])
+			.then((stdout) => {
+				let awslambda = JSON.parse(stdout);
+				for(let i = 0; i<awslambda.Functions.length; i++) {
+					awsFunctions.push(awslambda.Functions[i].FunctionName);
+				}
+			})
+			.catch((err) => {
+				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
+			});
+	
+			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway get-rest-apis --region ' + config.aws.region_options[i])
+			.then((stdout) => {
+				let awsapi = JSON.parse(stdout);
+				for(let i = 0; i<awsapi.items.length; i++) {
+					awsGateways.push(awsapi.items[i].id);
+				}
+			})
+			.catch((err) => {
+				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
+			});
+
+		}
 
 		if(awsFunctions.length == 0 && awsGateways.length == 0) {
 			currentLogStatusAWS += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
