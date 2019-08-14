@@ -2,35 +2,39 @@ version: '3.3'
 
 services:
   aws-cli:
-    image: mikesir87/aws-cli
+    image: mikesir87/aws-cli:1.16.216
     container_name: aws-cli
 
   azure-cli:
-    image: microsoft/azure-cli
+    image: microsoft/azure-cli:latest
     container_name: azure-cli
 
   google-cli:
-    image: google/cloud-sdk
+    image: google/cloud-sdk:257.0.0
     container_name: google-cli
 
   ibm-cli:
-    image: ibmcom/ibm-cloud-developer-tools-amd64
+    image: ibmcom/ibm-cloud-developer-tools-amd64:0.18.0
     container_name: ibm-cli
 
   ubuntu-zip:
-    image: bschitter/ubuntu-with-zip
+    image: bschitter/ubuntu-with-zip:0.1
     container_name: ubuntu-zip
 
-  dotnet:
-    image: mcr.microsoft.com/dotnet/core/sdk
-    container_name: dotnet
+  node:
+    image: node:10.16.0-alpine
+    container_name: node
 
   golang:
-    image: golang
+    image: golang:1.12
     container_name: golang
 
+  dotnet:
+    image: mcr.microsoft.com/dotnet/core/sdk:2.1
+    container_name: dotnet
+
   db:
-    image: influxdb:latest
+    image: influxdb:1.7.7
     container_name: influxdb
     env_file:
       - env.influx
@@ -42,7 +46,7 @@ services:
       - influx:/var/lib/influxdb
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:6.3.2
     container_name: grafana
     ports:
       - "3000:3000"
@@ -50,10 +54,13 @@ services:
       - env.grafana
     links:
       - db
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
 
   app:
     build: .
-    image: bschitter/benchmark-suite-serverless-computing
+    image: bschitter/benchmark-suite-serverless-computing:0.1
     container_name: app
     depends_on:
       - db
@@ -63,8 +70,9 @@ services:
       - google-cli
       - ibm-cli
       - ubuntu-zip
-      - dotnet
+      - node
       - golang
+      - dotnet
     ports:
       - "3001:3001"
     volumes:
