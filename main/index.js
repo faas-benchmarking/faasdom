@@ -1,8 +1,3 @@
-// IMPORTANT: for python need to run (Azure CLI needs to use python 3.6):
-// sudo apt-get install python3-venv -y
-// python3.6 -m venv .env
-// source .env/bin/activate
-
 const latencyModule = require("./latency.js");
 const fs = require('fs');
 const exec = require('child_process').exec;
@@ -32,7 +27,7 @@ const tests = [LATENCY, FACTORS, MEMORY];
 /** variable for config data */
 var config;
 
-var currentLogStatus = ''; // TODO: rename to begin
+var currentLogStatus = '';
 var currentLogStatusAWS = '';
 var currentLogStatusAWSEnd = '';
 var currentLogStatusAzure = '';
@@ -116,6 +111,7 @@ app.get('/logfile', function(req, res, next) {
 
 app.get('/cleanupLogFile', function(req, res, next) {
 	runningStatus = true;
+	resetLogStatus();
 	currentLogStatus = '<h4>Deleting Log File...</h4>';
 	try {
 		fs.writeFileSync('./error.log', '');
@@ -218,6 +214,7 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 	runningStatus = false;
 }
 
+/** Deploy Function for AWS */
 async function deployAWS(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
 		currentLogStatusAWS += '<h5>Amazon Web Services</h5>';
@@ -242,6 +239,7 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 	});
 }
 
+/** Deploy Function for Azure */
 async function deployAzure(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
 		currentLogStatusAzure += '<h5>Microsoft Azure</h5>';
@@ -266,6 +264,7 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 	});
 }
 
+/** Deploy Function for Google */
 async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
 		currentLogStatusGoogle += '<h5>Google Cloud</h5>';
@@ -292,6 +291,7 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 	});
 }
 
+/** Deploy Function for IBM */
 async function deployIBM(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
 		currentLogStatusIBM += '<h5>IBM Cloud</h5>';
@@ -724,190 +724,267 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 /** Cleans up (deletes) all functions and gateways on each cloud */
 async function cleanup() {
 
-	currentLogStatus += '<h4>Cleaning Up...</h4>';
-
-	let allFunctions = await loadDeployedFunctions();
 	latencyModule.resetURLs();
 
-	currentLogStatus += '<h5>Amazon Web Services</h5>';
-	if(allFunctions.awsFunctions.length == 0 && allFunctions.awsGateways.length == 0) {
-		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
-	}
-	for(let i = 0; i<allFunctions.awsFunctions.length; i++) {
-		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda delete-function --function-name ' + allFunctions.awsFunctions[i] + ' --region ' + config.aws.region)
-		.then((stdout) => {
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Function "' + allFunctions.awsFunctions[i] + '" deleted</li>';
-		})
-		.catch((err) => {
-			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function "' + allFunctions.awsFunctions[i] + '" could not be deleted</li>';
-		});
-	}
-	for(let i = 0; i<allFunctions.awsGateways.length; i++) {
-		if(i>0) {
-			await new Promise(resolve => setTimeout(resolve, 30000));
-		}
-		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway delete-rest-api --rest-api-id ' + allFunctions.awsGateways[i] + ' --region ' + config.aws.region)
-		.then((stdout) => {
-			currentLogStatus += '<li><span style="color:green">INFO:</span> API with ID "' + allFunctions.awsGateways[i] + '" deleted</li>';
-		})
-		.catch((err) => {
-			currentLogStatus += '<li><span style="color:red">ERROR:</span> API with ID "' + allFunctions.awsGateways[i] + '" could not be deleted</li>';
-		});
-	}
+	currentLogStatus += '<h4>Cleaning Up...</h4>';
 
-	currentLogStatus += '<h5>Microsoft Azure</h5>';
-	if(allFunctions.azureResourceGroups.length == 0) {
-		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
-	}
-	for(let i = 0; i<allFunctions.azureResourceGroups.length; i++) {
-		await execShellCommand('docker run --rm -v azure-secrets:/root/.azure microsoft/azure-cli az group delete --name ' + allFunctions.azureResourceGroups[i] + ' --yes')
-		.then((stdout) => {
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Function App in RG "' + allFunctions.azureResourceGroups[i] + '" deleted</li>';
-		})
-		.catch((err) => {
-			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function App in RG "' + allFunctions.azureResourceGroups[i] + '" could not be deleted</li>';
-		});
-	}
+	var promises = [];
 
-	currentLogStatus += '<h5>Google Cloud</h5>';
-	if(allFunctions.googleFunctions.length == 0) {
-		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
-	}
-	for(let i = 0; i<allFunctions.googleFunctions.length; i++) {
-		await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk gcloud functions delete ' + allFunctions.googleFunctions[i] + ' --region ' + config.google.region + ' --quiet')
-		.then((stdout) => {
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Function "' + allFunctions.googleFunctions[i] + '" deleted</li>';
-		})
-		.catch((err) => {
-			currentLogStatus += '<li><span style="color:red">ERROR:</span> Function "' + allFunctions.googleFunctions[i] + '" could not be deleted</li>';
-		});
-	}
+	let p1 = cleanupAWS();
+	promises.push(p1);
+	
+	let p2 = cleanupAzure();
+	promises.push(p2);
 
-	currentLogStatus += '<h5>IBM Cloud</h5>';
-	if(allFunctions.ibmFunctions.length == 0 && allFunctions.ibmGateways.length == 0) {
-		currentLogStatus += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
-	}
-	for(let i = 0; i<allFunctions.ibmGateways.length; i++) {
-		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn api delete / /' + allFunctions.ibmGateways[i])
-		.then((stdout) => {
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" deleted</li>';
-		})
-		.catch((err) => {
-			currentLogStatus += '<li><span style="color:red">ERROR:</span> Method "/' + allFunctions.ibmGateways[i] + '" on API Gateway "/" could not be deleted</li>';
-		});
-	}
-	for(let i = 0; i<allFunctions.ibmFunctions.length; i++) {
-		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn action delete ' + allFunctions.ibmFunctions[i])
-		.then((stdout) => {
-			currentLogStatus += '<li><span style="color:green">INFO:</span> Action "' + allFunctions.ibmFunctions[i] + '" deleted</li>';
-		})
-		.catch((err) => {
-			currentLogStatus += '<li><span style="color:red">ERROR:</span> Action "' + allFunctions.ibmFunctions[i] + '" could not be deleted</li>';
-		});
-	}
+	let p3 = cleanupGoogle();
+	promises.push(p3);
 
-	currentLogStatus += '<h4>Cleanup finished</h4>';
+	let p4 = cleanupIBM();
+	promises.push(p4);
+
+	await Promise.all(promises);
+
+	currentLogStatusEnd += '<h4>Cleanup finished</h4>';
 	runningStatus = false;
 
 }
 
-/** Loads all deployed functions on all cloud, used by cleanup process */
-async function loadDeployedFunctions() {
+/** Cleanup Function for AWS */
+async function cleanupAWS() {
 
-	let awsFunctions = [], awsGateways = [], googleFunctions = [], azureResourceGroups = [], ibmFunctions = [], ibmGateways = [];
+	return new Promise(async (resolve, reject) => {
 
-	// TODO: fix aws location, show always all functions and gateways
-	await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions --region ' + config.aws.region)
-	.then((stdout) => {
-		let awslambda = JSON.parse(stdout);
-		for(let i = 0; i<awslambda.Functions.length; i++) {
-			awsFunctions.push(awslambda.Functions[i].FunctionName);
-		}
-	})
-	.catch((err) => {
-		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
-	});
+		currentLogStatusAWS += '<h5>Amazon Web Services</h5>';
+		currentLogStatusAWS += '<ul stlye="list-style-position: outside">';
+		currentLogStatusAWSEnd += '</ul>';
+		runningStatusAWS = true;
 
+		let awsFunctions = [], awsGateways = [];
 
-	await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway get-rest-apis --region ' + config.aws.region)
-	.then((stdout) => {
-		let awsapi = JSON.parse(stdout);
-		for(let i = 0; i<awsapi.items.length; i++) {
-			awsGateways.push(awsapi.items[i].id);
-		}
-	})
-	.catch((err) => {
-		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
-	});
-
-	await execShellCommand('docker run --rm -v azure-secrets:/root/.azure microsoft/azure-cli az group list')
-	.then((stdout) => {
-		let azureresourcegroups = JSON.parse(stdout);
-		for(let i = 0; i<azureresourcegroups.length; i++) {
-			if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem')) {
-				azureResourceGroups.push(azureresourcegroups[i].name);
+		// TODO: fix aws location, show always all functions and gateways
+		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda list-functions --region ' + config.aws.region)
+		.then((stdout) => {
+			let awslambda = JSON.parse(stdout);
+			for(let i = 0; i<awslambda.Functions.length; i++) {
+				awsFunctions.push(awslambda.Functions[i].FunctionName);
 			}
+		})
+		.catch((err) => {
+			currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
+		});
+
+		await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway get-rest-apis --region ' + config.aws.region)
+		.then((stdout) => {
+			let awsapi = JSON.parse(stdout);
+			for(let i = 0; i<awsapi.items.length; i++) {
+				awsGateways.push(awsapi.items[i].id);
+			}
+		})
+		.catch((err) => {
+			currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
+		});
+
+		if(awsFunctions.length == 0 && awsGateways.length == 0) {
+			currentLogStatusAWS += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 		}
-	})
-	.catch((err) => {
-		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing Azure resource groups</li>';
+
+		for(let i = 0; i<awsFunctions.length; i++) {
+			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws lambda delete-function --function-name ' + awsFunctions[i] + ' --region ' + config.aws.region)
+			.then((stdout) => {
+				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Function "' + awsFunctions[i] + '" deleted</li>';
+			})
+			.catch((err) => {
+				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Function "' + awsFunctions[i] + '" could not be deleted</li>';
+			});
+		}
+
+		for(let i = 0; i<awsGateways.length; i++) {
+			if(i>0) {
+				await new Promise(resolve => setTimeout(resolve, 30000));
+			}
+			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli aws apigateway delete-rest-api --rest-api-id ' + awsGateways[i] + ' --region ' + config.aws.region)
+			.then((stdout) => {
+				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> API with ID "' + awsGateways[i] + '" deleted</li>';
+			})
+			.catch((err) => {
+				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> API with ID "' + awsGateways[i] + '" could not be deleted</li>';
+			});
+		}
+
+		runningStatusAWS = false;
+		resolve();
+
+	});
+}
+
+/** Cleanup Function for Azure */
+async function cleanupAzure() {
+
+	return new Promise(async (resolve, reject) => {
+
+		currentLogStatusAzure += '<h5>Microsoft Azure</h5>';
+		currentLogStatusAzure += '<ul stlye="list-style-position: outside">';
+		currentLogStatusAzureEnd += '</ul>';
+		runningStatusAzure = true;
+
+		let azureResourceGroups = [];
+
+		await execShellCommand('docker run --rm -v azure-secrets:/root/.azure microsoft/azure-cli az group list')
+		.then((stdout) => {
+			let azureresourcegroups = JSON.parse(stdout);
+			for(let i = 0; i<azureresourcegroups.length; i++) {
+				if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem')) {
+					azureResourceGroups.push(azureresourcegroups[i].name);
+				}
+			}
+		})
+		.catch((err) => {
+			currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Could not load existing Azure resource groups</li>';
+		});
+
+		if(azureResourceGroups.length == 0) {
+			currentLogStatusAzure += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
+		}
+		for(let i = 0; i<azureResourceGroups.length; i++) {
+			await execShellCommand('docker run --rm -v azure-secrets:/root/.azure microsoft/azure-cli az group delete --name ' + azureResourceGroups[i] + ' --yes')
+			.then((stdout) => {
+				currentLogStatusAzure += '<li><span style="color:green">INFO:</span> Function App in RG "' + azureResourceGroups[i] + '" deleted</li>';
+			})
+			.catch((err) => {
+				currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Function App in RG "' + azureResourceGroups[i] + '" could not be deleted</li>';
+			});
+		}
+
+		runningStatusAzure = false;
+		resolve();
+
 	});
 
+}
 
-	await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk gcloud functions list')
-	.then((stdout) => {
-		let googlefunctions = stdout;
-		let array = googlefunctions.split('\n');
-		array.pop();
-		array.shift();
-		for(let i = 0; i<array.length; i++) {
-			let row = array[i];
-			row = row.replace(/\s+/g, ' ');
-			let elements = row.split(' ');
-			googleFunctions.push(elements[0]);
+/** Cleanup Function for Google */
+async function cleanupGoogle() {
+
+	return new Promise(async (resolve, reject) => {
+
+		currentLogStatusGoogle += '<h5>Google Cloud</h5>';
+		currentLogStatusGoogle += '<ul stlye="list-style-position: outside">';
+		currentLogStatusGoogleEnd += '</ul>';
+		runningStatusGoogle = true;
+
+		let googleFunctions = [];
+
+		await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk gcloud functions list')
+		.then((stdout) => {
+			let googlefunctions = stdout;
+			let array = googlefunctions.split('\n');
+			array.pop();
+			array.shift();
+			for(let i = 0; i<array.length; i++) {
+				let row = array[i];
+				row = row.replace(/\s+/g, ' ');
+				let elements = row.split(' ');
+				googleFunctions.push(elements[0]);
+			}
+		})
+		.catch((err) => {
+			currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Could not load existing Google Cloud functions</li>';
+		});
+
+		if(googleFunctions.length == 0) {
+			currentLogStatusGoogle += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 		}
-	})
-	.catch((err) => {
-		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing Google Cloud functions</li>';
-	});
-
-	await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn api list')
-	.then((stdout) => {
-		let ibmapi = stdout;
-		let array2 = ibmapi.split('\n');
-		array2.pop();
-		array2.shift();
-		array2.shift();
-		for(let i = 0; i<array2.length; i++) {
-			let row = array2[i];
-			row = row.replace(/\s+/g, ' ');
-			let elements = row.split(' ');
-			let parts = elements[3].split('/');
-			ibmGateways.push(parts[parts.length-1])
+		for(let i = 0; i<googleFunctions.length; i++) {
+			await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk gcloud functions delete ' + googleFunctions[i] + ' --region ' + config.google.region + ' --quiet')
+			.then((stdout) => {
+				currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Function "' + googleFunctions[i] + '" deleted</li>';
+			})
+			.catch((err) => {
+				currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Function "' + googleFunctions[i] + '" could not be deleted</li>';
+			});
 		}
-	})
-	.catch((err) => {
-		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
-	});
 
-	await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn action list')
-	.then((stdout) => {
-		let ibmactions = stdout;
-		let array3 = ibmactions.split('\n');
-		array3.pop();
-		array3.shift();
-		for(let i = 0; i<array3.length; i++) {
-			let row = array3[i];
-			row = row.replace(/\s+/g, ' ');
-			let elements = row.split(' ');
-			let parts = elements[0].split('/');
-			ibmFunctions.push(parts[2])
+		runningStatusGoogle = false;
+		resolve();
+
+	});
+	
+}
+
+/** Cleanup Function for IBM */
+async function cleanupIBM() {
+
+	return new Promise(async (resolve, reject) => {
+
+		currentLogStatusIBM += '<h5>IBM Cloud</h5>';
+		currentLogStatusIBM += '<ul stlye="list-style-position: outside">';
+		currentLogStatusIBMEnd += '</ul>';
+		runningStatusIBM = true;
+
+		let ibmFunctions = [], ibmGateways = [];
+
+		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn api list')
+		.then((stdout) => {
+			let ibmapi = stdout;
+			let array2 = ibmapi.split('\n');
+			array2.pop();
+			array2.shift();
+			array2.shift();
+			for(let i = 0; i<array2.length; i++) {
+				let row = array2[i];
+				row = row.replace(/\s+/g, ' ');
+				let elements = row.split(' ');
+				let parts = elements[3].split('/');
+				ibmGateways.push(parts[parts.length-1])
+			}
+		})
+		.catch((err) => {
+			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
+		});
+
+		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn action list')
+		.then((stdout) => {
+			let ibmactions = stdout;
+			let array3 = ibmactions.split('\n');
+			array3.pop();
+			array3.shift();
+			for(let i = 0; i<array3.length; i++) {
+				let row = array3[i];
+				row = row.replace(/\s+/g, ' ');
+				let elements = row.split(' ');
+				let parts = elements[0].split('/');
+				ibmFunctions.push(parts[2])
+			}
+		})
+		.catch((err) => {
+			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
+		});
+
+		if(ibmFunctions.length == 0 && ibmGateways.length == 0) {
+			currentLogStatusIBM += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
 		}
-	})
-	.catch((err) => {
-		currentLogStatus += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
+		for(let i = 0; i<ibmGateways.length; i++) {
+			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn api delete / /' + ibmGateways[i])
+			.then((stdout) => {
+				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" deleted</li>';
+			})
+			.catch((err) => {
+				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" could not be deleted</li>';
+			});
+		}
+		for(let i = 0; i<ibmFunctions.length; i++) {
+			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud fn action delete ' + ibmFunctions[i])
+			.then((stdout) => {
+				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Action "' + ibmFunctions[i] + '" deleted</li>';
+			})
+			.catch((err) => {
+				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Action "' + ibmFunctions[i] + '" could not be deleted</li>';
+			});
+		}
+
+		runningStatusIBM = false;
+		resolve();
+
 	});
-
-
-	return {awsFunctions, awsGateways, googleFunctions, azureResourceGroups, ibmFunctions, ibmGateways};
+	
 }
