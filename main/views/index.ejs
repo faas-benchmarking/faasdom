@@ -331,12 +331,21 @@ $('#deployButton').click(function deploy(){
 
 $('#runButton').click(function cleanup(){
 
-  if($("#factorsTest").prop('checked')) {
+  var activeTab = $('.nav-tabs .active').attr('id');
+
+  var data = {};
+
+  if( activeTab == 'latency-tab') {
+    data = { test: 'latency', rps: $('#rpsLatency').val() };
+  } else if(activeTab == 'cpu-tab') {
+    data = { test: 'factors', rps: $('#rpsCPU').val(), n: $('#nFactor').val() };
+  } else if(activeTab == 'memory-tab') {
     $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
-    return;
+  } else if(activeTab == 'filesystem-tab') {
+    $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
   }
 
-  $.ajax({url: 'run', type: 'get', success:function(res){
+  $.ajax({url: 'run', type: 'get', data: data, success:function(res){
       $("#resultStart").html(res.data);
       update();
   }});
