@@ -1,13 +1,42 @@
 const now = require('performance-now');
+const fs = require('fs');
 
 function main(params) {
 
+  var machine_id = fs.readFileSync('/sys/class/dmi/id/product_uuid', 'utf-8');
+  var instance_id = fs.readFileSync('/proc/self/cgroup', 'utf-8');
+  var cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+  var meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
+  var uptime = fs.readFileSync('/proc/uptime', 'utf-8');
+
+  var n;
+
+  if(params && params.n) {
+      n = params.n;
+  } else {
+      n = 2688834647444046;
+  }
+
   let start = now();
-  let n = 2688834647444046;
   let result = factors(n);
   let end = now();
 
-  return { 'n': n, 'result': result, 'time(ms)': (end-start).toFixed(3) };
+  return {
+    success: true,
+    payload: {
+        "test": "cpu test",
+        "n": Number(n),
+        "result": result,
+        "time": Number((end-start).toFixed(3))
+    },
+        metrics: {
+        instanceId: instance_id,
+        machineId: machine_id,
+        cpu: cpuinfo,
+        mem: meminfo,
+        uptime: uptime
+    }
+  };
 
 };
 

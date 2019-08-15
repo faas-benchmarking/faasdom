@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
@@ -9,23 +10,44 @@ namespace Factors
     {
         public JObject Main(JObject args)
         {
+            string machineId = File.ReadAllText("/sys/class/dmi/id/product_uuid");
+            string instanceId = File.ReadAllText("/proc/self/cgroup");
+            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
+            string meminfo = File.ReadAllText("/proc/meminfo");
+            string uptime = File.ReadAllText("/proc/uptime");
+
+            long n = 2688834647444046;
+
+            if(args["n"] != null) {
+                bool parseOk = Int64.TryParse(args["n"].ToString(), out n);
+                if(!parseOk) {
+                    n = 2688834647444046;
+                }
+            } else {
+                n = 2688834647444046;
+            }
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            long n = 2688834647444046;
-		        List<long> list = factorCalc(n);
+		        List<long> result = factorCalc(n);
             sw.Stop();
-		        string result = "[";
-		        foreach (long i in list)
-            {
-                result += i + ",";
-            }
-		        result = result.Remove(result.Length - 1);
-		        result += "]";
-
+		        
             JObject message = new JObject();
-            message.Add("n", new JValue(n));
-            message.Add("result", new JValue(result));
-            message.Add("time(ms)", new JValue(sw.Elapsed.TotalMilliseconds));
+            message.Add("success", new JValue(true));
+            JObject payload = new JObject();
+            payload.Add("test", new JValue("cpu test"));
+            payload.Add("n", new JValue(n));
+            payload.Add("result", JToken.FromObject(result));
+            payload.Add("time", new JValue(sw.Elapsed.TotalMilliseconds));
+            message.Add("payload", payload);
+            JObject metrics = new JObject();
+            metrics.Add("machineId", new JValue(machineId));
+            metrics.Add("instanceId", new JValue(instanceId));
+            metrics.Add("cpu", new JValue(cpuinfo));
+            metrics.Add("mem", new JValue(meminfo));
+            metrics.Add("uptime", new JValue(uptime));
+            message.Add("metrics", metrics);
+
             return (message);
         }
 
