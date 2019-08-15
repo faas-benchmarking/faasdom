@@ -12,7 +12,6 @@ func Main(params map[string]interface{}) map[string]interface{} {
 
     if _, err := os.Stat("/tmp/test"); !os.IsNotExist(err) {
         os.RemoveAll("/tmp/test")
-        log.Print("DELETED")
     }
 
     if _, err := os.Stat("/tmp/test"); os.IsNotExist(err) {
