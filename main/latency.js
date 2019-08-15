@@ -65,7 +65,6 @@ function resetURLs() {
 
 async function getLatency() {
   for(let i = 0; i<urls.length; i++) {
-    console.log(urls[i].url);
     request.get({
       url : urls[i].url,
       time : true
@@ -91,11 +90,13 @@ function insertIntoDB(ms, language, provider) {
     }
   ])
   .catch((err) => {
+    console.error(err);
     console.error('Could not write to DB!');
   });
 }
 
-function printResults() {
+/** Deprecated */
+/*function printResults() {
 
     if(start == undefined) {
       start = new Date();
@@ -111,7 +112,7 @@ function printResults() {
     let lastAWSDotnet = (urls.find(x => x.provider == AWS && x.language == DOTNET) ? urls.find(x => x.provider == AWS && x.language == DOTNET).latest : '-');
 
     let lastAzureNode = (urls.find(x => x.provider == AZURE && x.language == NODE) ? urls.find(x => x.provider == AZURE && x.language == NODE).latest : '-');
-    //let lastAzurePython = (urls.find(x => x.provider == AZURE && x.language == PYTHON) ? urls.find(x => x.provider == AZURE && x.language == PYTHON).latest : '-');
+    let lastAzurePython = (urls.find(x => x.provider == AZURE && x.language == PYTHON) ? urls.find(x => x.provider == AZURE && x.language == PYTHON).latest : '-');
     let lastAzureDotnet = (urls.find(x => x.provider == AZURE && x.language == DOTNET) ? urls.find(x => x.provider == AZURE && x.language == DOTNET).latest : '-');
 
     let lastGoogleNode = (urls.find(x => x.provider == GOOGLE && x.language == NODE) ? urls.find(x => x.provider == GOOGLE && x.language == NODE).latest : '-');
@@ -142,6 +143,7 @@ function printResults() {
     // Azure Python: " + '&nbsp;'.repeat(8 - lastAzurePython.toString().length) + lastAzurePython.toString() + " ms
 
     return result;
-}
+}*/
 
-module.exports = { getLatency, printResults, pushURL, resetURLs };
+//module.exports = { getLatency, printResults, pushURL, resetURLs };
+module.exports = { getLatency, pushURL, resetURLs };

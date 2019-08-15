@@ -77,10 +77,13 @@ app.get('/deploy', async function(req, res, next) {
 });
 
 app.get('/run', function(req, res, next) {
+	// TODO: implement other test, different
 	runningStatus = true;
 	resetLogStatus();
+	currentLogStatus = 'Running...';
+	// TODO: interval parameter according to RPS
 	latencyRunningInterval = setInterval(function(){latencyModule.getLatency()}, 5000);
-	latencyPrintingInterval = setInterval(function(){currentLogStatus = latencyModule.printResults()}, 5000);
+	//latencyPrintingInterval = setInterval(function(){currentLogStatus = latencyModule.printResults()}, 5000);
 	res.send({data: currentLogStatus, running: runningStatus});
 });
 
@@ -88,7 +91,7 @@ app.get('/stop', function(req, res, next) {
 	runningStatus = false;
 	resetLogStatus();
 	clearInterval(latencyRunningInterval);
-	clearInterval(latencyPrintingInterval);
+	//clearInterval(latencyPrintingInterval);
 	res.send({data: currentLogStatus, running: runningStatus});
 });
 
