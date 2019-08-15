@@ -6,35 +6,35 @@ services:
     container_name: aws-cli
 
   azure-cli:
-    image: microsoft/azure-cli:latest
+    image: mcr.microsoft.com/azure-cli:2.0.71
     container_name: azure-cli
 
   google-cli:
-    image: google/cloud-sdk:257.0.0
+    image: google/cloud-sdk:257.0.0-alpine
     container_name: google-cli
 
   ibm-cli:
     image: ibmcom/ibm-cloud-developer-tools-amd64:0.18.0
     container_name: ibm-cli
 
-  ubuntu-zip:
-    image: bschitter/ubuntu-with-zip:0.1
-    container_name: ubuntu-zip
+  alpine-zip:
+    image: bschitter/alpine-with-zip:latest
+    container_name: alpine-zip
 
   node:
-    image: node:10.16.0-alpine
+    image: node:10.16.2-alpine
     container_name: node
 
   golang:
-    image: golang:1.12
+    image: golang:1.12-stretch
     container_name: golang
 
   dotnet:
-    image: mcr.microsoft.com/dotnet/core/sdk:2.1
+    image: mcr.microsoft.com/dotnet/core/sdk:2.1-alpine3.9
     container_name: dotnet
 
   db:
-    image: influxdb:1.7.7
+    image: influxdb:1.7.7-alpine
     container_name: influxdb
     env_file:
       - env.influx
@@ -69,7 +69,7 @@ services:
       - azure-cli
       - google-cli
       - ibm-cli
-      - ubuntu-zip
+      - alpine-zip
       - node
       - golang
       - dotnet

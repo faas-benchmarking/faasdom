@@ -76,7 +76,7 @@ docker volume create ibm-secrets
 docker volume create azure-secrets
 
 # copy all data into the docker volume (IMPORTANT: run from the project root directory!)
-docker run -v serverless-data:/data --name helper bschitter/ubuntu-with-zip
+docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip
 docker cp . helper:/data
 docker rm helper
 
@@ -104,7 +104,7 @@ docker-compose down
 
 To copy the app data again to the docker volume run (**IMPORTANT**: run from the project root directory!):
 ```bash
-docker volume rm serverless-data && docker volume create serverless-data && docker run -v serverless-data:/data --name helper bschitter/ubuntu-with-zip && docker cp . helper:/data && docker rm helper
+docker volume rm serverless-data && docker volume create serverless-data && docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip && docker cp . helper:/data && docker rm helper
 ```
 
 To delete all images:
