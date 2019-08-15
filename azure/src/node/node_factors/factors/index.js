@@ -1,15 +1,47 @@
 const now = require('performance-now');
+const fs = require('fs');
 
 module.exports = async function (context, req) {
-    
-    let start = now();
-    let n = 2688834647444046;
-    let result = factors(n);
-    let end = now();
 
-    context.res = {
-        body: JSON.stringify({ 'n': n, 'result': result, 'time(ms)': (end-start).toFixed(3) })
-    };
+  var cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+  var instanceId = fs.readFileSync('/proc/self/cgroup', 'utf-8');
+  var meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
+  var uptime = fs.readFileSync('/proc/uptime', 'utf-8');
+
+  var n;
+
+  if(req.query && req.query.n) {
+      n = req.query.n;
+  } else {
+      n = 2688834647444046;
+  }
+
+  let start = now();
+  let result = factors(n);
+  let end = now();
+
+  context.res = {
+    statusCode: 200,
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        success: true,
+        payload: {
+            "test": "cpu test",
+            "n": Number(n),
+            "result": result,
+            "time": Number((end-start).toFixed(3))
+        },
+        metrics: {
+            machineId: '',
+            instanceId: instanceId,
+            cpu: cpuinfo,
+            mem: meminfo,
+            uptime: uptime
+        }
+    })
+  };
 };
 
 function factors(num) {

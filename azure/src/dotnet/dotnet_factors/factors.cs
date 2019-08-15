@@ -1,5 +1,8 @@
 using System;
+using System.Net;
+using System.Net.Http;
 using System.IO;
+using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -8,32 +11,57 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace dotnet_factors
 {
     public static class factors
     {
         [FunctionName("factors")]
-        public static async Task<IActionResult> Run(
+        public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
+            string instanceId = File.ReadAllText("/proc/self/cgroup");
+            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
+            string meminfo = File.ReadAllText("/proc/meminfo");
+            string uptime = File.ReadAllText("/proc/uptime");
+
+            long n = 2688834647444046;
+
+            if(req.Query != null && req.Query.ContainsKey("n")) {
+                bool parseOk = Int64.TryParse(req.Query["n"], out n);
+                if(!parseOk) {
+                    n = 2688834647444046;
+                }
+            } else {
+                n = 2688834647444046;
+            }
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            long n = 2688834647444046;
-		    List<long> list = factorCalc(n);
+		        List<long> result = factorCalc(n);
             sw.Stop();
-		    string result = "[";
-		    foreach (long i in list)
-            {
-                result += i + ",";
-            }
-		    result = result.Remove(result.Length - 1);
-		    result += "]";
 
-            return (ActionResult)new OkObjectResult("{ \"n\": " + n + ", \"result\": " + result + ", 'time(ms)': " + sw.Elapsed.TotalMilliseconds + " }");
+            JObject message = new JObject();
+            message.Add("success", new JValue(true));
+            JObject payload = new JObject();
+            payload.Add("test", new JValue("cpu test"));
+            payload.Add("n", new JValue(n));
+            payload.Add("result", JToken.FromObject(result));
+            payload.Add("time", new JValue(sw.Elapsed.TotalMilliseconds));
+            message.Add("payload", payload);
+            JObject metrics = new JObject();
+            metrics.Add("machineId", new JValue(""));
+            metrics.Add("instanceId", new JValue(instanceId));
+            metrics.Add("cpu", new JValue(cpuinfo));
+            metrics.Add("mem", new JValue(meminfo));
+            metrics.Add("uptime", new JValue(uptime));
+            message.Add("metrics", metrics);
+
+            return new HttpResponseMessage(HttpStatusCode.OK) {
+                Content = new StringContent(message.ToString(), Encoding.UTF8, "application/json")
+            };
         }
 
         public static List<long> factorCalc(long num) {
