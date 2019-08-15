@@ -5,27 +5,33 @@ import json
 
 def my_handler(event, context):
 
-    f=open("/proc/self/cgroup", "r")
+    f=open('/proc/self/cgroup', 'r')
     if f.mode == 'r':
         insatnceId =f.read()
     f.close()
         
-    f=open("/proc/cpuinfo", "r")
+    f=open('/proc/cpuinfo', 'r')
     if f.mode == 'r':
         cpuinfo =f.read()
     f.close()
         
-    f=open("/proc/meminfo", "r")
+    f=open('/proc/meminfo', 'r')
     if f.mode == 'r':
         meminfo =f.read()
     f.close()
         
-    f=open("/proc/uptime", "r")
+    f=open('/proc/uptime', 'r')
     if f.mode == 'r':
         uptime =f.read()
     f.close()
 
     n = 2688834647444046
+
+    if event.get('queryStringParameters') is not None:
+        if 'n' in event['queryStringParameters']:
+            n = int(event['queryStringParameters']['n'])
+    else:
+        n = 2688834647444046
 
     start = time.time()
     result = factors(n)
@@ -33,16 +39,25 @@ def my_handler(event, context):
     elapsed = (end - start)*1000
 
     return {
-    'statusCode': 200,
-    'headers': {
-           'Content-Type': 'application/json'
-       },
-    'body': json.dumps({
-        'payload': {'n': n, 'result': result, 'time(ms)': elapsed },
-        'instanceId': insatnceId,
-        'cpu': cpuinfo,
-        'mem': meminfo,
-        'uptime': uptime
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps({
+            'success': True,
+            'payload': {
+                'test': 'cpu test',
+                'n': n,
+                'result': result,
+                'time': elapsed
+            },
+            'metrics': {
+                'machineId': '',
+                'instanceId': insatnceId,
+                'cpu': cpuinfo,
+                'mem': meminfo,
+                'uptime': uptime
+            }
         })
     }
 

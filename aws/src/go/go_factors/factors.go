@@ -1,8 +1,6 @@
 package main
 
 import (
-    "fmt"
-    "strings"
     "time"
     "math"
     "sort"
@@ -15,21 +13,29 @@ import (
     "encoding/json"
 )
 
-type MyEvent struct {
-    Name string `json:"name"`
-}
-
 type Message struct {
-    Payload string
-    InstanceId string
-    Cpu string
-    Mem string
-    Uptime string
+    Success bool `json:"success"`
+    Payload Payload `json:"payload"`
+    Metrics Metrics `json:"metrics"`
+
+}
+    
+type Payload struct {
+    Test string `json:"test"`
+    N int `json:"n"`
+    Result []int `json:"result"`
+    Time int `json:"time"`
 }
 
-func HandleRequest(ctx context.Context, name MyEvent) (events.APIGatewayProxyResponse, error) {
+type Metrics struct {
+    MachineId string `json:"machineId"`
+    InstanceId string `json:"instanceId"`
+    Cpu string `json:"cpu"`
+    Mem string `json:"mem"`
+    Uptime string `json:"uptime"`
+}
 
-    var n int = 2688834647444046
+func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
     buf1, err := ioutil.ReadFile("/proc/self/cgroup")
 	if err != nil {
@@ -55,20 +61,47 @@ func HandleRequest(ctx context.Context, name MyEvent) (events.APIGatewayProxyRes
     }
     uptime := string(buf4)
 
+    n := 2688834647444046
+
+    if _, ok := event.QueryStringParameters["n"]; ok {
+        n, err = strconv.Atoi(event.QueryStringParameters["n"])
+        if err != nil {
+            log.Fatal(err)
+        }
+    } else {
+        n = 2688834647444046
+    }
+
     start := time.Now()
     var result []int = factors(n)
     elapsed := time.Since(start)
 
-    m := &Message{"{\"n\":" + strconv.Itoa(n) + ",\"result\": [" + strings.Trim(strings.Join(strings.Fields(fmt.Sprint(result)), ","), "[]") + "],\"time(ms)\": " + strconv.FormatInt(int64(elapsed / time.Millisecond), 10), instanceId, cpuinfo, meminfo, uptime}
-    b, err := json.Marshal(m)
+    m := Message{
+        Success: true,
+        Payload: Payload{
+            Test: "cpu test",
+            N: n,
+            Result: result,
+            Time: int(elapsed / time.Millisecond),
+        },
+        Metrics: Metrics{
+            MachineId: "",
+            InstanceId: instanceId,
+            Cpu: cpuinfo,
+            Mem: meminfo,
+            Uptime: uptime,
+        },
+    }
+
+    js, err := json.Marshal(m)
     if err != nil {
-        log.Fatal(err)
+            log.Fatal(err)
     }
 
     return events.APIGatewayProxyResponse{
-        Body:       string(b),
-        StatusCode: 200,
-    }, nil
+    Body:       string(js),
+    StatusCode: 200,
+	}, nil
 }
 
 func main() {

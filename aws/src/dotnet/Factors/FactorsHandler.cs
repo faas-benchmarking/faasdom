@@ -7,7 +7,7 @@ using System.Net;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.Json;
 using Amazon.Lambda.APIGatewayEvents;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Factors
 {
@@ -16,20 +16,7 @@ namespace Factors
         [LambdaSerializer(typeof(JsonSerializer))]
         public APIGatewayProxyResponse HandleFunction(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            long n = 2688834647444046;
-		    List<long> list = factorCalc(n);
-            sw.Stop();
-		    string result = "[";
-		    foreach (long i in list)
-            {
-                result += i + ",";
-            }
-		    result = result.Remove(result.Length - 1);
-		    result += "]";
-
-            return CreateResponse("{ \"n\": " + n + ", \"result\": " + result + ", \"time(ms)\": " + sw.Elapsed.TotalMilliseconds + " }");
+            return CreateResponse(request);
         }
 
         public static List<long> factorCalc(long num) {
@@ -48,20 +35,51 @@ namespace Factors
           return n_factors;
         }
 
-        APIGatewayProxyResponse CreateResponse(String result)
+        APIGatewayProxyResponse CreateResponse(APIGatewayProxyRequest request)
         {
             int statusCode = (int)HttpStatusCode.OK;
-            string body = result;
 
             string instanceId = File.ReadAllText("/proc/self/cgroup");
             string cpuinfo = File.ReadAllText("/proc/cpuinfo");
             string meminfo = File.ReadAllText("/proc/meminfo");
             string uptime = File.ReadAllText("/proc/uptime");
 
+            long n = 2688834647444046;
+
+            if(request.QueryStringParameters != null && request.QueryStringParameters.ContainsKey("n")) {
+                bool parseOk = Int64.TryParse(request.QueryStringParameters["n"], out n);
+                if(!parseOk) {
+                    n = 2688834647444046;
+                }
+            } else {
+                n = 2688834647444046;
+            }
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+		        List<long> result = factorCalc(n);
+            sw.Stop();
+
+            JObject message = new JObject();
+            message.Add("success", new JValue(true));
+            JObject payload = new JObject();
+            payload.Add("test", new JValue("cpu test"));
+            payload.Add("n", new JValue(n));
+            payload.Add("result", JToken.FromObject(result));
+            payload.Add("time", new JValue(sw.Elapsed.TotalMilliseconds));
+            message.Add("payload", payload);
+            JObject metrics = new JObject();
+            metrics.Add("machineId", new JValue(""));
+            metrics.Add("instanceId", new JValue(instanceId));
+            metrics.Add("cpu", new JValue(cpuinfo));
+            metrics.Add("mem", new JValue(meminfo));
+            metrics.Add("uptime", new JValue(uptime));
+            message.Add("metrics", metrics);
+
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = statusCode,
-                Body = "{ \"payload\": " + body + ", \"id\": " + instanceId + ", \"cpu\": " + cpuinfo + ",  \"mem\": " + meminfo + ",  \"uptime\": " + uptime + "}",
+                Body = message.ToString(),
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
