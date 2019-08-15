@@ -19,8 +19,6 @@ const influx = new Influx.InfluxDB({
   ]
 });
 
-influx
-
 const AWS = 'aws';
 const AZURE = 'azure';
 const GOOGLE = 'google';
