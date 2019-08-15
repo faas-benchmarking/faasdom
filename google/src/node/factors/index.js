@@ -1,13 +1,43 @@
 const now = require('performance-now');
+const fs = require('fs');
 
 exports.node_factors = (req, res) => {
 
+  var instanceId = fs.readFileSync('/proc/self/cgroup', 'utf-8');
+  var cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+  var meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
+  var uptime = fs.readFileSync('/proc/uptime', 'utf-8');
+
+  var n;
+
+    if(req.query && req.query.n) {
+        n = req.query.n;
+    } else {
+        n = 2688834647444046;
+    }
+
   let start = now();
-  let n = 2688834647444046;
   let result = factors(n);
   let end = now();
 
-  res.send(JSON.stringify({ 'n': n, 'result': result, 'time(ms)': (end-start).toFixed(3) }))
+  res.set("Content-Type", "application/json");
+	res.status(200);
+  res.send(JSON.stringify({
+      success: true,
+      payload: {
+          "test": "cpu test",
+          "n": Number(n),
+          "result": result,
+          "time": Number((end-start).toFixed(3))
+      },
+      metrics: {
+          machineId: '',
+          instanceId: instanceId,
+          cpu: cpuinfo,
+          mem: meminfo,
+          uptime: uptime
+      }
+  }));
 
 };
 
