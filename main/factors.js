@@ -22,6 +22,7 @@ const influx = new Influx.InfluxDB({
 
 const AWS = 'aws';
 const AZURE = 'azure';
+const AZUREWINDOWS = 'azureWindows';
 const GOOGLE = 'google';
 const IBM = 'ibm';
 
@@ -30,7 +31,7 @@ const PYTHON = 'python';
 const GO = 'go';
 const DOTNET = 'dotnet';
 
-const providers = [AWS, AZURE, GOOGLE, IBM];
+const providers = [AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM];
 const languages = [NODE, PYTHON, GO, DOTNET];
 
 var rawdata = fs.readFileSync('factors_urls.json');
