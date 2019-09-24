@@ -39,6 +39,9 @@
                                 <div class="radio">
                                   <label><input id="filesystemTest" type="radio" name="test">Filesystem</label>
                                 </div>
+                                <div class="radio">
+                                  <label><input id="customTest" type="radio" name="test">Custom</label>
+                                </div>
                           </div>
                           <div class="col-2">
                             <b>Memory (MB):</b>
@@ -315,6 +318,7 @@ $('#deployButton').click(function deploy(){
     factors: $("#factorsTest").prop('checked'),
     memory: $("#memoryTest").prop('checked'),
     filesystem: $("#filesystemTest").prop('checked'),
+    custom: $("#customTest").prop('checked'),
     ram: document.querySelector('input[name="ram"]:checked').value,
     timeout: $('#timeout').val(),
     aws: $("#amazon").prop('checked'), 

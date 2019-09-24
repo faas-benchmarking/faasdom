@@ -22,10 +22,11 @@ const LATENCY = 'latency';
 const FACTORS = 'factors';
 const MEMORY = 'memory';
 const FILESYSTEM = 'filesystem';
+const CUSTOM = 'custom';
 
 const providers = [AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM];
 const languages = [NODE, PYTHON, GO, DOTNET];
-const tests = [LATENCY, FACTORS, MEMORY];
+const tests = [LATENCY, FACTORS, MEMORY, CUSTOM];
 
 /** variable for config data */
 var config;
@@ -77,6 +78,8 @@ app.get('/deploy', async function(req, res, next) {
 		deploy(req.query, MEMORY, 'Memory', 'Memory');
 	} else if(req.query.filesystem == 'true') {
 		deploy(req.query, FILESYSTEM, 'Filesystem', 'Filesystem');
+	} else if(req.query.custom == 'true') {
+		deploy(req.query, CUSTOM, 'Custom', 'Custom');
 	} else {
 		console.error('invalid test');
 	}
@@ -1030,7 +1033,7 @@ async function cleanupAzure() {
 		.then((stdout) => {
 			let azureresourcegroups = JSON.parse(stdout);
 			for(let i = 0; i<azureresourcegroups.length; i++) {
-				if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem')) {
+				if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem') || azureresourcegroups[i].name.includes('custom')) {
 					azureResourceGroups.push(azureresourcegroups[i].name);
 				}
 			}

@@ -1,0 +1,11 @@
+{
+  "name": "azure-node-custom",
+  "description": "Custom test for Microsoft Azure Functions",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bschitter/benchmark-suite-serverless-computing.git"
+  },
+  "author": "Pascal Maissen <pascal.maissen@unifr.ch>",
+  "license": "ISC"
+}
