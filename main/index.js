@@ -255,6 +255,9 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for AWS */
 async function deployAWS(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
+
 		currentLogStatusAWS += '<h5>Amazon Web Services (parallel deployment)</h5>';
 		currentLogStatusAWS += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAWSEnd += '</ul>';
@@ -281,6 +284,9 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 
 		await Promise.all(promises);
 
+		let end = now();
+		currentLogStatusAWS += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
+
 		runningStatusAWS = false;
 		resolve();
 	});
@@ -289,6 +295,9 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for Azure (Linux) */
 async function deployAzure(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
+
 		currentLogStatusAzure += '<h5>Microsoft Azure (Linux, parallel deployment)</h5>';
 		currentLogStatusAzure += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAzureEnd += '</ul>';
@@ -314,6 +323,9 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 
 		await Promise.all(promises);
 
+		let end = now();
+		currentLogStatusAzure += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
+
 		runningStatusAzure = false;
 		resolve();
 	});
@@ -322,6 +334,9 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for Azure (Windows) */
 async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
+
 		currentLogStatusAzureWindows += '<h5>Microsoft Azure (Windows, parallel deployment)</h5>';
 		currentLogStatusAzureWindows += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAzureWindowsEnd += '</ul>';
@@ -346,6 +361,9 @@ async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 
 		await Promise.all(promises);
 
+		let end = now();
+		currentLogStatusAzureWindows += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
+
 		runningStatusAzureWindows = false;
 		resolve();
 	});
@@ -354,6 +372,9 @@ async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for Google */
 async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
+
 		currentLogStatusGoogle += '<h5>Google Cloud (parallel deployment)</h5>';
 		currentLogStatusGoogle += '<ul stlye="list-style-position: outside">';
 		currentLogStatusGoogleEnd += '</ul>';
@@ -379,6 +400,9 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 
 		await Promise.all(promises);
 
+		let end = now();
+		currentLogStatusGoogle += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
+
 		runningStatusGoogle = false;
 		resolve();
 	});
@@ -387,6 +411,9 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for IBM */
 async function deployIBM(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
+
 		currentLogStatusIBM += '<h5>IBM Cloud (sequential deployment)</h5>';
 		currentLogStatusIBM += '<ul stlye="list-style-position: outside">';
 		currentLogStatusIBMEnd += '</ul>';
@@ -412,6 +439,9 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 		}
 
 		//await Promise.all(promises);
+
+		let end = now();
+		currentLogStatusIBM += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
 
 		runningStatusIBM = false;
 		resolve();
@@ -931,6 +961,8 @@ async function cleanupAWS() {
 
 	return new Promise(async (resolve, reject) => {
 
+		let start = now();
+
 		currentLogStatusAWS += '<h5>Amazon Web Services (sequential cleanup)</h5>';
 		currentLogStatusAWS += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAWSEnd += '</ul>';
@@ -1011,6 +1043,9 @@ async function cleanupAWS() {
 			});
 		}
 
+		let end = now();
+		currentLogStatusAWS += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
+
 		runningStatusAWS = false;
 		resolve();
 
@@ -1021,6 +1056,8 @@ async function cleanupAWS() {
 async function cleanupAzure() {
 
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
 
 		currentLogStatusAzure += '<h5>Microsoft Azure (parallel cleanup)</h5>';
 		currentLogStatusAzure += '<ul stlye="list-style-position: outside">';
@@ -1065,6 +1102,9 @@ async function cleanupAzure() {
 
 		await Promise.all(promises);
 
+		let end = now();
+		currentLogStatusAzure += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
+
 		runningStatusAzure = false;
 		resolve();
 
@@ -1076,6 +1116,8 @@ async function cleanupAzure() {
 async function cleanupGoogle() {
 
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
 
 		currentLogStatusGoogle += '<h5>Google Cloud (parallel cleanup)</h5>';
 		currentLogStatusGoogle += '<ul stlye="list-style-position: outside">';
@@ -1122,6 +1164,9 @@ async function cleanupGoogle() {
 
 		await Promise.all(promises);
 
+		let end = now();
+		currentLogStatusGoogle += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
+
 		runningStatusGoogle = false;
 		resolve();
 
@@ -1133,6 +1178,8 @@ async function cleanupGoogle() {
 async function cleanupIBM() {
 
 	return new Promise(async (resolve, reject) => {
+
+		let start = now();
 
 		currentLogStatusIBM += '<h5>IBM Cloud (sequential cleanup)</h5>';
 		currentLogStatusIBM += '<ul stlye="list-style-position: outside">';
@@ -1209,6 +1256,9 @@ async function cleanupIBM() {
 				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Action "' + ibmFunctions[i] + '" could not be deleted</li>';
 			});
 		}
+
+		let end = now();
+		currentLogStatusIBM += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
 
 		runningStatusIBM = false;
 		resolve();
