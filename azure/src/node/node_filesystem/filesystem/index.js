@@ -48,9 +48,9 @@ module.exports = async function (context, req) {
     var path = '';
 
     if(fs.existsSync('/tmp')) {
-        path = '/tmp/test';
+        path = '/tmp/test/';
     } else {
-        path = 'D:\\local\\Temp\\test'
+        path = 'D:\\local\\Temp\\test\\'
     }
 
     if(fs.existsSync(path)){

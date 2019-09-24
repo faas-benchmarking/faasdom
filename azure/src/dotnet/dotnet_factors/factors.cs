@@ -22,10 +22,30 @@ namespace dotnet_factors
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            string instanceId = File.ReadAllText("/proc/self/cgroup");
-            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
-            string meminfo = File.ReadAllText("/proc/meminfo");
-            string uptime = File.ReadAllText("/proc/uptime");
+            string instanceId = ""; 
+            string cpuinfo = "";
+            string meminfo = "";
+            string uptime = "";
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                instanceId = File.ReadAllText("/proc/self/cgroup");
+            }
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                cpuinfo = File.ReadAllText("/proc/cpuinfo");
+            }
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                meminfo = File.ReadAllText("/proc/meminfo");
+            }
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                uptime = File.ReadAllText("/proc/uptime");
+            }
 
             long n = 2688834647444046;
 

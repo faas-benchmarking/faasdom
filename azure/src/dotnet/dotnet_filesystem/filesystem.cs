@@ -22,18 +22,46 @@ namespace dotnet_filesystem
             ILogger log)
         {
 
-            if(Directory.Exists("/tmp/test")) {
-                System.IO.Directory.Delete("/tmp/test", true);
+            string path = "";
+
+            if(Directory.Exists("/tmp")) {
+                path = "/tmp/test/";
+            } else {
+                path = "D:\\local\\Temp\\test\\";
             }
 
-            if(!Directory.Exists("/tmp/test")) {
-                System.IO.Directory.CreateDirectory("/tmp/test");
+            if(Directory.Exists(path)) {
+                System.IO.Directory.Delete(path, true);
             }
 
-            string instanceId = File.ReadAllText("/proc/self/cgroup");
-            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
-            string meminfo = File.ReadAllText("/proc/meminfo");
-            string uptime = File.ReadAllText("/proc/uptime");
+            if(!Directory.Exists(path)) {
+                System.IO.Directory.CreateDirectory(path);
+            }
+
+            string instanceId = ""; 
+            string cpuinfo = "";
+            string meminfo = "";
+            string uptime = "";
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                instanceId = File.ReadAllText("/proc/self/cgroup");
+            }
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                cpuinfo = File.ReadAllText("/proc/cpuinfo");
+            }
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                meminfo = File.ReadAllText("/proc/meminfo");
+            }
+
+            if (Directory.Exists("/proc/self/cgroup"))
+            {
+                uptime = File.ReadAllText("/proc/uptime");
+            }
 
             int n = 10000;
             int size = 10240;
@@ -65,18 +93,18 @@ namespace dotnet_filesystem
             Stopwatch swWrite = new Stopwatch();
             swWrite.Start();
             for(short i = 0; i<n; i++) {
-                File.WriteAllText("/tmp/test/"+i+".txt", text);
+                File.WriteAllText(path+i+".txt", text);
             }
             swWrite.Stop();
 
             Stopwatch swRead = new Stopwatch();
             swRead.Start();
             for(short i = 0; i<n; i++) {
-                string test = File.ReadAllText("/tmp/test/"+i+".txt");
+                string test = File.ReadAllText(path+i+".txt");
             }
             swRead.Stop();
 
-            string[] files = Directory.GetFiles("/tmp/test");
+            string[] files = Directory.GetFiles(path);
 
             JObject message = new JObject();
             message.Add("success", new JValue((files.Length == n).ToString()));
