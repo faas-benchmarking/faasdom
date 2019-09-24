@@ -252,7 +252,7 @@ async function deploy(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for AWS */
 async function deployAWS(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
-		currentLogStatusAWS += '<h5>Amazon Web Services</h5>';
+		currentLogStatusAWS += '<h5>Amazon Web Services (parallel deployment)</h5>';
 		currentLogStatusAWS += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAWSEnd += '</ul>';
 		runningStatusAWS = true;
@@ -286,7 +286,7 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for Azure (Linux) */
 async function deployAzure(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
-		currentLogStatusAzure += '<h5>Microsoft Azure (Linux)</h5>';
+		currentLogStatusAzure += '<h5>Microsoft Azure (Linux, parallel deployment)</h5>';
 		currentLogStatusAzure += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAzureEnd += '</ul>';
 		runningStatusAzure = true;
@@ -319,7 +319,7 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for Azure (Windows) */
 async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
-		currentLogStatusAzureWindows += '<h5>Microsoft Azure (Windows)</h5>';
+		currentLogStatusAzureWindows += '<h5>Microsoft Azure (Windows, parallel deployment)</h5>';
 		currentLogStatusAzureWindows += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAzureWindowsEnd += '</ul>';
 		runningStatusAzureWindows = true;
@@ -351,7 +351,7 @@ async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for Google */
 async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
-		currentLogStatusGoogle += '<h5>Google Cloud</h5>';
+		currentLogStatusGoogle += '<h5>Google Cloud (parallel deployment)</h5>';
 		currentLogStatusGoogle += '<ul stlye="list-style-position: outside">';
 		currentLogStatusGoogleEnd += '</ul>';
 		runningStatusGoogle = true;
@@ -384,12 +384,12 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 /** Deploy Function for IBM */
 async function deployIBM(params, func, funcFirstUpperCase, testName) {
 	return new Promise(async (resolve, reject) => {
-		currentLogStatusIBM += '<h5>IBM Cloud</h5>';
+		currentLogStatusIBM += '<h5>IBM Cloud (sequential deployment)</h5>';
 		currentLogStatusIBM += '<ul stlye="list-style-position: outside">';
 		currentLogStatusIBMEnd += '</ul>';
 		runningStatusIBM = true;
 
-		var promises = [];
+		//var promises = [];
 
 		if(params.node == 'true') {
 			await deployFunction(IBM, NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
@@ -928,7 +928,7 @@ async function cleanupAWS() {
 
 	return new Promise(async (resolve, reject) => {
 
-		currentLogStatusAWS += '<h5>Amazon Web Services</h5>';
+		currentLogStatusAWS += '<h5>Amazon Web Services (sequential cleanup)</h5>';
 		currentLogStatusAWS += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAWSEnd += '</ul>';
 		runningStatusAWS = true;
@@ -937,9 +937,7 @@ async function cleanupAWS() {
 
 		var promises = [];
 
-		for(let i = 0; i<config.aws.region_options.length; i++) { // normal
-
-		//for(let i = 10; i<11; i++) { // eu-central-1 for faster testing
+		for(let i = 0; i<config.aws.region_options.length; i++) {
 
 			let p1 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli:1.16.216 aws lambda list-functions --region ' + config.aws.region_options[i])
 			.then((stdout) => {
@@ -1021,7 +1019,7 @@ async function cleanupAzure() {
 
 	return new Promise(async (resolve, reject) => {
 
-		currentLogStatusAzure += '<h5>Microsoft Azure</h5>';
+		currentLogStatusAzure += '<h5>Microsoft Azure (parallel cleanup)</h5>';
 		currentLogStatusAzure += '<ul stlye="list-style-position: outside">';
 		currentLogStatusAzureEnd += '</ul>';
 		runningStatusAzure = true;
@@ -1076,7 +1074,7 @@ async function cleanupGoogle() {
 
 	return new Promise(async (resolve, reject) => {
 
-		currentLogStatusGoogle += '<h5>Google Cloud</h5>';
+		currentLogStatusGoogle += '<h5>Google Cloud (parallel cleanup)</h5>';
 		currentLogStatusGoogle += '<ul stlye="list-style-position: outside">';
 		currentLogStatusGoogleEnd += '</ul>';
 		runningStatusGoogle = true;
@@ -1133,7 +1131,7 @@ async function cleanupIBM() {
 
 	return new Promise(async (resolve, reject) => {
 
-		currentLogStatusIBM += '<h5>IBM Cloud</h5>';
+		currentLogStatusIBM += '<h5>IBM Cloud (sequential cleanup)</h5>';
 		currentLogStatusIBM += '<ul stlye="list-style-position: outside">';
 		currentLogStatusIBMEnd += '</ul>';
 		runningStatusIBM = true;
