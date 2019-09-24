@@ -2,10 +2,26 @@ const fs = require('fs')
 
 module.exports = async function (context, req) {
 
-    var instanceId = fs.readFileSync('/proc/self/cgroup', 'utf8');
-    var cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
-    var meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
-    var uptime = fs.readFileSync('/proc/uptime', 'utf-8');
+    var cpuinfo = '';
+    var instanceId = '';
+    var meminfo = '';
+    var uptime = '';
+  
+    if(fs.existsSync('/proc/cpuinfo')) {
+      cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+    }
+  
+    if(fs.existsSync('/proc/self/cgroup')) {
+      instanceId = fs.readFileSync('/proc/self/cgroup', 'utf8');
+    }
+  
+    if(fs.existsSync('/proc/meminfo')) {
+      meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
+    }
+  
+    if(fs.existsSync('/proc/uptime')) {
+      uptime = fs.readFileSync('/proc/uptime', 'utf8');
+    }
     
     var text = '';
 

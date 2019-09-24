@@ -4,10 +4,26 @@ var rimraf = require("rimraf");
 
 module.exports = async function (context, req) {
     
-    var instanceId = fs.readFileSync('/proc/self/cgroup', 'utf-8');
-    var cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
-    var meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
-    var uptime = fs.readFileSync('/proc/uptime', 'utf-8');
+    var cpuinfo = '';
+    var instanceId = '';
+    var meminfo = '';
+    var uptime = '';
+  
+    if(fs.existsSync('/proc/cpuinfo')) {
+      cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+    }
+  
+    if(fs.existsSync('/proc/self/cgroup')) {
+      instanceId = fs.readFileSync('/proc/self/cgroup', 'utf8');
+    }
+  
+    if(fs.existsSync('/proc/meminfo')) {
+      meminfo = fs.readFileSync('/proc/meminfo', 'utf8');
+    }
+  
+    if(fs.existsSync('/proc/uptime')) {
+      uptime = fs.readFileSync('/proc/uptime', 'utf8');
+    }
     
     var n, size;
 
@@ -29,27 +45,35 @@ module.exports = async function (context, req) {
         text += 'A';
     }
 
-    if(fs.existsSync('/tmp/test')){
-        rimraf.sync('/tmp/test');
+    var path = '';
+
+    if(fs.existsSync('/tmp')) {
+        path = '/tmp/test';
+    } else {
+        path = 'D:\\local\\Temp\\test'
     }
 
-    if(!fs.existsSync('/tmp/test')){
-      fs.mkdirSync('/tmp/test');
+    if(fs.existsSync(path)){
+        rimraf.sync(path);
+    }
+
+    if(!fs.existsSync(path)){
+      fs.mkdirSync(path);
     }
     
     let startWrite = now();
     for(let i = 0; i<n; i++) {
-        fs.writeFileSync('/tmp/test/'+i+'.txt', text, 'utf-8');
+        fs.writeFileSync(path+i+'.txt', text, 'utf-8');
     }
     let endWrite = now();
     
     let startRead = now();
     for(let i = 0; i<n; i++) {
-        var test = fs.readFileSync('/tmp/test/'+i+'.txt', 'utf-8');
+        var test = fs.readFileSync(path+i+'.txt', 'utf-8');
     }
     let endRead = now();
     
-    let files = fs.readdirSync('/tmp/test');
+    let files = fs.readdirSync(path);
 
     context.res = {
         statusCode: 200,
