@@ -1,2 +1,8 @@
 def main(request):
-    return {"payload": "Latency Test"}
+    
+    return {
+        'success': True,
+        'payload': {
+            'test': 'latency test'
+        }
+    }

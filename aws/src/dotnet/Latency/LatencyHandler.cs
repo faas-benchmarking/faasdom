@@ -6,6 +6,7 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Latency
 {
@@ -14,23 +15,23 @@ namespace Latency
         [LambdaSerializer(typeof(JsonSerializer))]
         public APIGatewayProxyResponse HandleFunction(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            return CreateResponse("Latency Test");
+            return CreateResponse();
         }
 
-        APIGatewayProxyResponse CreateResponse(String result)
+        APIGatewayProxyResponse CreateResponse()
         {
             int statusCode = (int)HttpStatusCode.OK;
-            string body = result;
 
-            string instanceId = File.ReadAllText("/proc/self/cgroup");
-            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
-            string meminfo = File.ReadAllText("/proc/meminfo");
-            string uptime = File.ReadAllText("/proc/uptime");
+            JObject message = new JObject();
+            message.Add("success", new JValue(true));
+            JObject payload = new JObject();
+            payload.Add("test", new JValue("latency test"));
+            message.Add("payload", payload);
 
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = statusCode,
-                Body = "{ \"payload\": " + body + ", \"id\": " + instanceId + ", \"cpu\": " + cpuinfo + ",  \"mem\": " + meminfo + ",  \"uptime\": " + uptime + "}",
+                Body = message.ToString(),
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 

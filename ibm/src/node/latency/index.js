@@ -1,5 +1,12 @@
 function main(params) {
-    return {payload:  'Latency Test'};
+    
+    return {
+        success: true,
+        payload: {
+            "test": "latency test"
+        }
+      };
+
 }
 
 exports.main = main;

@@ -8,7 +8,11 @@ namespace Latency
         public JObject Main(JObject args)
         {
             JObject message = new JObject();
-            message.Add("payload", new JValue("Latency Test"));
+            message.Add("success", new JValue(true));
+            JObject payload = new JObject();
+            payload.Add("test", new JValue("latency test"));
+            message.Add("payload", payload);
+
             return (message);
         }
     }

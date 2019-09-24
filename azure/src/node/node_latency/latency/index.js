@@ -1,5 +1,16 @@
 module.exports = async function (context, req) {
+
     context.res = {
-        body: "Latency Test"
-    };
+        statusCode: 200,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            success: true,
+            payload: {
+                "test": "latency test"
+            }
+        })
+      };
+
 };
