@@ -27,23 +27,11 @@ namespace dotnet_factors
             string meminfo = "";
             string uptime = "";
 
-            if (Directory.Exists("/proc/self/cgroup"))
+            if (Directory.Exists("/proc"))
             {
                 instanceId = File.ReadAllText("/proc/self/cgroup");
-            }
-
-            if (Directory.Exists("/proc/self/cgroup"))
-            {
                 cpuinfo = File.ReadAllText("/proc/cpuinfo");
-            }
-
-            if (Directory.Exists("/proc/self/cgroup"))
-            {
                 meminfo = File.ReadAllText("/proc/meminfo");
-            }
-
-            if (Directory.Exists("/proc/self/cgroup"))
-            {
                 uptime = File.ReadAllText("/proc/uptime");
             }
 
