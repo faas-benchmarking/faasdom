@@ -2,14 +2,17 @@ import json
 import time
 import os
 import shutil
+import random
 
 def main(request):
+
+    rnd = random.randint(100000,999999)
 
     if os.path.exists("/tmp/test"):
         shutil.rmtree("/tmp/test")
 
-    if not os.path.exists("/tmp/test"):
-        os.makedirs("/tmp/test")
+    if not os.path.exists("/tmp/test/"+str(rnd)):
+        os.makedirs("/tmp/test/"+str(rnd))
 
     f=open("/proc/self/cgroup", "r")
     if f.mode == 'r':
@@ -55,7 +58,7 @@ def main(request):
         
     startWrite = time.time()
     for i in range(0,n):
-        filehandle = open('/tmp/test/'+str(i)+'.txt', 'w')
+        filehandle = open('/tmp/test/'+str(rnd)+'/'+str(i)+'.txt', 'w')
         filehandle.write(text)
         filehandle.close()
     
@@ -63,13 +66,16 @@ def main(request):
     
     startRead = time.time()
     for i in range(0,n):
-        filehandle = open('/tmp/test/'+str(i)+'.txt', 'r')
+        filehandle = open('/tmp/test/'+str(rnd)+'/'+str(i)+'.txt', 'r')
         test = filehandle.read()
         filehandle.close()
     
     endRead = time.time()
     
-    files = os.listdir("/tmp/test")
+    files = os.listdir("/tmp/test/"+str(rnd))
+
+    if os.path.exists("/tmp/test/"+str(rnd)):
+        shutil.rmtree("/tmp/test/"+str(rnd))
 
     return {
         'success': len(files) == n,
@@ -77,12 +83,12 @@ def main(request):
             "test": "filesystem test",
             "n": len(files),
             "size": size,
-            "timeWrite(ms)": (endWrite-startWrite)*1000,
-            "timeRead(ms)": (endRead-startRead)*1000
+            "timewrite": (endWrite-startWrite)*1000,
+            "timeread": (endRead-startRead)*1000
         },
         'metrics': {
-            'machineId': machine_id,
-            'instanceId': instance_id,
+            'machineid': machine_id,
+            'instanceid': instance_id,
             'cpu': cpuinfo,
             'mem': meminfo,
             'uptime': uptime

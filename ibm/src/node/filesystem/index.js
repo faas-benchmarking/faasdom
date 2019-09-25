@@ -12,6 +12,8 @@ function main(params) {
     
     var n, size;
 
+    var rnd = Math.floor(Math.random() * 900000) + 100000;
+
     if(params && params.n) {
         n = params.n;
     } else {
@@ -29,41 +31,45 @@ function main(params) {
     for(let i = 0; i<size; i++) {
         text += 'A';
     }
-
-    if(fs.existsSync('/tmp/test')){
-        rimraf.sync('/tmp/test');
-    }
     
     if(!fs.existsSync('/tmp/test')){
       fs.mkdirSync('/tmp/test');
     }
 
+    if(!fs.existsSync('/tmp/test/'+rnd)){
+        fs.mkdirSync('/tmp/test/'+rnd);
+    }
+
     let startWrite = now();
     for(let i = 0; i<n; i++) {
-        fs.writeFileSync('/tmp/test/'+i+'.txt', text, 'utf-8');
+        fs.writeFileSync('/tmp/test/'+rnd+'/'+i+'.txt', text, 'utf-8');
     }
     let endWrite = now();
     
     let startRead = now();
     for(let i = 0; i<n; i++) {
-        var test = fs.readFileSync('/tmp/test/'+i+'.txt', 'utf-8');
+        var test = fs.readFileSync('/tmp/test/'+rnd+'/'+i+'.txt', 'utf-8');
     }
     let endRead = now();
     
-    let files = fs.readdirSync('/tmp/test');
+    let files = fs.readdirSync('/tmp/test/'+rnd);
+
+    if(fs.existsSync('/tmp/test/'+rnd)){
+        rimraf.sync('/tmp/test/'+rnd);
+    }
 
     return {
         success: files.length == n,
         payload: {
             "test": "filesystem test",
             "n": files.length,
-            "size": size,
-            "timeWrite(ms)": (endWrite-startWrite).toFixed(3),
-            "timeRead(ms)": (endRead-startRead).toFixed(3)
+            "size": Number(size),
+            "timewrite": (endWrite-startWrite).toFixed(3),
+            "timeread": (endRead-startRead).toFixed(3)
         },
-            metrics: {
-            instance_id: instance_id,
-            machine_id: machine_id,
+        metrics: {
+            instanceid: instance_id,
+            machineid: machine_id,
             cpu: cpuinfo,
             mem: meminfo,
             uptime: uptime

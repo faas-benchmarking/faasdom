@@ -21,21 +21,26 @@ namespace dotnet_filesystem
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
+            Random random = new Random();
+            int rnd = random.Next(100000, 1000000);
 
             string path = "";
+            string fullPath = "";
 
             if(Directory.Exists("/tmp")) {
                 path = "/tmp/test/";
+                fullPath = "/tmp/test/" + rnd.ToString() + "/";
             } else {
                 path = "D:\\local\\Temp\\test\\";
-            }
-
-            if(Directory.Exists(path)) {
-                System.IO.Directory.Delete(path, true);
+                fullPath = "D:\\local\\Temp\\test\\" + rnd.ToString() + "\\";
             }
 
             if(!Directory.Exists(path)) {
                 System.IO.Directory.CreateDirectory(path);
+            }
+
+            if(!Directory.Exists(fullPath)) {
+                System.IO.Directory.CreateDirectory(fullPath);
             }
 
             string instanceId = ""; 
@@ -43,23 +48,11 @@ namespace dotnet_filesystem
             string meminfo = "";
             string uptime = "";
 
-            if (Directory.Exists("/proc/self/cgroup"))
+            if (Directory.Exists("/proc/"))
             {
                 instanceId = File.ReadAllText("/proc/self/cgroup");
-            }
-
-            if (Directory.Exists("/proc/self/cgroup"))
-            {
                 cpuinfo = File.ReadAllText("/proc/cpuinfo");
-            }
-
-            if (Directory.Exists("/proc/self/cgroup"))
-            {
                 meminfo = File.ReadAllText("/proc/meminfo");
-            }
-
-            if (Directory.Exists("/proc/self/cgroup"))
-            {
                 uptime = File.ReadAllText("/proc/uptime");
             }
 
@@ -93,31 +86,35 @@ namespace dotnet_filesystem
             Stopwatch swWrite = new Stopwatch();
             swWrite.Start();
             for(short i = 0; i<n; i++) {
-                File.WriteAllText(path+i+".txt", text);
+                File.WriteAllText(fullPath+""+i+".txt", text);
             }
             swWrite.Stop();
 
             Stopwatch swRead = new Stopwatch();
             swRead.Start();
             for(short i = 0; i<n; i++) {
-                string test = File.ReadAllText(path+i+".txt");
+                string test = File.ReadAllText(fullPath+""+i+".txt");
             }
             swRead.Stop();
 
-            string[] files = Directory.GetFiles(path);
+            string[] files = Directory.GetFiles(fullPath);
+
+            if(Directory.Exists(fullPath)) {
+                System.IO.Directory.Delete(fullPath, true);
+            }
 
             JObject message = new JObject();
-            message.Add("success", new JValue((files.Length == n).ToString()));
+            message.Add("success", new JValue(files.Length == n));
             JObject payload = new JObject();
             payload.Add("test", new JValue("filesystem test"));
             payload.Add("n", new JValue(files.Length));
             payload.Add("size", new JValue(size));
-            payload.Add("timeWrite(ms)", new JValue(swWrite.Elapsed.TotalMilliseconds));
-            payload.Add("timeRead(ms)", new JValue(swRead.Elapsed.TotalMilliseconds));
+            payload.Add("timewrite", new JValue(swWrite.Elapsed.TotalMilliseconds));
+            payload.Add("timeread", new JValue(swRead.Elapsed.TotalMilliseconds));
             message.Add("payload", payload);
             JObject metrics = new JObject();
-            metrics.Add("machine_id", new JValue(string.Join("\n", "")));
-            metrics.Add("instance_id", new JValue(string.Join("\n", instanceId)));
+            metrics.Add("machineid", new JValue(string.Join("\n", "")));
+            metrics.Add("instanceid", new JValue(string.Join("\n", instanceId)));
             metrics.Add("cpu", new JValue(string.Join("\n", cpuinfo)));
             metrics.Add("mem", new JValue(string.Join("\n", meminfo)));
             metrics.Add("uptime", new JValue(string.Join("\n", uptime)));

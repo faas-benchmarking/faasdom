@@ -9,40 +9,43 @@ import (
     "encoding/json"
     "time"
     "os"
+    "math/rand"
 )
 
 type Message struct {
-    Success bool
-    Payload Payload
-    Metrics Metrics
+    Success bool `json:"success"`
+    Payload Payload `json:"payload"`
+    Metrics Metrics `json:"metrics"`
 
 }
     
 type Payload struct {
-    Test string
-    N int
-    Size int
-    TimeWrite string
-    TimeRead string
+    Test string `json:"test"`
+    N int `json:"n"`
+    Size int `json:"size"`
+    TimeWrite string `json:"timewrite"`
+    TimeRead string `json:"timeread"`
 }
 
 type Metrics struct {
-    MachineId string
-    InstanceId string
-    Cpu string
-    Mem string
-    Uptime string
+    MachineId string `json:"machineid"`
+    InstanceId string `json:"instanceid"`
+    Cpu string `json:"cpu"`
+    Mem string `json:"mem"`
+    Uptime string `json:"uptime"`
 }
 
 
 func Go_filesystem(w http.ResponseWriter, r *http.Request) {
 
-    if _, err := os.Stat("/tmp/test"); !os.IsNotExist(err) {
-        os.RemoveAll("/tmp/test")
-    }
+    rnd := rand.Intn(900000) + 100000
 
     if _, err := os.Stat("/tmp/test"); os.IsNotExist(err) {
-        os.Mkdir("/tmp/test", os.ModeDir)
+        os.Mkdir("/tmp/test", 0777)
+    }
+
+    if _, err := os.Stat("/tmp/test/"+strconv.Itoa(rnd)); os.IsNotExist(err) {
+        os.Mkdir("/tmp/test/"+strconv.Itoa(rnd), 0777)
     }
 
     buf2, err := ioutil.ReadFile("/proc/cpuinfo")
@@ -92,7 +95,7 @@ func Go_filesystem(w http.ResponseWriter, r *http.Request) {
 
     startWrite := time.Now()
     for i := 0; i < n; i++ {
-        f, err := os.Create("/tmp/test/" + strconv.Itoa(i) + ".txt")
+        f, err := os.Create("/tmp/test/" + strconv.Itoa(rnd) + "/" + strconv.Itoa(i) + ".txt")
         if err != nil {
             log.Fatal(err)
         }
@@ -105,7 +108,7 @@ func Go_filesystem(w http.ResponseWriter, r *http.Request) {
 
     startRead := time.Now()
     for i := 0; i < n; i++ {
-        buf, err := ioutil.ReadFile("/tmp/test/" + strconv.Itoa(i) + ".txt")
+        buf, err := ioutil.ReadFile("/tmp/test/" + strconv.Itoa(rnd) + "/" + strconv.Itoa(i) + ".txt")
 	    if err != nil {
 		    log.Fatal(err)
         }
@@ -115,13 +118,17 @@ func Go_filesystem(w http.ResponseWriter, r *http.Request) {
 
     log.Print(test)
 
-    files, err := ioutil.ReadDir("/tmp/test")
+    files, err := ioutil.ReadDir("/tmp/test/" + strconv.Itoa(rnd))
     if err != nil {
         log.Fatal(err)
     }
 
+    if _, err := os.Stat("/tmp/test/"+strconv.Itoa(rnd)); !os.IsNotExist(err) {
+        os.RemoveAll("/tmp/test/"+strconv.Itoa(rnd))
+    }
+
     msg := &Message{
-        Success: len(files) == 10000,
+        Success: len(files) == n,
         Payload: Payload{
             Test: "filesystem test",
             N: len(files),

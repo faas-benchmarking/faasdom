@@ -27,6 +27,8 @@ module.exports = async function (context, req) {
     
     var n, size;
 
+    var rnd = Math.floor(Math.random() * 900000) + 100000;
+
     if(req.query && req.query.n) {
         n = req.query.n;
     } else {
@@ -46,34 +48,41 @@ module.exports = async function (context, req) {
     }
 
     var path = '';
+    var fullPath = '';
 
     if(fs.existsSync('/tmp')) {
         path = '/tmp/test/';
+        fullPath = '/tmp/test/' + rnd + '/';
     } else {
-        path = 'D:\\local\\Temp\\test\\'
-    }
-
-    if(fs.existsSync(path)){
-        rimraf.sync(path);
+        path = 'D:\\local\\Temp\\test\\';
+        fullPath = 'D:\\local\\Temp\\test\\' + rnd + '\\';
     }
 
     if(!fs.existsSync(path)){
       fs.mkdirSync(path);
     }
+
+    if(!fs.existsSync(fullPath)){
+        fs.mkdirSync(fullPath);
+    }
     
     let startWrite = now();
     for(let i = 0; i<n; i++) {
-        fs.writeFileSync(path+i+'.txt', text, 'utf-8');
+        fs.writeFileSync(fullPath+i+'.txt', text, 'utf-8');
     }
     let endWrite = now();
     
     let startRead = now();
     for(let i = 0; i<n; i++) {
-        var test = fs.readFileSync(path+i+'.txt', 'utf-8');
+        var test = fs.readFileSync(fullPath+i+'.txt', 'utf-8');
     }
     let endRead = now();
     
-    let files = fs.readdirSync(path);
+    let files = fs.readdirSync(fullPath);
+
+    if(fs.existsSync(fullPath)){
+        rimraf.sync(fullPath);
+    }
 
     context.res = {
         statusCode: 200,
@@ -85,13 +94,13 @@ module.exports = async function (context, req) {
             payload: {
                 "test": "filesystem test",
                 "n": files.length,
-                "size": size,
-                "timeWrite(ms)": (endWrite-startWrite).toFixed(3),
-                "timeRead(ms)": (endRead-startRead).toFixed(3)
+                "size": Number(size),
+                "timewrite": (endWrite-startWrite).toFixed(3),
+                "timeread": (endRead-startRead).toFixed(3)
             },
             metrics: {
-                machineId: '',
-                id: instanceId,
+                machineid: '',
+                instanceid: instanceId,
                 cpu: cpuinfo,
                 mem: meminfo,
                 uptime: uptime
