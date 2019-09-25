@@ -983,7 +983,6 @@ async function cleanupAWS() {
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
-				return;
 			});
 			promises.push(p1);
 	
@@ -996,7 +995,6 @@ async function cleanupAWS() {
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
-				return;
 			});
 			promises.push(p2);
 
@@ -1077,7 +1075,6 @@ async function cleanupAzure() {
 		})
 		.catch((err) => {
 			currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Could not load existing Azure resource groups</li>';
-			return;
 		});
 
 		if(azureResourceGroups.length == 0) {
@@ -1141,7 +1138,6 @@ async function cleanupGoogle() {
 		})
 		.catch((err) => {
 			currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Could not load existing Google Cloud functions</li>';
-			return;
 		});
 
 		if(googleFunctions.length == 0) {
@@ -1205,7 +1201,6 @@ async function cleanupIBM() {
 		})
 		.catch((err) => {
 			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
-			return;
 		});
 
 		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn action list')
@@ -1224,7 +1219,6 @@ async function cleanupIBM() {
 		})
 		.catch((err) => {
 			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
-			return;
 		});
 
 		if(ibmFunctions.length == 0 && ibmGateways.length == 0) {
