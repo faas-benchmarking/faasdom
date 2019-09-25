@@ -49,8 +49,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 "time": (end-start)*1000
             },
             'metrics': {
-                'machineId': '',
-                'instanceId': instanceId,
+                'machineid': '',
+                'instanceid': instanceId,
                 'cpu': cpuinfo,
                 'mem': meminfo,
                 'uptime': uptime

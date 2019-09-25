@@ -44,8 +44,8 @@ def python_factors(request):
             "time": elapsed
         },
         'metrics': {
-            'machineId': '',
-            'instanceId': '',
+            'machineid': '',
+            'instanceid': '',
             'cpu': cpuinfo,
             'mem': meminfo,
             'uptime': uptime

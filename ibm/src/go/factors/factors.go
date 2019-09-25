@@ -64,8 +64,8 @@ func Main(params map[string]interface{}) map[string]interface{} {
     msg["payload"].(map[string]interface{})["result"] = result
     msg["payload"].(map[string]interface{})["time"] = int64(elapsed / time.Millisecond)
     msg["metrics"] = map[string]string{}
-    msg["metrics"].(map[string]string)["machineId"] = machine_id
-    msg["metrics"].(map[string]string)["instanceId"] = instance_id
+    msg["metrics"].(map[string]string)["machineid"] = machine_id
+    msg["metrics"].(map[string]string)["instanceid"] = instance_id
     msg["metrics"].(map[string]string)["cpu"] = cpuinfo
     msg["metrics"].(map[string]string)["mem"] = meminfo
     msg["metrics"].(map[string]string)["uptime"] = uptime

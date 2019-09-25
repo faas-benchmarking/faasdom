@@ -49,8 +49,8 @@ def main(request):
             'time': elapsed
         },
         'metrics': {
-            'machineId': machine_id,
-            'instanceId': instance_id,
+            'machineid': machine_id,
+            'instanceid': instance_id,
             'cpu': cpuinfo,
             'mem': meminfo,
             'uptime': uptime

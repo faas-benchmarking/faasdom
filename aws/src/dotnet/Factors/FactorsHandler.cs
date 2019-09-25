@@ -69,8 +69,8 @@ namespace Factors
             payload.Add("time", new JValue(sw.Elapsed.TotalMilliseconds));
             message.Add("payload", payload);
             JObject metrics = new JObject();
-            metrics.Add("machineId", new JValue(""));
-            metrics.Add("instanceId", new JValue(instanceId));
+            metrics.Add("machineid", new JValue(""));
+            metrics.Add("instanceid", new JValue(instanceId));
             metrics.Add("cpu", new JValue(cpuinfo));
             metrics.Add("mem", new JValue(meminfo));
             metrics.Add("uptime", new JValue(uptime));

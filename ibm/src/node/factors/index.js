@@ -30,8 +30,8 @@ function main(params) {
         "time": Number((end-start).toFixed(3))
     },
         metrics: {
-        instanceId: instance_id,
-        machineId: machine_id,
+        instanceid: instance_id,
+        machineid: machine_id,
         cpu: cpuinfo,
         mem: meminfo,
         uptime: uptime

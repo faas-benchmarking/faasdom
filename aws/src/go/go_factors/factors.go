@@ -28,8 +28,8 @@ type Payload struct {
 }
 
 type Metrics struct {
-    MachineId string `json:"machineId"`
-    InstanceId string `json:"instanceId"`
+    MachineId string `json:"machineid"`
+    InstanceId string `json:"instanceid"`
     Cpu string `json:"cpu"`
     Mem string `json:"mem"`
     Uptime string `json:"uptime"`

@@ -31,8 +31,8 @@ exports.node_factors = (req, res) => {
           "time": Number((end-start).toFixed(3))
       },
       metrics: {
-          machineId: '',
-          instanceId: instanceId,
+          machineid: '',
+          instanceid: instanceId,
           cpu: cpuinfo,
           mem: meminfo,
           uptime: uptime

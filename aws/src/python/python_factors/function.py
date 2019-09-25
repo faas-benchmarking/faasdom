@@ -52,8 +52,8 @@ def my_handler(event, context):
                 'time': elapsed
             },
             'metrics': {
-                'machineId': '',
-                'instanceId': insatnceId,
+                'machineid': '',
+                'instanceid': insatnceId,
                 'cpu': cpuinfo,
                 'mem': meminfo,
                 'uptime': uptime
