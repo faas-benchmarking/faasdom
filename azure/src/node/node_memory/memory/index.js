@@ -30,18 +30,23 @@ module.exports = async function (context, req) {
     }
 
     context.res = {
-        statusCode: 200,
-        headers: {
-           "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            payload: "memory test",
-            success: true,
-            n: req.query.n,
-            id: instanceId,
-            cpu: cpuinfo,
-            mem: meminfo,
-            uptime: uptime
-        })
+      statusCode: 200,
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+          success: true,
+          payload: {
+              "test": "memory test",
+              "n": Number(req.query.n)
+          },
+          metrics: {
+              machineid: '',
+              instanceid: instanceId,
+              cpu: cpuinfo,
+              mem: meminfo,
+              uptime: uptime
+          }
+      })
     };
 };

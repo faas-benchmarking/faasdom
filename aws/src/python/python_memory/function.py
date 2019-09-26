@@ -28,17 +28,22 @@ def my_handler(event, context):
         text += 'A'
     
     return {
-    'statusCode': 200,
-    'headers': {
-           'Content-Type': 'application/json'
-       },
-    'body': json.dumps({
-        'payload': 'memory Test',
-        'success': True,
-        'n': event['queryStringParameters']['n'],
-        'instanceId': insatnceId,
-        'cpu': cpuinfo,
-        'mem': meminfo,
-        'uptime': uptime
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps({
+            'success': True,
+            'payload': {
+                'test': 'memory test',
+                'n': int(event['queryStringParameters']['n'])
+            },
+            'metrics': {
+                'machineid': '',
+                'instanceid': insatnceId,
+                'cpu': cpuinfo,
+                'mem': meminfo,
+                'uptime': uptime
+            }
         })
     }

@@ -11,13 +11,24 @@ import (
 )
 
 type Message struct {
-        Payload string
-        Success string
-        InstanceId string
-        Cpu string
-        Mem string
-        Uptime string
-}
+        Success bool `json:"success"`
+        Payload Payload `json:"payload"`
+        Metrics Metrics `json:"metrics"`
+    
+    }
+        
+    type Payload struct {
+        Test string `json:"test"`
+        N int `json:"n"`
+    }
+    
+    type Metrics struct {
+        MachineId string `json:"machineid"`
+        InstanceId string `json:"instanceid"`
+        Cpu string `json:"cpu"`
+        Mem string `json:"mem"`
+        Uptime string `json:"uptime"`
+    }
 
 func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
@@ -56,24 +67,31 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (ev
         for i := 1; i <= n_num; i++ {
                 text += "A"
         }
-
-        log.Printf("1")
         
-        m := &Message{"memory test", "true", instanceId, cpuinfo, meminfo, uptime}
-
-        log.Printf("2")
-
-        js, err := json.Marshal(m)
-        if err != nil {
-                log.Fatal(err)
-        }
-
-        log.Printf("3")
-
-        return events.APIGatewayProxyResponse{
-		Body:       string(js),
-		StatusCode: 200,
-	}, nil
+        m := Message{
+                Success: true,
+                Payload: Payload{
+                    Test: "memory test",
+                    N: n_num,
+                },
+                Metrics: Metrics{
+                    MachineId: "",
+                    InstanceId: instanceId,
+                    Cpu: cpuinfo,
+                    Mem: meminfo,
+                    Uptime: uptime,
+                },
+            }
+        
+            js, err := json.Marshal(m)
+            if err != nil {
+                    log.Fatal(err)
+            }
+        
+            return events.APIGatewayProxyResponse{
+            Body:       string(js),
+            StatusCode: 200,
+                }, nil
 }
 
 func main() {

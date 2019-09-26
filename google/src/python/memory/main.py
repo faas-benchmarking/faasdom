@@ -24,13 +24,19 @@ def python_memory(request):
         
     headers = {
         'Content-Type': 'application/json'
-        }
+    }
     
     return (json.dumps({
-        'payload': 'memory Test',
         'success': True,
-        'n': request.args.get('n'),
-        'cpu': cpuinfo,
-        'mem': meminfo,
-        'uptime': uptime
-        }), 200, headers)
+        'payload': {
+            "test": "memory test",
+            "n": int(request.args.get('n'))
+        },
+        'metrics': {
+            'machineid': '',
+            'instanceid': '',
+            'cpu': cpuinfo,
+            'mem': meminfo,
+            'uptime': uptime
+        }
+    }), 200, headers)

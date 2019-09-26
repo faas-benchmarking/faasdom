@@ -13,21 +13,25 @@ exports.handler = async (event, context, callback) => {
         text += 'A';
     }
     
-    const response = {
+    const res = {
         statusCode: 200,
         headers: {
-           "Content-Type": "application/json"
+           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            payload: "memory test",
             success: true,
-            n: event.queryStringParameters.n,
-            id: instanceId,
-            cpu: cpuinfo,
-            mem: meminfo,
-            uptime: uptime
+            payload: {
+                'test': 'memory test',
+                'n': Number(event.queryStringParameters.n),
+            },
+            metrics: {
+                machineid: '',
+                instanceid: instanceId,
+                cpu: cpuinfo,
+                mem: meminfo,
+                uptime: uptime
+            }
         })
-    };
-    
-    return response;
+      };
+      callback(null, res);
 };

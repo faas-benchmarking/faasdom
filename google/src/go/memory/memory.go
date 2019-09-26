@@ -10,12 +10,23 @@ import (
 )
 
 type Message struct {
-    Payload string
-    N string
-    Success bool
-    Cpu string
-    Mem string
-    Uptime string
+    Success bool `json:"success"`
+    Payload Payload `json:"payload"`
+    Metrics Metrics `json:"metrics"`
+
+}
+    
+type Payload struct {
+    Test string `json:"test"`
+    N int `json:"n"`
+}
+
+type Metrics struct {
+    MachineId string `json:"machineid"`
+    InstanceId string `json:"instanceid"`
+    Cpu string `json:"cpu"`
+    Mem string `json:"mem"`
+    Uptime string `json:"uptime"`
 }
 
 func Go_memory(w http.ResponseWriter, r *http.Request) {
@@ -50,17 +61,26 @@ func Go_memory(w http.ResponseWriter, r *http.Request) {
         text += "A"
     }
 
-    msg := make(map[string]interface{})
-    msg["payload"] = "memory test"
-    msg["n"] = strconv.Itoa(n_num)
-    msg["success"] = true
-    msg["cpu"] = cpuinfo
-    msg["mem"] = meminfo
-    msg["uptime"] = uptime
+    msg := &Message{
+        Success: true,
+        Payload: Payload{
+            Test: "memory test",
+            N: n_num,
+        },
+        Metrics: Metrics{
+            MachineId: "",
+            InstanceId: "",
+            Cpu: cpuinfo,
+            Mem: meminfo,
+            Uptime: uptime,
+        },
+    }
 
     b, err := json.Marshal(msg)
 
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(200)
+
     fmt.Fprint(w, string(b))
-    
 
  }

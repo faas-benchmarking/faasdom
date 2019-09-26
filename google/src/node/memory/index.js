@@ -12,15 +12,20 @@ exports.node_memory = (req, res) => {
         text += 'A';
     }
 	
-	res.set("Content-Type", "application/json");
+    res.set("Content-Type", "application/json");
 	res.status(200);
     res.send(JSON.stringify({
-      payload: 'memory test',
       success: true,
-      n: req.query.n,
-      cpu: cpuinfo,
-      mem: meminfo,
-      uptime: uptime,
-      memory_avail: process.env.FUNCTION_MEMORY_MB
-    }));
+      payload: {
+          "test": "memory test",
+          "n": Number(req.query.n)
+      },
+      metrics: {
+          machineid: '',
+          instanceid: '',
+          cpu: cpuinfo,
+          mem: meminfo,
+          uptime: uptime
+      }
+  }));
 };

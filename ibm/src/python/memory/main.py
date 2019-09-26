@@ -31,12 +31,16 @@ def main(request):
         text += 'A'
 
     return {
-        'payload': 'memory Test',
         'success': True,
-        'n': request.get("n"),
-        'instance_id': instance_id,
-        'machine_id': machine_id,
-        'cpu': cpuinfo,
-        'mem': meminfo,
-        'uptime': uptime
+        'payload': {
+            'test': 'memory test',
+            'n': int(request.get("n"))
+        },
+        'metrics': {
+            'machineid': machine_id,
+            'instanceid': instance_id,
+            'cpu': cpuinfo,
+            'mem': meminfo,
+            'uptime': uptime
+        }
     }

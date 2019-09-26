@@ -14,16 +14,20 @@ function main(params) {
         text += 'A';
     }
     
-	return {
-        payload: "memory test",
+    return {
         success: true,
-        n: params.n,
-        instance_id: instance_id,
-        machine_id: machine_id,
-        cpu: cpuinfo,
-        mem: meminfo,
-        uptime: uptime
-    };
+        payload: {
+            "test": "memory test",
+            "n": Number(params.n)
+        },
+            metrics: {
+            instanceid: instance_id,
+            machineid: machine_id,
+            cpu: cpuinfo,
+            mem: meminfo,
+            uptime: uptime
+        }
+      };
 }
 
 

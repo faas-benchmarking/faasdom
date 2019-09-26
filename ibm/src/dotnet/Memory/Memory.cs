@@ -9,11 +9,11 @@ namespace Memory
         public JObject Main(JObject args)
         {
 
-            string[] machine_id = File.ReadAllLines("/sys/class/dmi/id/product_uuid");
-            string[] instance_id = File.ReadAllLines("/proc/self/cgroup");
-            string[] cpuinfo = File.ReadAllLines("/proc/cpuinfo");
-            string[] meminfo = File.ReadAllLines("/proc/meminfo");
-            string[] uptime = File.ReadAllLines("/proc/uptime");
+            string machine_id = File.ReadAllText("/sys/class/dmi/id/product_uuid");
+            string instance_id = File.ReadAllText("/proc/self/cgroup");
+            string cpuinfo = File.ReadAllText("/proc/cpuinfo");
+            string meminfo = File.ReadAllText("/proc/meminfo");
+            string uptime = File.ReadAllText("/proc/uptime");
 
             int n;
             if(args["n"] != null) {
@@ -32,14 +32,19 @@ namespace Memory
             }
 
             JObject message = new JObject();
-            message.Add("payload", new JValue("memory test"));
             message.Add("success", new JValue(true));
-            message.Add("n", new JValue(n));
-            message.Add("instance_id", new JValue(string.Join("\n", instance_id)));
-            message.Add("machine_id", new JValue(string.Join("\n", machine_id)));
-            message.Add("cpu", new JValue(string.Join("\n", cpuinfo)));
-            message.Add("mem", new JValue(string.Join("\n", meminfo)));
-            message.Add("uptime", new JValue(string.Join("\n", uptime)));
+            JObject payload = new JObject();
+            payload.Add("test", new JValue("memory test"));
+            payload.Add("n", new JValue(n));
+            message.Add("payload", payload);
+            JObject metrics = new JObject();
+            metrics.Add("machineid", new JValue(machine_id));
+            metrics.Add("instanceid", new JValue(instance_id));
+            metrics.Add("cpu", new JValue(cpuinfo));
+            metrics.Add("mem", new JValue(meminfo));
+            metrics.Add("uptime", new JValue(uptime));
+            message.Add("metrics", metrics);
+
             return (message);
             
         }

@@ -1,9 +1,9 @@
 package main
 
 import (
-    "strconv"
     "io/ioutil"
     "log"
+    "strconv"
 )
 
 type Message struct {
@@ -48,8 +48,14 @@ func Main(params map[string]interface{}) map[string]interface{} {
     }
     machine_id := string(buf5)
 
-    n, ok := params["n"].(int)
-    if !ok {
+    n := 55
+
+    if _, ok := params["n"]; ok {
+        n, err = strconv.Atoi(params["n"].(string))
+        if err != nil {
+            log.Fatal(err)
+        }
+    } else {
         n = 55
     }
 
@@ -59,15 +65,17 @@ func Main(params map[string]interface{}) map[string]interface{} {
         text += "A"
     }
 
-    msg := make(map[string]interface{})
-    msg["payload"] = "memory test"
-    msg["n"] = strconv.Itoa(n)
-    msg["success"] = "true"
-    msg["instance_id"] = instance_id
-    msg["machine_id"] = machine_id
-    msg["cpu"] = cpuinfo
-    msg["mem"] = meminfo
-    msg["uptime"] = uptime
+    msg := map[string]interface{}{}
+    msg["success"] = true
+    msg["payload"] = map[string]interface{}{}
+    msg["payload"].(map[string]interface{})["test"] = "memory test"
+    msg["payload"].(map[string]interface{})["n"] = n
+    msg["metrics"] = map[string]string{}
+    msg["metrics"].(map[string]string)["machineid"] = machine_id
+    msg["metrics"].(map[string]string)["instanceid"] = instance_id
+    msg["metrics"].(map[string]string)["cpu"] = cpuinfo
+    msg["metrics"].(map[string]string)["mem"] = meminfo
+    msg["metrics"].(map[string]string)["uptime"] = uptime
 
     return msg
 
