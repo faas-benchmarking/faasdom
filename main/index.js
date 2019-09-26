@@ -214,8 +214,10 @@ function execShellCommand(cmd) {
 				errorMsg += 'STDOUT: ' + stdout + (stdout? '' : '\n');
 				errorMsg += 'STDERR: ' + stderr + (stderr? '' : '\n');
 				errorMsg += '----------------------------------------------------------------------------------------------------\n';
-				console.error(errorMsg);
-				fs.appendFileSync('./error.log', errorMsg);
+				if(!(cmd.includes('az functionapp deployment source config-zip') && error.toString().includes("Operation failed with status: 'Bad Request'."))) {
+					console.error(errorMsg);
+					fs.appendFileSync('./error.log', errorMsg);
+				}
 				reject();
 	  		}		
 	  		resolve(stdout? stdout : stderr);
@@ -794,19 +796,36 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				return;
 			}
 
-			await new Promise(resolve => setTimeout(resolve, 10000));
-
 			/** Deploy a function */
 			await execShellCommand(dockerPrefix + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + functionNamePostfix + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip --timeout ' + timeout).catch((err) => {
 				error = true;
-				if(provider == AZURE) {
-					currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-				} else {
-					currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-				}
 			});
 			if(error) {
-				return;
+
+				var errorCount = 1;
+
+				while(error) {
+
+					error = false;
+
+					await execShellCommand(dockerPrefix + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + functionNamePostfix + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip --timeout ' + timeout).catch((err) => {
+						error = true;
+						if(provider == AZURE) {
+							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						} else {
+							currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						}
+					});
+
+					if(error && errorCount >= 10) {
+						return;
+					}
+
+					errorCount++;
+					await new Promise(resolve => setTimeout(resolve, errorCount*1000));
+
+				}
+
 			}
 
 			let end = now();
