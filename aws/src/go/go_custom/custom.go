@@ -4,20 +4,45 @@ import (
         "context"
         "github.com/aws/aws-lambda-go/lambda"
         "github.com/aws/aws-lambda-go/events"
+        "log"
+        "encoding/json"
 )
 
-type MyEvent struct {
-        Test string
+type Message struct {
+        Success bool `json:"success"`
+        Payload Payload `json:"payload"`
+    
 }
 
-func HandleRequest(ctx context.Context, test MyEvent) (events.APIGatewayProxyResponse, error) {
+type Payload struct {
+        Test string `json:"test"`
+}
 
-        // TODO: put your code here
+func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+        /* 
+        TODO: put your code here
+        You can basically do anything you want,
+        but please leave the return statement header
+        and the success field as it is.
+        */
+
+        m := Message{
+                Success: true,
+                Payload: Payload{
+                    Test: "custom test",
+                },
+            }
+
+        js, err := json.Marshal(m)
+        if err != nil {
+                log.Fatal(err)
+        }
 
         return events.APIGatewayProxyResponse{
-		Body:       "ok",
-		StatusCode: 200,
-	}, nil
+        Body:       string(js),
+        StatusCode: 200,
+        }, nil
 }
 
 func main() {

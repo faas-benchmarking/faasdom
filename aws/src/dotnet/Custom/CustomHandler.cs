@@ -6,6 +6,7 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Custom
 {
@@ -19,13 +20,30 @@ namespace Custom
 
         APIGatewayProxyResponse CreateResponse()
         {
-            // TODO: put your code here
+            /* 
+            TODO: put your code here
+            You can basically do anything you want,
+            but please leave the return statement header
+            and the success field as it is.
+            */
 
             int statusCode = (int)HttpStatusCode.OK;
+
+            JObject message = new JObject();
+            message.Add("success", new JValue(true));
+            JObject payload = new JObject();
+            payload.Add("test", new JValue("custom test"));
+            message.Add("payload", payload);
+
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = statusCode,
-                Body = "ok"
+                Body = message.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" } 
+                }
             };
             
             return response;
