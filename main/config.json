@@ -1,9 +1,4 @@
 {
-    "global": {
-        "memory": 128,
-        "timeout": 120
-    },
-
     "aws": {
         "arn_role": "PLACEHOLDER",
         "output": "json",
