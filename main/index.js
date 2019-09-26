@@ -1016,6 +1016,8 @@ async function cleanupAWS() {
 
 		var promises = [];
 
+		let error = false;
+
 		for(let i = 0; i<config.aws.region_options.length; i++) {
 
 			let p1 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli:1.16.216 aws lambda list-functions --region ' + config.aws.region_options[i])
@@ -1027,7 +1029,7 @@ async function cleanupAWS() {
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
-				reject();
+				error = true;
 			});
 			promises.push(p1);
 	
@@ -1040,7 +1042,7 @@ async function cleanupAWS() {
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
-				reject();
+				error = true;
 			});
 			promises.push(p2);
 
@@ -1049,6 +1051,10 @@ async function cleanupAWS() {
 		await Promise.all(promises);
 
 		currentLogStatusAWS += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
+
+		if(error) {
+			return;
+		}
 
 		if(awsFunctions.length == 0 && awsGateways.length == 0) {
 			currentLogStatusAWS += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
@@ -1112,6 +1118,8 @@ async function cleanupAzure() {
 
 		let azureResourceGroups = [];
 
+		let error = false;
+
 		await execShellCommand('docker run --rm -v azure-secrets:/root/.azure mcr.microsoft.com/azure-cli:2.0.71 az group list')
 		.then((stdout) => {
 			let azureresourcegroups = JSON.parse(stdout);
@@ -1123,10 +1131,14 @@ async function cleanupAzure() {
 		})
 		.catch((err) => {
 			currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Could not load existing Azure resource groups</li>';
-			reject();
+			error = true;
 		});
 
 		currentLogStatusAzure += 'Resource Groups loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
+
+		if(error) {
+			return;
+		}
 
 		if(azureResourceGroups.length == 0) {
 			currentLogStatusAzure += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
@@ -1174,6 +1186,8 @@ async function cleanupGoogle() {
 
 		let googleFunctions = [];
 
+		let error = false;
+
 		await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk:257.0.0-alpine gcloud functions list')
 		.then((stdout) => {
 			let googlefunctions = stdout;
@@ -1189,10 +1203,14 @@ async function cleanupGoogle() {
 		})
 		.catch((err) => {
 			currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Could not load existing Google Cloud functions</li>';
-			reject();
+			error = true;
 		});
 
 		currentLogStatusGoogle += 'Functions loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
+
+		if(error) {
+			return;
+		}
 
 		if(googleFunctions.length == 0) {
 			currentLogStatusGoogle += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
@@ -1238,6 +1256,8 @@ async function cleanupIBM() {
 
 		let ibmFunctions = [], ibmGateways = [];
 
+		let error = false;
+
 		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn api list')
 		.then((stdout) => {
 			let ibmapi = stdout;
@@ -1255,7 +1275,7 @@ async function cleanupIBM() {
 		})
 		.catch((err) => {
 			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
-			reject();
+			error = true;
 		});
 
 		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn action list')
@@ -1274,10 +1294,14 @@ async function cleanupIBM() {
 		})
 		.catch((err) => {
 			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
-			reject();
+			error = true;
 		});
 
 		currentLogStatusIBM += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
+
+		if(error) {
+			return;
+		}
 
 		if(ibmFunctions.length == 0 && ibmGateways.length == 0) {
 			currentLogStatusIBM += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
