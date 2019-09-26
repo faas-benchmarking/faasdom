@@ -1027,6 +1027,7 @@ async function cleanupAWS() {
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS lambda functions</li>';
+				reject();
 			});
 			promises.push(p1);
 	
@@ -1039,12 +1040,15 @@ async function cleanupAWS() {
 			})
 			.catch((err) => {
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Could not load existing AWS APIs</li>';
+				reject();
 			});
 			promises.push(p2);
 
 		}
 
 		await Promise.all(promises);
+
+		currentLogStatusAWS += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 
 		if(awsFunctions.length == 0 && awsGateways.length == 0) {
 			currentLogStatusAWS += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
@@ -1119,7 +1123,10 @@ async function cleanupAzure() {
 		})
 		.catch((err) => {
 			currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Could not load existing Azure resource groups</li>';
+			reject();
 		});
+
+		currentLogStatusAzure += 'Resource Groups loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 
 		if(azureResourceGroups.length == 0) {
 			currentLogStatusAzure += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
@@ -1182,7 +1189,10 @@ async function cleanupGoogle() {
 		})
 		.catch((err) => {
 			currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Could not load existing Google Cloud functions</li>';
+			reject();
 		});
+
+		currentLogStatusGoogle += 'Functions loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 
 		if(googleFunctions.length == 0) {
 			currentLogStatusGoogle += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
@@ -1245,6 +1255,7 @@ async function cleanupIBM() {
 		})
 		.catch((err) => {
 			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
+			reject();
 		});
 
 		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn action list')
@@ -1263,7 +1274,10 @@ async function cleanupIBM() {
 		})
 		.catch((err) => {
 			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
+			reject();
 		});
+
+		currentLogStatusIBM += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 
 		if(ibmFunctions.length == 0 && ibmGateways.length == 0) {
 			currentLogStatusIBM += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
