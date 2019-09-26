@@ -5,6 +5,7 @@ const exec = require('child_process').exec;
 const express = require('express');
 const app = express();
 const now = require('performance-now');
+const locks = require('locks');
 
 /** constants with providers and languages */
 const AWS = 'aws';
@@ -55,6 +56,9 @@ var latencyRunningInterval;
 var factorsRunningInterval;
 var memoryRunningInterval;
 var filesystemRunningInterval;
+
+var azureNodeMutex = locks.createMutex();
+var azureDotnetMutex = locks.createMutex();
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -670,31 +674,38 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			if(language == NODE) {
 
-				/** Run npm install */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
-					error = true;
-					if(provider == AZURE) {
-						currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-					} else {
-						currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-					}
-				});
-				if(error) {
-					return;
-				}
+				azureNodeMutex.lock(async function() {
 
-				/** Zip function */
-				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/alpine-with-zip:latest /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'").catch((err) => {
-					error = true;
-					if(provider == AZURE) {
-						currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-					} else {
-						currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+					/** Run npm install */
+					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+						error = true;
+						if(provider == AZURE) {
+							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						} else {
+							currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						}
+					});
+					if(error) {
+						azureNodeMutex.unlock();
+						return;
 					}
+
+					/** Zip function */
+					await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " bschitter/alpine-with-zip:latest /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; zip -0 -r " + functionName + ".zip *'").catch((err) => {
+						error = true;
+						if(provider == AZURE) {
+							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						} else {
+							currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						}
+					});
+					if(error) {
+						azureNodeMutex.unlock();
+						return;
+					}
+
+					azureNodeMutex.unlock();
 				});
-				if(error) {
-					return;
-				}
 
 			} else if(language == PYTHON) {
 
@@ -709,31 +720,38 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			} else if(language == DOTNET) {
 
-				/** Build function */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.1-alpine3.9 dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + '/out').catch((err) => {
-					error = true;
-					if(provider == AZURE) {
-						currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-					} else {
-						currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-					}
-				});
-				if(error) {
-					return;
-				}
+				azureDotnetMutex.lock(async function() {
 
-				/** Zipping function */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' bschitter/alpine-with-zip:latest /bin/sh -c \'cd ' + dockerMountPoint + srcPath + '/out && zip -r -0 ' + dockerMountPoint + srcPath + '/' + functionName +  '.zip *\'').catch((err) => {
-					error = true;
-					if(provider == AZURE) {
-						currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
-					} else {
-						currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+					/** Build function */
+					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.1-alpine3.9 dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + '/out').catch((err) => {
+						error = true;
+						if(provider == AZURE) {
+							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						} else {
+							currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						}
+					});
+					if(error) {
+						azureDotnetMutex.unlock();
+						return;
 					}
+
+					/** Zipping function */
+					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' bschitter/alpine-with-zip:latest /bin/sh -c \'cd ' + dockerMountPoint + srcPath + '/out && zip -r -0 ' + dockerMountPoint + srcPath + '/' + functionName +  '.zip *\'').catch((err) => {
+						error = true;
+						if(provider == AZURE) {
+							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						} else {
+							currentLogStatusAzureWindows += '<li><span style="color:red">ERROR:</span> Error happened while zipping function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
+						}
+					});
+					if(error) {
+						azureDotnetMutex.unlock();
+						return;
+					}
+
+					azureDotnetMutex.unlock();
 				});
-				if(error) {
-					return;
-				}
 
 			}
 
