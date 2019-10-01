@@ -34,13 +34,13 @@ const DOTNET = 'dotnet';
 const providers = [AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM];
 const languages = [NODE, PYTHON, GO, DOTNET];
 
-var rawdata = fs.readFileSync('factors_urls.json');
+var rawdata = fs.readFileSync('./factors/factors_urls.json');
 var urls = JSON.parse(rawdata);
 
 function pushURL(provider, language, url) {
   if(providers.includes(provider) && languages.includes(language)) {
-    urls.push({provider: provider, language: language, url: url, latest: '0', mean: 0});
-    fs.writeFile('factors_urls.json', JSON.stringify(urls), function(err) {
+    urls.push({provider: provider, language: language, url: url});
+    fs.writeFile('./factors/factors_urls.json', JSON.stringify(urls), function(err) {
       if (err) {
         console.error(err);
         process.exit(0);
@@ -52,7 +52,7 @@ function pushURL(provider, language, url) {
 }
 
 function resetURLs() {
-  fs.writeFile('factors_urls.json', '[]', function(err) {
+  fs.writeFile('./factors/factors_urls.json', '[]', function(err) {
     if (err) {
       console.error(err);
       process.exit(0);

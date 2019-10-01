@@ -35,13 +35,13 @@ const languages = [NODE, PYTHON, GO, DOTNET];
 
 var start = undefined;
 
-var rawdata = fs.readFileSync('latency_urls.json');
+var rawdata = fs.readFileSync('./latency/latency_urls.json');
 var urls = JSON.parse(rawdata);
 
 function pushURL(provider, language, url) {
   if(providers.includes(provider) && languages.includes(language)) {
-    urls.push({provider: provider, language: language, url: url, latest: '0', mean: 0});
-    fs.writeFile('latency_urls.json', JSON.stringify(urls), function(err) {
+    urls.push({provider: provider, language: language, url: url});
+    fs.writeFile('./latency/latency_urls.json', JSON.stringify(urls), function(err) {
       if (err) {
         console.error(err);
         process.exit(0);
@@ -53,7 +53,7 @@ function pushURL(provider, language, url) {
 }
 
 function resetURLs() {
-  fs.writeFile('latency_urls.json', '[]', function(err) {
+  fs.writeFile('./latency/latency_urls.json', '[]', function(err) {
     if (err) {
       console.error(err);
       process.exit(0);
