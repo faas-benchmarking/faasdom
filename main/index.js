@@ -1050,10 +1050,12 @@ async function cleanupAWS() {
 
 		await Promise.all(promises);
 
-		currentLogStatusAWS += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
-
 		if(error) {
+			runningStatusAWS = false;
+			resolve();
 			return;
+		} else {
+			currentLogStatusAWS += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 		}
 
 		if(awsFunctions.length == 0 && awsGateways.length == 0) {
@@ -1134,10 +1136,12 @@ async function cleanupAzure() {
 			error = true;
 		});
 
-		currentLogStatusAzure += 'Resource Groups loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
-
 		if(error) {
+			runningStatusAzure = false;
+			resolve();
 			return;
+		} else {
+			currentLogStatusAzure += 'Resource Groups loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 		}
 
 		if(azureResourceGroups.length == 0) {
@@ -1206,10 +1210,12 @@ async function cleanupGoogle() {
 			error = true;
 		});
 
-		currentLogStatusGoogle += 'Functions loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
-
 		if(error) {
+			runningStatusGoogle = false;
+			resolve();
 			return;
+		} else {
+			currentLogStatusGoogle += 'Functions loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 		}
 
 		if(googleFunctions.length == 0) {
@@ -1297,10 +1303,12 @@ async function cleanupIBM() {
 			error = true;
 		});
 
-		currentLogStatusIBM += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
-
 		if(error) {
+			runningStatusIBM = false;
+			resolve();
 			return;
+		} else {
+			currentLogStatusIBM += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
 		}
 
 		if(ibmFunctions.length == 0 && ibmGateways.length == 0) {
