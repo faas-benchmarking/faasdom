@@ -1,5 +1,5 @@
-const latencyModule = require("./latency.js");
-const factorsModule = require("./factors.js");
+const latencyModule = require("./latency/latency.js");
+const factorsModule = require("./factors/factors.js");
 const fs = require('fs');
 const exec = require('child_process').exec;
 const express = require('express');
