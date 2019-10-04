@@ -56,6 +56,7 @@ var latencyRunningInterval;
 var factorsRunningInterval;
 var memoryRunningInterval;
 var filesystemRunningInterval;
+var customRunningInterval;
 
 var azureNodeMutex = locks.createMutex();
 var azureDotnetMutex = locks.createMutex();
@@ -94,13 +95,16 @@ app.get('/run', function(req, res, next) {
 	runningStatus = true;
 	resetLogStatus();
 	currentLogStatus = 'Running...';
+	let timeout = 5000;
 	if(req.query.test == LATENCY) {
-		latencyRunningInterval = setInterval(function(){latencyModule.getLatency()}, 1000/req.query.rps);
+		latencyRunningInterval = setInterval(function(){latencyModule.getLatency(req.query.testName)}, timeout);
 	} else if(req.query.test == FACTORS) {
-		factorsRunningInterval = setInterval(function(){factorsModule.getFactors(req.query.n)}, 1000/req.query.rps);
+		factorsRunningInterval = setInterval(function(){factorsModule.getFactors(req.query.n, req.query.testName)}, timeout);
 	} else if(req.query.test == MEMORY) {
 		// TODO: implement
 	} else if(req.query.test == FILESYSTEM) {
+		// TODO: implement
+	} else if(req.query.test == CUSTOM) {
 		// TODO: implement
 	} else {
 		console.error('invalid test');
@@ -115,6 +119,7 @@ app.get('/stop', function(req, res, next) {
 	clearInterval(factorsRunningInterval);
 	clearInterval(memoryRunningInterval);
 	clearInterval(filesystemRunningInterval);
+	clearInterval(customRunningInterval);
 	res.send({data: currentLogStatus, running: runningStatus});
 });
 
