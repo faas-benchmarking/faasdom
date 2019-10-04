@@ -13,7 +13,8 @@ const influx = new Influx.InfluxDB({
       measurement: 'factors',
       fields: {
         ms: Influx.FieldType.INTEGER,
-        successful: Influx.FieldType.BOOLEAN
+        measured_ms: Influx.FieldType.FLOAT,
+        success: Influx.FieldType.BOOLEAN
       },
       tags: ['test', 'provider', 'language']
     }
@@ -61,36 +62,59 @@ function resetURLs() {
   urls = [];
 }
 
-async function getFactors(n) {
+async function getFactors(n, testName) {
   for(let i = 0; i<urls.length; i++) {
     request.get({
       url : urls[i].url,
       qs: {n: n},
       time : true
-    },function(err, response){
-        let data = JSON.parse(response.body);
+    },function(err, response, body){
+
+        let jsonBody;
         let success = false;
-        if(data.success != undefined && data.success == true) {
-            success = true;
+        let measured_ms = 0;
+        try {
+          jsonBody = JSON.parse(body);
+
+          if(!jsonBody.hasOwnProperty('success')) {
+            success = false;
+            measured_ms = 0;
+          } else {
+            success = jsonBody.success;
+            measured_ms = jsonBody.payload.time;
+          }
+
+          insertIntoDB(testName, response.elapsedTime, measured_ms, success, urls[i].language, urls[i].provider);
+
+        } catch (e) {
+          console.error(e);
+
+          console.error('Factors test from ' + urls[i].provider + ' in langauge ' + urls[i].language + ' with body:');
+          console.error(body);
+          console.error('Statuscode: ' + response.statusCode);
+          console.error('\n');
+
+          insertIntoDB(testName, response.elapsedTime, measured_ms, false, urls[i].language, urls[i].provider);
         }
-        insertIntoDB(response.elapsedTime, success, urls[i].language, urls[i].provider)
-        urls[i].latest = response.elapsedTime;
+
+        
     });
   }
 }
 
-function insertIntoDB(ms, success, language, provider) {
+function insertIntoDB(testName, ms, measured_ms, success, language, provider) {
   influx.writePoints([
     {
       measurement: 'factors',
       tags: {
-        test: 'secondTest',
+        test: testName,
         language: language,
         provider: provider
       },
       fields: {
         ms: ms,
-        successful: success
+        measured_ms: measured_ms,
+        success: success
       }
     }
   ])
