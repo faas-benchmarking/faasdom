@@ -184,7 +184,9 @@
                   </div>
                   <div class="card">
                     <div class="card-body">
-                      <h4 class="card-title">Run Tests</h4>
+                      <h4 class="card-title">Run Comparison Tests</h4>
+                      This will call each function from each cloud every 5 seconds and plot the results to grafana.
+                      This is a good reference of how fast the functions are executed under normal conditions and to compare the cloud providers and programming languages.
                       <div class="row" style="padding-bottom: 10px">
                           <div class="col-12">
                               <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -200,58 +202,55 @@
                                   <li class="nav-item">
                                     <a class="nav-link" id="filesystem-tab" data-toggle="tab" href="#filesystemContent" role="tab" aria-controls="filesystemContent" aria-selected="false">Filesystem</a>
                                   </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link" id="custom-tab" data-toggle="tab" href="#customContent" role="tab" aria-controls="customContent" aria-selected="false">Custom</a>
+                                  </li>
                                 </ul>
                                 <div class="tab-content" id="myTabContent">
                                   <div class="tab-pane fade show active" id="latencyContent" role="tabpanel" aria-labelledby="latency-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
                                     <div class="row" style="padding-left: 10px">
-                                      <div class="col-4" style="padding-top: 10px">  
-                                      <b>Requests per second (RPS):</b>
+                                      <div class="col-12" style="padding-top: 10px">  
+                                        <b>Test name:</b>
                                         <div>
-                                          <input id="rpsLatency" value="1" type="number" min="0" max="200" name="rpsLatency" style="max-width: 50px; text-align:right">
+                                          <input id="testNameLatency" value="myLatencyTest" type="text" name="testNameLatency" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
                                   </div>
                                   <div class="tab-pane fade" id="cpuContent" role="tabpanel" aria-labelledby="cpu-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
                                     <div class="row" style="padding-left: 10px">
-                                      <div class="col-4" style="padding-top: 10px">  
-                                        <b>Requests per second (RPS):</b>
-                                        <div>
-                                          <input id="rpsCPU" value="1" type="number" min="0" max="200" name="rpsCPU" style="max-width: 50px; text-align:right">
-                                        </div>
-                                      </div>
-                                      <div class="col-4" style="padding-top: 10px">  
+                                      <div class="col-6" style="padding-top: 10px">  
                                         <b>n (number to factorize):</b>
                                         <div>
-                                          <input id="nFactor" value="2688834647444046" type="number" name="nFactor" style="max-width: 250px; text-align:right">
+                                          <input id="nFactor" value="88834647444046" type="number" name="nFactor" style="max-width: 250px; text-align:right">
+                                        </div>
+                                      </div>
+                                      <div class="col-6" style="padding-top: 10px">  
+                                        <b>Test name:</b>
+                                        <div>
+                                          <input id="testNameCPU" value="myCPUTest" type="text" name="testNameCPU" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
                                   </div>
                                   <div class="tab-pane fade" id="memoryContent" role="tabpanel" aria-labelledby="memory-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
                                     <div class="row" style="padding-left: 10px">
-                                      <div class="col-4" style="padding-top: 10px">  
-                                        <b>Requests per second (RPS):</b>
-                                        <div>
-                                          <input id="rpsMemory" value="1" type="number" min="0" max="200" name="rpsMemory" style="max-width: 50px; text-align:right">
-                                        </div>
-                                      </div>
                                       <div class="col-6" style="padding-top: 10px">  
                                         <b>n (# characters appended to string):</b>
                                         <div>
                                           <input id="nMemory" value="100000" type="number" name="nMemory" style="max-width: 250px; text-align:right">
                                         </div>
                                       </div>
+                                      <div class="col-6" style="padding-top: 10px">  
+                                        <b>Test name:</b>
+                                        <div>
+                                          <input id="testNameMemory" value="myMemoryTest" type="text" name="testNameMemory" style="max-width: 250px">
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                   <div class="tab-pane fade" id="filesystemContent" role="tabpanel" aria-labelledby="filesystem-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
-                                    <div class="row" style="padding-left: 10px">  
-                                      <div class="col-4" style="padding-top: 10px">  
-                                        <b>Requests per second (RPS):</b>
-                                        <div>
-                                          <input id="rpsFilesystem" value="1" type="number" min="0" max="200" name="rpsFilesystem" style="max-width: 50px; text-align:right">
-                                        </div>
-                                      </div>
+                                    <div class="row" style="padding-left: 10px">
                                       <div class="col-4" style="padding-top: 10px">  
                                         <b>n (# files to write and read):</b>
                                         <div>
@@ -262,6 +261,22 @@
                                         <b>bytes (# bytes written/read per file):</b>
                                         <div>
                                           <input id="bytesFilesystem" value="10240" type="number" name="bytesFilesystem" style="max-width: 250px; text-align:right">
+                                        </div>
+                                      </div>
+                                      <div class="col-4" style="padding-top: 10px">  
+                                        <b>Test name:</b>
+                                        <div>
+                                          <input id="testNameFilesystem" value="myFilesystemTest" type="text" name="testNameFilesystem" style="max-width: 250px">
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="tab-pane fade" id="customContent" role="tabpanel" aria-labelledby="custom-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
+                                    <div class="row" style="padding-left: 10px">
+                                      <div class="col-12" style="padding-top: 10px">  
+                                        <b>Test name:</b>
+                                        <div>
+                                          <input id="testNameCustom" value="myCustomTest" type="text" name="testNameCustom" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
@@ -347,12 +362,14 @@ $('#runButton').click(function cleanup(){
   var data = {};
 
   if( activeTab == 'latency-tab') {
-    data = { test: 'latency', rps: $('#rpsLatency').val() };
+    data = { test: 'latency', testName: $('#testNameLatency').val() };
   } else if(activeTab == 'cpu-tab') {
-    data = { test: 'factors', rps: $('#rpsCPU').val(), n: $('#nFactor').val() };
+    data = { test: 'factors', n: $('#nFactor').val(), testName: $('#testNameCPU').val() };
   } else if(activeTab == 'memory-tab') {
     $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
   } else if(activeTab == 'filesystem-tab') {
+    $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
+  } else if(activeTab == 'custom-tab') {
     $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
   }
 
