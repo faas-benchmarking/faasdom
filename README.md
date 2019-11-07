@@ -24,10 +24,10 @@ The basic idea is that you can deploy and run various tests and see how they per
 ### Available tests
 
   - **Latency test:** measures the latency of a very simple function
-  - **CPU test (factors):** calculates the factors of a big number iteratively to benchmark the CPU performance
+  - **CPU test (factors):** calculates the factors of a number iteratively to benchmark the CPU performance
   - **Memory test:** uses up as much memory as possible to see how much the function can actually use
-  - **Filesystem test:** writes and reads 10'000 time a 10kB text file to the filesystem
-  - more tests will follow soon...
+  - **Filesystem test:** writes and reads n times a x kB text file to the filesystem
+  - **Custom test:** implement you own test, templates are provided
 
 ## Getting started
 
@@ -75,11 +75,6 @@ docker volume create google-secrets
 docker volume create ibm-secrets
 docker volume create azure-secrets
 
-# copy all data into the docker volume (IMPORTANT: run from the project root directory!)
-docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip
-docker cp . helper:/data
-docker rm helper
-
 # mount the volumes and login with the cloud provider
 docker run --rm -tiv aws-secrets:/root/.aws mikesir87/aws-cli aws configure
 docker run --rm -tiv azure-secrets:/root/.azure microsoft/azure-cli az login
@@ -100,11 +95,6 @@ To stop and remove containers run:
 
 ```bash
 docker-compose down
-```
-
-To copy the app data again to the docker volume run (**IMPORTANT**: run from the project root directory!):
-```bash
-docker volume rm serverless-data && docker volume create serverless-data && docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip && docker cp . helper:/data && docker rm helper
 ```
 
 To delete all images:
