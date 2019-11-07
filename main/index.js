@@ -182,6 +182,7 @@ app.get('/status', function(req, res, next) {
 });
 
 loadConfig();
+copyDockerData();
 app.listen(3001, function () {
 	console.log('App listening on port 3001!')
 });
@@ -190,6 +191,25 @@ app.listen(3001, function () {
 function loadConfig() {
 	config_file = fs.readFileSync("./config.json");
 	config = JSON.parse(config_file);
+}
+
+/** Copy data to docker volume serverless-data */
+async function copyDockerData() {
+	var error = false;
+	await execShellCommand('docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip:latest').catch((err) => {
+		error = true;
+	});
+	await execShellCommand('docker cp .. helper:/data').catch((err) => {
+		error = true;
+	});
+	await execShellCommand('docker rm helper').catch((err) => {
+		error = true;
+	});
+	if(!error) {
+		console.log('INFO: Data copied to docker volume "serverless-data".');
+	} else {
+		console.error('ERROR: Could not copy data to docker volume "serverless-data".');
+	}
 }
 
 /** reset all log variables */
