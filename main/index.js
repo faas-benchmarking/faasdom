@@ -29,6 +29,12 @@ const providers = [AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM];
 const languages = [NODE, PYTHON, GO, DOTNET];
 const tests = [LATENCY, FACTORS, MEMORY, CUSTOM];
 
+/** Constant strings */
+const AWS_CONTAINER_IMAGE = 'mikesir87/aws-cli:1.16.275';
+const AZURE_CONTAINER_IMAGE = 'mcr.microsoft.com/azure-cli:2.0.76';
+const GOOGLE_CONTAINER_IMAGE = 'google/cloud-sdk:270.0.0-alpine';
+const IBM_CONTAINER_IMAGE = 'ibmcom/ibm-cloud-developer-tools-amd64:0.20.0';
+
 /** variable for config data */
 var config;
 
@@ -277,19 +283,19 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(AWS, NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs8.10', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram, params.timeout);
+			let p = deployFunction(AWS, NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs8.10', '', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
-			let p = deployFunction(AWS, PYTHON, func, 'python_' + func, 'python_' + func, 'python_' + func, 'python3.6', 'function.my_handler', '/aws/src/python/python_' + func + '/', 'Python', '', '', params.ram, params.timeout);
+			let p = deployFunction(AWS, PYTHON, func, 'python_' + func, 'python_' + func, 'python_' + func, 'python3.7', '', 'function.my_handler', '/aws/src/python/python_' + func + '/', 'Python', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.go == 'true') {
-			let p = deployFunction(AWS, GO, func, 'go_' + func, 'go_' + func, 'go_' + func, 'go1.x', func, '/aws/src/go/go_' + func + '/', 'Go', '', '', params.ram, params.timeout);
+			let p = deployFunction(AWS, GO, func, 'go_' + func, 'go_' + func, 'go_' + func, 'go1.x', '', func, '/aws/src/go/go_' + func + '/', 'Go', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.dotnet == 'true') {
-			let p = deployFunction(AWS, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, 'dotnet_' + func, 'dotnetcore2.1', funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Handler::HandleFunction', '/aws/src/dotnet/' + funcFirstUpperCase + '/', '.NET', '', '', params.ram, params.timeout);
+			let p = deployFunction(AWS, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, 'dotnet_' + func, 'dotnetcore2.1', '', funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Handler::HandleFunction', '/aws/src/dotnet/' + funcFirstUpperCase + '/', '.NET', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 
@@ -317,18 +323,18 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(AZURE, NODE, func, 'node-' + func, '', '', 'node', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
+			let p = deployFunction(AZURE, NODE, func, 'node-' + func, '', '', 'node', '8', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
-			let p = deployFunction(AZURE, PYTHON, func, 'python-' + func, '', '', 'python', '', '/azure/src/python/python_' + func, 'Python', '', '', params.ram, params.timeout);
+			let p = deployFunction(AZURE, PYTHON, func, 'python-' + func, '', '', 'python', '3.7', '', '/azure/src/python/python_' + func, 'Python', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.go == 'true') {
 			currentLogStatusAzure += '<li><span style="color:orange">SKIP:</span> No Go runtime</li>';
 		}
 		if(params.dotnet == 'true') {
-			let p = deployFunction(AZURE, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '', params.ram, params.timeout);
+			let p = deployFunction(AZURE, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '2', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 
@@ -356,7 +362,7 @@ async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(AZUREWINDOWS, NODE, func, 'node-' + func, '', '', 'node', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
+			let p = deployFunction(AZUREWINDOWS, NODE, func, 'node-' + func, '', '', 'node', '8', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
@@ -366,7 +372,7 @@ async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 			currentLogStatusAzureWindows += '<li><span style="color:orange">SKIP:</span> No Go runtime</li>';
 		}
 		if(params.dotnet == 'true') {
-			let p = deployFunction(AZUREWINDOWS, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '', params.ram, params.timeout);
+			let p = deployFunction(AZUREWINDOWS, DOTNET, func, 'dotnet-' + func, '', '', 'dotnet', '2', '', '/azure/src/dotnet/dotnet_' + func, '.NET', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 
@@ -394,15 +400,15 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(GOOGLE, NODE, func, 'node_' + func, '', '', 'nodejs8', '', '/google/src/node/' + func, 'Node.js', '', '', params.ram, params.timeout);
+			let p = deployFunction(GOOGLE, NODE, func, 'node_' + func, '', '', 'nodejs8', '', '', '/google/src/node/' + func, 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
-			let p = deployFunction(GOOGLE, PYTHON, func, 'python_' + func, '', '', 'python37', '', '/google/src/python/' + func, 'Python', '', '', params.ram, params.timeout);
+			let p = deployFunction(GOOGLE, PYTHON, func, 'python_' + func, '', '', 'python37', '', '', '/google/src/python/' + func, 'Python', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.go == 'true') {
-			let p = deployFunction(GOOGLE, GO, func, 'Go_' + func, '', '', 'go111', '', '/google/src/go/' + func, 'Go', '', '', params.ram, params.timeout);
+			let p = deployFunction(GOOGLE, GO, func, 'Go_' + func, '', '', 'go111', '', '', '/google/src/go/' + func, 'Go', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.dotnet == 'true') {
@@ -433,19 +439,19 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 		//var promises = [];
 
 		if(params.node == 'true') {
-			await deployFunction(IBM, NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
+			await deployFunction(IBM, NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:8', '', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
 			//promises.push(p);
 		}
 		if(params.python == 'true') {
-			await deployFunction(IBM, PYTHON, func, 'python_' + func, 'python_' + func, '', 'python:3.7', '', '/ibm/src/python/' + func + '/main.py', 'Python', ' ', 'json', params.ram, params.timeout);
+			await deployFunction(IBM, PYTHON, func, 'python_' + func, 'python_' + func, '', 'python:3.7', '', '', '/ibm/src/python/' + func + '/main.py', 'Python', ' ', 'json', params.ram, params.timeout);
 			//promises.push(p);
 		}
 		if(params.go == 'true') {
-			await deployFunction(IBM, GO, func, 'go_' + func, 'go_' + func, '', 'go:1.11', '', '/ibm/src/go/' + func + '/' + func + '.go', 'Go', ' ', 'json', params.ram, params.timeout);
+			await deployFunction(IBM, GO, func, 'go_' + func, 'go_' + func, '', 'go:1.11', '', '', '/ibm/src/go/' + func + '/' + func + '.go', 'Go', ' ', 'json', params.ram, params.timeout);
 			//promises.push(p);
 		}
 		if(params.dotnet == 'true') {
-			await deployFunction(IBM, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, '', 'dotnet:2.2', '', '/ibm/src/dotnet/' + funcFirstUpperCase + '/', '.NET', ' --main ' + funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Dotnet::Main', 'json', params.ram, params.timeout)
+			await deployFunction(IBM, DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, '', 'dotnet:2.2', '', '', '/ibm/src/dotnet/' + funcFirstUpperCase + '/', '.NET', ' --main ' + funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Dotnet::Main', 'json', params.ram, params.timeout)
 			//promises.push(p);
 		}
 
@@ -460,7 +466,7 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 }
 
 /** Deploy a function */
-async function deployFunction(provider, language, test, functionName, APIName, APIPath, runtime, handler, srcPath, languageName, mainMethod, responseType, ram, timeout) {
+async function deployFunction(provider, language, test, functionName, APIName, APIPath, runtime, runtimeVersion, handler, srcPath, languageName, mainMethod, responseType, ram, timeout) {
 	if(providers.includes(provider) && language.includes(language)) {
 
 		let url = '';
@@ -472,13 +478,13 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			let start = now();
 
-			let dockerPrefixBothVolumes = 'docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' mikesir87/aws-cli:1.16.216 ';
-			let dockerPrefixOnlyCLIVolume = 'docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli:1.16.216 ';
+			let dockerPrefixBothVolumes = 'docker run --rm -v aws-secrets:/root/.aws -v serverless-data:' + dockerMountPoint + ' ' + AWS_CONTAINER_IMAGE + ' ';
+			let dockerPrefixOnlyCLIVolume = 'docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' ';
 
 			if(language == NODE) {
 
 				/** Run npm install */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:8.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 					error = true;
 					currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
@@ -511,7 +517,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			} else if(language == GO) {
 
 				/** Build go */
-				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " golang:1.12-stretch /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; go clean; go get github.com/aws/aws-lambda-go/lambda github.com/aws/aws-lambda-go/events; go build *.go'").catch((err) => {
+				await execShellCommand("docker run --rm -v serverless-data:" + dockerMountPoint + " golang:1.11-stretch /bin/sh -c 'cd " + dockerMountPoint + srcPath + "; go clean; go get github.com/aws/aws-lambda-go/lambda github.com/aws/aws-lambda-go/events; go build *.go'").catch((err) => {
 					error = true;
 					currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
@@ -532,7 +538,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			} else if(language == DOTNET) {
 
 				/** Build and zip function */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.1-alpine3.9 /bin/sh -c \'apk -uv add --no-cache zip; cd ' + dockerMountPoint + srcPath + '; dotnet build; dotnet tool install -g Amazon.Lambda.Tools; dotnet lambda package -C Release -o ' + functionName + '.zip -f netcoreapp2.1\'').catch((err) => {
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.2-alpine3.9 /bin/sh -c \'apk -uv add --no-cache zip; cd ' + dockerMountPoint + srcPath + '; dotnet build; dotnet tool install -g Amazon.Lambda.Tools; dotnet lambda package -C Release -o ' + functionName + '.zip -f netcoreapp2.1\'').catch((err) => {
 					error = true;
 					currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
@@ -661,8 +667,8 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			let start = now();
 
-			let dockerPrefixBothVolumes = 'docker run --rm -v azure-secrets:/root/.azure -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/azure-cli:2.0.71 ';
-			let dockerPrefixOnlyCLIVolume = 'docker run --rm -v azure-secrets:/root/.azure mcr.microsoft.com/azure-cli:2.0.71 ';
+			let dockerPrefixBothVolumes = 'docker run --rm -v azure-secrets:/root/.azure -v serverless-data:' + dockerMountPoint + ' ' + AZURE_CONTAINER_IMAGE + ' ';
+			let dockerPrefixOnlyCLIVolume = 'docker run --rm -v azure-secrets:/root/.azure ' + AZURE_CONTAINER_IMAGE + ' ';
 
 			let rnd = Math.floor(Math.random()*(999-100+1)+100);
 			let resourcegroupname = functionName + '-rg';
@@ -686,7 +692,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				azureNodeMutex.lock(async function() {
 
 					/** Run npm install */
-					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:8.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 						error = true;
 						if(provider == AZURE) {
 							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
@@ -732,7 +738,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				azureDotnetMutex.lock(async function() {
 
 					/** Build function */
-					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.1-alpine3.9 dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + '/out').catch((err) => {
+					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.2-alpine3.9 dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + '/out').catch((err) => {
 						error = true;
 						if(provider == AZURE) {
 							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
@@ -791,7 +797,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** Create a function app */
-			await execShellCommand(dockerPrefixOnlyCLIVolume + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + functionNamePostfix + rnd + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --os-type ' + os).catch((err) => {
+			await execShellCommand(dockerPrefixOnlyCLIVolume + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + functionNamePostfix + rnd + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --runtime-version ' + runtimeVersion + ' --os-type ' + os).catch((err) => {
 				error = true;
 				if(provider == AZURE) {
 					currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while creating function app. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
@@ -814,7 +820,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				while(error) {
 
 					error = false;
-
+					
 					await execShellCommand(dockerPrefixBothVolumes + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + functionNamePostfix + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip --timeout ' + timeout).catch((err) => {
 						error = true;
 					});
@@ -856,10 +862,10 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			let start = now();
 
-			let dockerPrefixBothVolumes = 'docker run --rm -v google-secrets:/root/.config/gcloud -v serverless-data:' + dockerMountPoint + ' google/cloud-sdk:257.0.0-alpine ';
+			let dockerPrefixBothVolumes = 'docker run --rm -v google-secrets:/root/.config/gcloud -v serverless-data:' + dockerMountPoint + ' ' + GOOGLE_CONTAINER_IMAGE + ' ';
 
 			/** Deploy function */
-			await execShellCommand(dockerPrefixBothVolumes + 'gcloud functions deploy ' + functionName + ' --region=' + config.google.region + ' --memory=' + ram + config.google.memory_appendix + ' --timeout=' + timeout + config.google.timeout_appendix + ' --runtime=' + runtime + ' --trigger-http --source=' + dockerMountPoint + srcPath).catch((err) => {
+			await execShellCommand(dockerPrefixBothVolumes + 'gcloud functions deploy ' + functionName + ' --region=' + config.google.region + ' --memory=' + ram + config.google.memory_appendix + ' --timeout=' + timeout + config.google.timeout_appendix + ' --runtime=' + runtime + ' --trigger-http --source=' + dockerMountPoint + srcPath + ' --allow-unauthenticated').catch((err) => {
 				error = true;
 				currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Error happened while deploying function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
@@ -879,13 +885,13 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 			let start = now();
 
-			let dockerPrefixBothVolumes = 'docker run --rm -v ibm-secrets:/root/.bluemix -v serverless-data:' + dockerMountPoint + ' ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ';
-			let dockerPrefixOnlyCLIVolume = 'docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ';
+			let dockerPrefixBothVolumes = 'docker run --rm -v ibm-secrets:/root/.bluemix -v serverless-data:' + dockerMountPoint + ' ' + IBM_CONTAINER_IMAGE + ' ';
+			let dockerPrefixOnlyCLIVolume = 'docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ';
 
 			if(language == NODE) {
 
 				/** Run npm install */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:8.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 					error = true;
 					currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
@@ -906,7 +912,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			} else if(language == DOTNET) {
 
 				/** Build function */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.1-alpine3.9 dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + 'out').catch((err) => {
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' mcr.microsoft.com/dotnet/core/sdk:2.2-alpine3.9 dotnet publish ' + dockerMountPoint + srcPath + ' -c Release -o ' + dockerMountPoint + srcPath + 'out').catch((err) => {
 					error = true;
 					currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Error happened while building function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
@@ -1025,7 +1031,7 @@ async function cleanupAWS() {
 
 		for(let i = 0; i<config.aws.region_options.length; i++) {
 
-			let p1 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli:1.16.216 aws lambda list-functions --region ' + config.aws.region_options[i])
+			let p1 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws lambda list-functions --region ' + config.aws.region_options[i])
 			.then((stdout) => {
 				let awslambda = JSON.parse(stdout);
 				for(let i = 0; i<awslambda.Functions.length; i++) {
@@ -1038,7 +1044,7 @@ async function cleanupAWS() {
 			});
 			promises.push(p1);
 	
-			let p2 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli:1.16.216 aws apigateway get-rest-apis --region ' + config.aws.region_options[i])
+			let p2 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws apigateway get-rest-apis --region ' + config.aws.region_options[i])
 			.then((stdout) => {
 				let awsapi = JSON.parse(stdout);
 				for(let i = 0; i<awsapi.items.length; i++) {
@@ -1071,7 +1077,7 @@ async function cleanupAWS() {
 
 		for(let i = 0; i<awsFunctions.length; i++) {
 			let start = now();
-			let p = execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli:1.16.216 aws lambda delete-function --function-name ' + awsFunctions[i] + ' --region ' + config.aws.region)
+			let p = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws lambda delete-function --function-name ' + awsFunctions[i] + ' --region ' + config.aws.region)
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
@@ -1091,7 +1097,7 @@ async function cleanupAWS() {
 			if(i>0) {
 				await new Promise(resolve => setTimeout(resolve, 30000));
 			}
-			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws mikesir87/aws-cli:1.16.216 aws apigateway delete-rest-api --rest-api-id ' + awsGateways[i] + ' --region ' + config.aws.region)
+			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws apigateway delete-rest-api --rest-api-id ' + awsGateways[i] + ' --region ' + config.aws.region)
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
@@ -1127,7 +1133,7 @@ async function cleanupAzure() {
 
 		let error = false;
 
-		await execShellCommand('docker run --rm -v azure-secrets:/root/.azure mcr.microsoft.com/azure-cli:2.0.71 az group list')
+		await execShellCommand('docker run --rm -v azure-secrets:/root/.azure ' + AZURE_CONTAINER_IMAGE + ' az group list')
 		.then((stdout) => {
 			let azureresourcegroups = JSON.parse(stdout);
 			for(let i = 0; i<azureresourcegroups.length; i++) {
@@ -1157,7 +1163,7 @@ async function cleanupAzure() {
 
 		for(let i = 0; i<azureResourceGroups.length; i++) {
 			let start = now();
-			let p = execShellCommand('docker run --rm -v azure-secrets:/root/.azure mcr.microsoft.com/azure-cli:2.0.71 az group delete --name ' + azureResourceGroups[i] + ' --yes')
+			let p = execShellCommand('docker run --rm -v azure-secrets:/root/.azure ' + AZURE_CONTAINER_IMAGE + ' az group delete --name ' + azureResourceGroups[i] + ' --yes')
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
@@ -1197,7 +1203,7 @@ async function cleanupGoogle() {
 
 		let error = false;
 
-		await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk:257.0.0-alpine gcloud functions list')
+		await execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud ' + GOOGLE_CONTAINER_IMAGE + ' gcloud functions list')
 		.then((stdout) => {
 			let googlefunctions = stdout;
 			let array = googlefunctions.split('\n');
@@ -1229,7 +1235,7 @@ async function cleanupGoogle() {
 		var promises = [];
 		for(let i = 0; i<googleFunctions.length; i++) {
 			let start = now();
-			let p = execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud google/cloud-sdk:257.0.0-alpine gcloud functions delete ' + googleFunctions[i] + ' --region ' + config.google.region + ' --quiet')
+			let p = execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud ' + GOOGLE_CONTAINER_IMAGE + ' gcloud functions delete ' + googleFunctions[i] + ' --region ' + config.google.region + ' --quiet')
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
@@ -1269,7 +1275,7 @@ async function cleanupIBM() {
 
 		let error = false;
 
-		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn api list')
+		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn api list')
 		.then((stdout) => {
 			let ibmapi = stdout;
 			let array2 = ibmapi.split('\n');
@@ -1289,7 +1295,7 @@ async function cleanupIBM() {
 			error = true;
 		});
 
-		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn action list')
+		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn action list')
 		.then((stdout) => {
 			let ibmactions = stdout;
 			let array3 = ibmactions.split('\n');
@@ -1322,7 +1328,7 @@ async function cleanupIBM() {
 
 		for(let i = 0; i<ibmGateways.length; i++) {
 			let start = now();
-			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn api delete / /' + ibmGateways[i])
+			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn api delete / /' + ibmGateways[i])
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
@@ -1335,7 +1341,7 @@ async function cleanupIBM() {
 
 		for(let i = 0; i<ibmFunctions.length; i++) {
 			let start = now();
-			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.18.0 ibmcloud fn action delete ' + ibmFunctions[i])
+			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn action delete ' + ibmFunctions[i])
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
