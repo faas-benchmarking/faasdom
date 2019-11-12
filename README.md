@@ -75,14 +75,19 @@ docker volume create google-secrets
 docker volume create ibm-secrets
 docker volume create azure-secrets
 
+# copy all data into the docker volume (IMPORTANT: run from the project root directory!)
+docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip
+docker cp . helper:/data
+docker rm helper
+
 # mount the volumes and login with the cloud provider
-docker run --rm -tiv aws-secrets:/root/.aws mikesir87/aws-cli aws configure
-docker run --rm -tiv azure-secrets:/root/.azure microsoft/azure-cli az login
-docker run --rm -tiv google-secrets:/root/.config/gcloud google/cloud-sdk gcloud init
-docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud login
+docker run --rm -tiv aws-secrets:/root/.aws mikesir87/aws-cli:1.16.275 aws configure
+docker run --rm -tiv azure-secrets:/root/.azure microsoft/azure-cli:2.0.76 az login
+docker run --rm -tiv google-secrets:/root/.config/gcloud google/cloud-sdk:270.0.0-alpine gcloud init
+docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.20.0 ibmcloud login
 
 # with ibm you also have to set the region -r, the API endpoint --cf-api, the organization -o and the space -s
-docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud target -r <YOUR_REGION> --cf-api https://api.<YOUR_REGION>.bluemix.net -o <YOUR_ORGANIZATION> -s <YOUR_SPACE>
+docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.20.0 ibmcloud target -r <YOUR_REGION> --cf-api https://api.<YOUR_REGION>.bluemix.net -o <YOUR_ORGANIZATION> -s <YOUR_SPACE>
 ```
 
 To start the main application (in the folder [main](main/)) run:
