@@ -1,11 +1,22 @@
 const latencyModule = require("./latency/latency.js");
 const factorsModule = require("./factors/factors.js");
+const pricing = require ('./pricing.js');
 const fs = require('fs');
 const exec = require('child_process').exec;
 const express = require('express');
 const app = express();
 const now = require('performance-now');
 const locks = require('locks');
+const Influx = require('influx');
+
+const influx = new Influx.InfluxDB({
+    host: 'db',
+    port: 8086,
+    database: 'results',
+    username: 'benchmark-suite',
+    password: 'benchmark',
+    schema: []
+});
 
 /** constants with providers and languages */
 const AWS = 'aws';
@@ -129,6 +140,57 @@ app.get('/stop', function(req, res, next) {
 	res.send({data: currentLogStatus, running: runningStatus});
 });
 
+app.get('/theoreticalPricing', function(req, res, next) {
+	resetLogStatus();
+	let tables = pricing.calcAllPrices(Number(req.query.calls), Number(req.query.execTime), Number(req.query.size), Number(req.query.memory));
+	let result = '';
+	for(let i=0; i<tables.length; i++) {
+		result += '<div class="row" style="min-height: 20px"></div>';
+		result += '<style>table {font-family: arial, sans-serif;border-collapse: collapse; width: 95%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 2px;}</style>';
+		result += '<div class="row"><table><tr><th>'+tables[i].provider+'</th><th>Gross Value</th><th>Free Tier</th><th>Net Value</th><th>Unit Price</th><th>Total Price</th> </tr>';
+		result += '<tr><td>Invocations</td><td>'+tables[i].invocations.gross.toLocaleString()+'</td><td>'+tables[i].invocations.free.toLocaleString()+'</td><td>'+tables[i].invocations.net.toLocaleString()+'</td><td>'+tables[i].invocations.unit.toFixed(7)+' $</td><td>'+tables[i].invocations.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><td>GB-seconds</td><td>'+tables[i].gb_seconds.gross.toLocaleString()+'</td><td>'+tables[i].gb_seconds.free.toLocaleString()+'</td><td>'+tables[i].gb_seconds.net.toLocaleString()+'</td><td>'+tables[i].gb_seconds.unit.toFixed(10)+' $</td><td>'+tables[i].gb_seconds.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><td>GHz-seconds</td><td>'+tables[i].ghz_seconds.gross.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.free.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.net.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.unit.toFixed(5)+' $</td><td>'+tables[i].ghz_seconds.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><td>Networking</td><td>'+tables[i].networking.gross.toLocaleString()+' GB</td><td>'+tables[i].networking.free.toLocaleString()+' GB</td><td>'+tables[i].networking.net.toLocaleString()+' GB</td><td>'+tables[i].networking.unit.toFixed(3)+' $</td><td>'+tables[i].networking.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><th>Total / Month</th><th></th><th></th><th></th><th></th><th>'+tables[i].total_price.toFixed(2)+' $</th></tr>';
+		result += '</table></div>';
+	}
+	res.send({data: result, running: runningStatus});
+});
+
+app.get('/testedPricing', async function(req, res, next) {
+	resetLogStatus();
+	let tables = await pricing.calcAllPricesFromTest(Number(req.query.calls), req.query.testName, req.query.test, req.query.runtime);
+	let result = '';
+	for(let i=0; i<tables.length; i++) {
+		result += '<div class="row" style="min-height: 20px"></div>';
+		result += '<style>table {font-family: arial, sans-serif;border-collapse: collapse; width: 95%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 2px;}</style>';
+		result += '<div class="row"><table><tr><th>'+tables[i].provider+', mean time: '+tables[i].execTime.toFixed(0)+' ms</th><th>Gross Value</th><th>Free Tier</th><th>Net Value</th><th>Unit Price</th><th>Total Price</th> </tr>';
+		result += '<tr><td>Invocations</td><td>'+tables[i].invocations.gross.toLocaleString()+'</td><td>'+tables[i].invocations.free.toLocaleString()+'</td><td>'+tables[i].invocations.net.toLocaleString()+'</td><td>'+tables[i].invocations.unit.toFixed(7)+' $</td><td>'+tables[i].invocations.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><td>GB-seconds</td><td>'+tables[i].gb_seconds.gross.toLocaleString()+'</td><td>'+tables[i].gb_seconds.free.toLocaleString()+'</td><td>'+tables[i].gb_seconds.net.toLocaleString()+'</td><td>'+tables[i].gb_seconds.unit.toFixed(10)+' $</td><td>'+tables[i].gb_seconds.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><td>GHz-seconds</td><td>'+tables[i].ghz_seconds.gross.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.free.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.net.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.unit.toFixed(5)+' $</td><td>'+tables[i].ghz_seconds.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><td>Networking</td><td>'+tables[i].networking.gross.toLocaleString()+' GB</td><td>'+tables[i].networking.free.toLocaleString()+' GB</td><td>'+tables[i].networking.net.toLocaleString()+' GB</td><td>'+tables[i].networking.unit.toFixed(3)+' $</td><td>'+tables[i].networking.total.toFixed(2)+' $</td></tr>';
+		result += '<tr><th>Total / Month</th><th></th><th></th><th></th><th></th><th>'+tables[i].total_price.toFixed(2)+' $</th></tr>';
+		result += '</table></div>';
+	}
+	res.send({data: result, running: runningStatus});
+});
+
+app.get('/testedPricingAvailableTestNames', async function(req, res, next) {
+	resetLogStatus();
+	let result = '';
+	let rawData;
+	await influx.query(`
+		show tag values from ${req.query.test} with key = "test"
+	`)
+	.then( result => rawData = result )
+	.catch( error => console.error(error) );
+
+	for(let i = 0; i<rawData.length; i++) {
+		result += '<option value="'+rawData[i].value+'">'+rawData[i].value+'</option>';
+	}
+	res.send({data: result, running: runningStatus});
+});
 
 app.get('/cleanup', function(req, res, next) {
 	runningStatus = true;
@@ -182,9 +244,10 @@ app.get('/status', function(req, res, next) {
 });
 
 loadConfig();
-copyDockerData();
+// only for testing
+//copyDockerData();
 app.listen(3001, function () {
-	console.log('App listening on port 3001!')
+	console.log('INFO: App listening on port 3001!')
 });
 
 /** load configurations from file */
@@ -199,7 +262,8 @@ async function copyDockerData() {
 	await execShellCommand('docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip:latest').catch((err) => {
 		error = true;
 	});
-	await execShellCommand('docker cp .. helper:/data').catch((err) => {
+	// TODO: only for testing
+	await execShellCommand('docker cp ../. helper:/data').catch((err) => {
 		error = true;
 	});
 	await execShellCommand('docker rm helper').catch((err) => {
@@ -487,7 +551,7 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 
 /** Deploy a function */
 async function deployFunction(provider, language, test, functionName, APIName, APIPath, runtime, runtimeVersion, handler, srcPath, languageName, mainMethod, responseType, ram, timeout) {
-	if(providers.includes(provider) && language.includes(language)) {
+	if(providers.includes(provider) && languages.includes(language)) {
 
 		let url = '';
 		let error = false;
@@ -990,9 +1054,9 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 		console.log(url);
 
 		if(test == LATENCY) {
-			latencyModule.pushURL(provider, language, url);
+			latencyModule.pushURL(provider, language, url, ram);
 		} else if(test == FACTORS) {
-			factorsModule.pushURL(provider, language, url);
+			factorsModule.pushURL(provider, language, url, ram);
 		} else if (test == MEMORY) {
 			// TODO: similar to latency urls
 		} else if (test == FILESYSTEM) {

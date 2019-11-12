@@ -21,171 +21,188 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6" style="padding-top: 15px; padding-bottom: 15px">
-            <div class="card">
-                    <div class="card-body">
-                      <h4 class="card-title">Deploy Tests</h4>
-                      <div class="row" style="padding-bottom: 10px">
-                          <div class="col-2">
-                              <b>Test:</b>
-                              <div class="radio">
-                                  <label><input id="latencyTest" type="radio" name="test" checked>Latency</label>
-                                </div>
+                  <div id="accordion">
+                    <div class="card">
+                      <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                          <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Deploy/Remove Tests
+                          </button>
+                        </h5>
+                      </div>
+                  
+                      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                          <div class="row" style="padding-bottom: 10px">
+                            <div class="col-2">
+                                <b>Test:</b>
                                 <div class="radio">
-                                  <label><input id="factorsTest" type="radio" name="test">CPU (Factors)</label>
-                                </div>
-                                <div class="radio">
-                                  <label><input id="memoryTest" type="radio" name="test">Memory</label>
-                                </div>
-                                <div class="radio">
-                                  <label><input id="filesystemTest" type="radio" name="test">Filesystem</label>
-                                </div>
-                                <div class="radio">
-                                  <label><input id="customTest" type="radio" name="test">Custom</label>
-                                </div>
-                          </div>
-                          <div class="col-2">
-                            <b>Memory (MB):</b>
-                            <div class="radio" id="memory">
-                                <label><input id="memory128" value="128" type="radio" name="ram" checked>128</label>
-                              </div>
-                              <div class="radio">
-                                <label><input id="memory256" value="256" type="radio" name="ram">256</label>
-                              </div>
-                              <div class="radio">
-                                <label><input id="memory512" value="512" type="radio" name="ram">512</label>
-                              </div>
-                              <div class="radio">
-                                <label><input id="memory1024" value="1024" type="radio" name="ram">1024</label>
-                              </div>
-                              <div class="radio">
-                                <label><input id="memory2048" value="2048" type="radio" name="ram">2048</label>
-                              </div>
-                        </div>
-                        <div class="col-2">
-                          <b>Timeout (s):</b>
-                          <div>
-                              <input id="timeout" value="30" type="number" name="timeout" style="max-width: 50px; text-align:right">
+                                    <label><input id="latencyTest" type="radio" name="test" checked>Latency</label>
+                                  </div>
+                                  <div class="radio">
+                                    <label><input id="factorsTest" type="radio" name="test">CPU (Factors)</label>
+                                  </div>
+                                  <div class="radio">
+                                    <label><input id="memoryTest" type="radio" name="test">Memory</label>
+                                  </div>
+                                  <div class="radio">
+                                    <label><input id="filesystemTest" type="radio" name="test">Filesystem</label>
+                                  </div>
+                                  <div class="radio">
+                                    <label><input id="customTest" type="radio" name="test">Custom</label>
+                                  </div>
                             </div>
-                      </div>
-                          <div class="col-3">
-                              <b>Clouds:</b>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="amazon">
-                                  <label class="form-check-label" for="amazon">Amazon Web Services</label>
+                            <div class="col-2">
+                              <b>Memory (MB):</b>
+                              <div class="radio" id="memory">
+                                  <label><input id="memory128" value="128" type="radio" name="ram" checked>128</label>
                                 </div>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="azure">
-                                  <label class="form-check-label" for="azure">Microsoft Azure (Linux)</label>
+                                <div class="radio">
+                                  <label><input id="memory256" value="256" type="radio" name="ram">256</label>
                                 </div>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="azureWindows">
-                                  <label class="form-check-label" for="azureWindows">Microsoft Azure (Windows)</label>
+                                <div class="radio">
+                                  <label><input id="memory512" value="512" type="radio" name="ram">512</label>
                                 </div>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="google">
-                                  <label class="form-check-label" for="google">Google Cloud</label>
+                                <div class="radio">
+                                  <label><input id="memory1024" value="1024" type="radio" name="ram">1024</label>
                                 </div>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="ibm">
-                                  <label class="form-check-label" for="ibm">IBM Cloud</label>
+                                <div class="radio">
+                                  <label><input id="memory2048" value="2048" type="radio" name="ram">2048</label>
                                 </div>
                           </div>
-                          <div class="col-3">
-                              <b>Languages:</b>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="node">
-                                  <label class="form-check-label" for="node">Node.js</label>
-                                </div>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="python">
-                                  <label class="form-check-label" for="python">Python</label>
-                                </div>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="go">
-                                  <label class="form-check-label" for="go">Go</label>
-                                </div>
-                                <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="dotnet">
-                                  <label class="form-check-label" for="dotnet">.NET</label>
-                                </div>
-                          </div>
-
-                      </div>
-                      <div class="row">
-                        <div class="col-6">
-                          <b>AWS Location:</b><br>
-                          <select id="awslocation" class="custom-select">
-                            <option value="us-east-2">us-east-2, US East (Ohio)</option>
-                            <option value="us-east-1">us-east-1, US East (N. Virginia)</option>
-                            <option value="us-west-1">us-west-1, US West (N. California)</option>
-                            <option value="us-west-2">us-west-2, US West (Oregon)</option>
-                            <option value="ap-south-1">ap-south-1, Asia Pacific (Mumbai)</option>
-                            <option value="ap-northeast-2">ap-northeast-2, Asia Pacific (Seoul)</option>
-                            <option value="ap-southeast-1">ap-southeast-1, Asia Pacific (Singapore)</option>
-                            <option value="ap-southeast-2">ap-southeast-2, Asia Pacific (Sydney)</option>
-                            <option value="ap-northeast-1">ap-northeast-1, Asia Pacific (Tokyo)</option>
-                            <option value="ca-central-1">ca-central-1, Canada (Central)</option>
-                            <option value="eu-central-1" selected>eu-central-1, EU (Frankfurt)</option>
-                            <option value="eu-west-1">eu-west-1, EU (Ireland)</option>
-                            <option value="eu-west-2">eu-west-2, EU (London)</option>
-                            <option value="eu-west-3">eu-west-3, EU (Paris)</option>
-                            <option value="eu-north-1">eu-north-1, EU (Stockholm)</option>
-                            <option value="sa-east-1">sa-east-1, South America (Sao Paulo)</option>
-                          </select>
+                          <div class="col-2">
+                            <b>Timeout (s):</b>
+                            <div>
+                                <input id="timeout" value="30" type="number" name="timeout" style="max-width: 50px; text-align:right">
+                              </div>
                         </div>
-                        <div class="col-6">
-                            <b>Azure Location:</b><br>
-                            <select id="azurelocation" class="custom-select">
-                              <option value="australiaeast">Australia East, New South Wales</option>
-                              <option value="eastasia">East Asia, Hong Kong</option>
-                              <option value="eastus">East US, Virginia</option>
-                              <option value="eastus2">East US 2, Virginia</option>
-                              <option value="northeurope">North Europe, Ireland</option>
-                              <option value="southcentralus">South Central US, Texas</option>
-                              <option value="southeastasia">Southeast Asia, Singapore</option>
-                              <option value="uksouth">UK South, London</option>
-                              <option value="westeurope" selected>West Europe, Netherlands</option>
-                              <option value="westus">West US, California</option>
-                              <option value="westus2">West US 2, Washington</option>
+                            <div class="col-3">
+                                <b>Clouds:</b>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="amazon">
+                                    <label class="form-check-label" for="amazon">Amazon Web Services</label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="azure">
+                                    <label class="form-check-label" for="azure">Microsoft Azure (Linux)</label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="azureWindows">
+                                    <label class="form-check-label" for="azureWindows">Microsoft Azure (Windows)</label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="google">
+                                    <label class="form-check-label" for="google">Google Cloud</label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="ibm">
+                                    <label class="form-check-label" for="ibm">IBM Cloud</label>
+                                  </div>
+                            </div>
+                            <div class="col-3">
+                                <b>Languages:</b>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="node">
+                                    <label class="form-check-label" for="node">Node.js</label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="python">
+                                    <label class="form-check-label" for="python">Python</label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="go">
+                                    <label class="form-check-label" for="go">Go</label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="dotnet">
+                                    <label class="form-check-label" for="dotnet">.NET</label>
+                                  </div>
+                            </div>
+  
+                        </div>
+                        <div class="row">
+                          <div class="col-6">
+                            <b>AWS Location:</b><br>
+                            <select id="awslocation" class="custom-select">
+                              <option value="us-east-2">us-east-2, US East (Ohio)</option>
+                              <option value="us-east-1">us-east-1, US East (N. Virginia)</option>
+                              <option value="us-west-1">us-west-1, US West (N. California)</option>
+                              <option value="us-west-2">us-west-2, US West (Oregon)</option>
+                              <option value="ap-south-1">ap-south-1, Asia Pacific (Mumbai)</option>
+                              <option value="ap-northeast-2">ap-northeast-2, Asia Pacific (Seoul)</option>
+                              <option value="ap-southeast-1">ap-southeast-1, Asia Pacific (Singapore)</option>
+                              <option value="ap-southeast-2">ap-southeast-2, Asia Pacific (Sydney)</option>
+                              <option value="ap-northeast-1">ap-northeast-1, Asia Pacific (Tokyo)</option>
+                              <option value="ca-central-1">ca-central-1, Canada (Central)</option>
+                              <option value="eu-central-1" selected>eu-central-1, EU (Frankfurt)</option>
+                              <option value="eu-west-1">eu-west-1, EU (Ireland)</option>
+                              <option value="eu-west-2">eu-west-2, EU (London)</option>
+                              <option value="eu-west-3">eu-west-3, EU (Paris)</option>
+                              <option value="eu-north-1">eu-north-1, EU (Stockholm)</option>
+                              <option value="sa-east-1">sa-east-1, South America (Sao Paulo)</option>
                             </select>
                           </div>
-                      </div>
-                      <br>
-                      <div class="row">
                           <div class="col-6">
-                            <b>Google Location:</b><br>
-                            <select id="googlelocation" class="custom-select">
-                              <option value="us-central1">us-central1, Iowa</option>
-                              <option value="us-east1">us-east1, South Carolina</option>
-                              <option value="us-east4">us-east4, Northern Virginia</option>
-                              <option value="europe-west1" selected>europe-west1, Belgium</option>
-                              <option value="europe-west2">europe-west2, London</option>
-                              <option value="asia-east2">asia-east2, Hong Kong</option>
-                              <option value="asia-northeast1">asia-northeast1, Tokyo</option>
-                            </select>
-                          </div>
-                          <div class="col-6">
-                              <b>IBM Location:</b><br>
-                              <select id="ibmlocation" class="custom-select">
-                                <option value="jp-tok">jp-tok, Tokyo</option>
-                                <option value="eu-de" selected>eu-de, Frankfurt</option>
-                                <option value="eu-gb">eu-gb, London</option>
-                                <option value="us-south">us-south, Dallas</option>
-                                <option value="us-east">us-east, Washington, D.C.</option>
+                              <b>Azure Location:</b><br>
+                              <select id="azurelocation" class="custom-select">
+                                <option value="australiaeast">Australia East, New South Wales</option>
+                                <option value="eastasia">East Asia, Hong Kong</option>
+                                <option value="eastus">East US, Virginia</option>
+                                <option value="eastus2">East US 2, Virginia</option>
+                                <option value="northeurope">North Europe, Ireland</option>
+                                <option value="southcentralus">South Central US, Texas</option>
+                                <option value="southeastasia">Southeast Asia, Singapore</option>
+                                <option value="uksouth">UK South, London</option>
+                                <option value="westeurope" selected>West Europe, Netherlands</option>
+                                <option value="westus">West US, California</option>
+                                <option value="westus2">West US 2, Washington</option>
                               </select>
                             </div>
                         </div>
-                      <br>
-                      <div class="row">
-                        <button id='deployButton' type="button" class="btn btn-primary" style="margin: 5px">Deploy</button>
-                        <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup All</button>
+                        <br>
+                        <div class="row">
+                            <div class="col-6">
+                              <b>Google Location:</b><br>
+                              <select id="googlelocation" class="custom-select">
+                                <option value="us-central1">us-central1, Iowa</option>
+                                <option value="us-east1">us-east1, South Carolina</option>
+                                <option value="us-east4">us-east4, Northern Virginia</option>
+                                <option value="europe-west1" selected>europe-west1, Belgium</option>
+                                <option value="europe-west2">europe-west2, London</option>
+                                <option value="asia-east2">asia-east2, Hong Kong</option>
+                                <option value="asia-northeast1">asia-northeast1, Tokyo</option>
+                              </select>
+                            </div>
+                            <div class="col-6">
+                                <b>IBM Location:</b><br>
+                                <select id="ibmlocation" class="custom-select">
+                                  <option value="jp-tok">jp-tok, Tokyo</option>
+                                  <option value="eu-de" selected>eu-de, Frankfurt</option>
+                                  <option value="eu-gb">eu-gb, London</option>
+                                  <option value="us-south">us-south, Dallas</option>
+                                  <option value="us-east">us-east, Washington, D.C.</option>
+                                </select>
+                              </div>
+                          </div>
+                        <br>
+                        <div class="row">
+                          <button id='deployButton' type="button" class="btn btn-primary" style="margin: 5px">Deploy</button>
+                          <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup All</button>
+                        </div>  
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="card">
-                    <div class="card-body">
-                      <h4 class="card-title">Run Comparison Tests</h4>
-                      This will call each function from each cloud every 5 seconds and plot the results to grafana.
+                    <div class="card">
+                      <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Run Comparison Tests
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div class="card-body">
+                          This will call each function from each cloud every 5 seconds and plot the results to grafana.
                       This is a good reference of how fast the functions are executed under normal conditions and to compare the cloud providers and programming languages.
                       <div class="row" style="padding-bottom: 10px">
                           <div class="col-12">
@@ -292,8 +309,127 @@
                       <div class="col-6">
                         <b>Results:</b> <a href="http://localhost:3000" target="_blank">Grafana - http://localhost:3000</a>
                       </div>
+                    </div></div>
+                      </div>
                     </div>
-                  </div></div>
+                    <div class="card">
+                      <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Run Loadtest
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                        <div class="card-body">
+                          TODO
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Calculate Theoretical Pricing
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                        <div class="card-body">
+                          Here you can calculate the price for each cloud provider. Every parameter should and can be know except for the actual execution time.
+                          Therefore also a calculator regarding to the carried out tests is available.<br>
+                          <b>Notice: </b> Azure has no defined instance sizes. It uses at max 1.5 GB memory. This calculation supposes that it uses as much as the others have available.
+                          <div class="row">
+                            <div class="col-3" style="padding-top: 10px">  
+                              <b>Calls</b><br>
+                              per month
+                              <div>
+                                <input id="theoreticPricingCalls" value="10000000" type="number" name="theoreticPricingCalls" style="max-width: 150px">
+                              </div>
+                            </div>
+                            <div class="col-3" style="padding-top: 10px">  
+                              <b>Execution Time (ms)</b><br>
+                              per call
+                              <div>
+                                <input id="theoreticPricingExecutionTime" value="500" type="number" name="theoreticPricingExecutionTime" style="max-width: 150px">
+                              </div>
+                            </div>
+                            <div class="col-3" style="padding-top: 10px">  
+                              <b>Return size (KB)</b><br>
+                              per call
+                              <div>
+                                <input id="theoreticPricingSize" value="1" type="number" name="theoreticPricingSize" style="max-width: 150px">
+                              </div>
+                            </div>
+                            <div class="col-3" style="padding-top: 10px">  
+                              <b>Memory (MB)</b><br>
+                              function instance size
+                              <div>
+                                  <select id="theoreticPricingMemory" class="custom-select">
+                                      <option value="128">128</option>
+                                      <option value="256">256</option>
+                                      <option value="512" selected>512</option>
+                                      <option value="1024">1024</option>
+                                      <option value="2048">2048</option>
+                                    </select></div>
+                            </div>
+                          </div>
+                          <button id="theoreticalPricingButton" type="button" class="btn btn-primary" style="margin: 5px">Calculate / Update</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Calculate Pricing regarding to tests
+                          </button>
+                        </h5>
+                      </div>
+                      <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+                        <div class="card-body">
+                          Calculates the prices respected to a test that previously ran (either factors or custom test). Select the test by its name and choose which runtime to calculate.
+                          <div class="row">
+                              <div class="col-3" style="padding-top: 10px">  
+                                <b>Calls</b>, per month
+                                <div>
+                                  <input id="testedPricingCalls" value="10000000" type="number" name="testedPricingCalls" style="max-width: 150px">
+                                </div>
+                              </div>
+                              <div class="col-3" style="padding-top: 10px">  
+                                  <b>Test</b>
+                                  <div>
+                                      <select id="testedPricingTest" class="custom-select">
+                                          <option value="factors">Factors (CPU)</option>
+                                          <option value="custom">Custom</option>
+                                        </select>
+                                      </div>
+                                </div>
+                              <div class="col-3" style="padding-top: 10px">  
+                                <b>Test Name</b>
+                                <div>
+                                    <select id="testedPricingTestName" class="custom-select">
+                                          <%= data %>
+                                      </select>
+                                    </div>
+                              </div>
+                              <div class="col-3" style="padding-top: 10px">  
+                                <b>Runtime</b>
+                                <div>
+                                    <select id="testedPricingRuntime" class="custom-select">
+                                        <option value="node">Node.js</option>
+                                        <option value="python">Python</option>
+                                        <option value="go">Go</option>
+                                        <option value="dotnet">.NET Core</option>
+                                      </select>
+                                    </div>
+                              </div>
+                            </div>
+                            <button id="testedPricingButton" type="button" class="btn btn-primary" style="margin: 5px">Calculate / Update</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
     </div>
     <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6" style="padding-top: 15px; padding-bottom: 15px">
         <button id="clearButton" type="button" class="btn btn-primary" style="margin: 5px">Clear Output</button>
@@ -385,6 +521,28 @@ $('#stopButton').click(function cleanup(){
   }});
 });
 
+$('#theoreticalPricingButton').click(function calcTheoreticalPricing(){
+  $.ajax({url: 'theoreticalPricing', type: 'get', data: {
+    calls: $('#theoreticPricingCalls').val(),
+    execTime: $('#theoreticPricingExecutionTime').val(),
+    size: $('#theoreticPricingSize').val(),
+    memory: $('#theoreticPricingMemory').val()
+  }, success:function(res){
+    $("#resultStart").html(res.data);
+  }});
+});
+
+$('#testedPricingButton').click(function calcTestedPricing(){
+  $.ajax({url: 'testedPricing', type: 'get', data: {
+    calls: $('#testedPricingCalls').val(),
+    testName: $('#testedPricingTestName').val(),
+    test: $('#testedPricingTest').val(),
+    runtime: $('#testedPricingRuntime').val()
+  }, success:function(res){
+    $("#resultStart").html(res.data);
+  }});
+});
+
 $('#cleanupButton').click(function cleanup(){
   $.ajax({url: 'cleanup', type: 'get', data: {awslocation: $('#awslocation').val()}, success:function(res){
       $("#resultStart").html(res.data);
@@ -450,6 +608,16 @@ function update() {
   }});
 }
 
+$('#testedPricingTest').change(function(){
+  loadTestNames($('#testedPricingTest').val());
+});
+
+function loadTestNames(test) {
+  $.ajax({url: 'testedPricingAvailableTestNames', type: 'get', data: { test: test }, success:function(res){
+    $("#testedPricingTestName").html(res.data);
+  }});
+}
+
 $('#clearButton').click(function clear() {
   $("#resultStart").html('');
   $("#resultAWS").html('');
@@ -466,6 +634,7 @@ $(document).ready( function() {
   $('#spinnerAzureWindows').hide();
   $('#spinnerGoogle').hide();
   $('#spinnerIBM').hide();
+  loadTestNames("factors");
 });
 </script>
 
