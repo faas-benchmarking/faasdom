@@ -1,6 +1,7 @@
 const request = require('request');
 const fs = require('fs');
 const Influx = require('influx');
+const constants = require('../constants.js')
 
 const influx = new Influx.InfluxDB({
   host: 'db',
@@ -15,34 +16,21 @@ const influx = new Influx.InfluxDB({
         ms: Influx.FieldType.INTEGER,
         success: Influx.FieldType.BOOLEAN
       },
-      tags: ['test', 'provider', 'language']
+      tags: ['test', 'provider', 'language', 'memory']
     }
   ]
 });
 
-const AWS = 'aws';
-const AZURE = 'azure';
-const AZUREWINDOWS = 'azureWindows';
-const GOOGLE = 'google';
-const IBM = 'ibm';
-
-const NODE = 'node';
-const PYTHON = 'python';
-const GO = 'go';
-const DOTNET = 'dotnet';
-
-const providers = [AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM];
-const languages = [NODE, PYTHON, GO, DOTNET];
-
 var rawdata = fs.readFileSync('./latency/latency_urls.json');
 var urls = JSON.parse(rawdata);
 
-function pushURL(provider, language, url) {
-  if(providers.includes(provider) && languages.includes(language)) {
-    urls.push({provider: provider, language: language, url: url});
+function pushURL(provider, language, url, memory) {
+  if(constants.PROVIDERS.includes(provider) && constants.LANGUAGES.includes(language)) {
+    urls.push({provider: provider, language: language, url: url, memory: memory});
     fs.writeFile('./latency/latency_urls.json', JSON.stringify(urls), function(err) {
       if (err) {
         console.error(err);
+        // TODO: rejection instead of exit
         process.exit(0);
       }
     });
@@ -79,7 +67,7 @@ async function getLatency(testName) {
             success = jsonBody.success;
           }
 
-          insertIntoDB(testName, response.elapsedTime, success, urls[i].language, urls[i].provider);
+          insertIntoDB(testName, response.elapsedTime, success, urls[i].language, urls[i].provider, urls[i].memory);
 
         } catch (e) {
           console.error(e);
@@ -97,14 +85,15 @@ async function getLatency(testName) {
   }
 }
 
-function insertIntoDB(testName, ms, success, language, provider) {
+function insertIntoDB(testName, ms, success, language, provider, memory) {
   influx.writePoints([
     {
       measurement: 'latency',
       tags: {
         test: testName,
         language: language,
-        provider: provider
+        provider: provider,
+        memory: memory
       },
       fields: {
         ms: ms,
