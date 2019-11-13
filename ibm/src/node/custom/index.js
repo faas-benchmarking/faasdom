@@ -1,4 +1,7 @@
+const now = require('performance-now');
+
 function main(params) {
+    let start = now();
 
     /* 
     TODO: put your code here
@@ -7,10 +10,12 @@ function main(params) {
     and the success field as it is.
     */
 
+    let end = now();
     return {
         success: true,
         payload: {
-            "test": "custom test"
+            'test': 'custom test',
+            'time': Number((end-start).toFixed(3))
         }
       };
 }

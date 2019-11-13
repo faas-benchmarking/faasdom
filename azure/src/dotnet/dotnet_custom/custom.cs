@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.IO;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,9 @@ namespace dotnet_custom
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {   
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             /* 
             TODO: put your code here
             You can basically do anything you want,
@@ -27,10 +31,12 @@ namespace dotnet_custom
             and the success field as it is.
             */
 
+            sw.Stop();
             JObject message = new JObject();
             message.Add("success", new JValue(true));
             JObject payload = new JObject();
             payload.Add("test", new JValue("custom test"));
+            payload.Add("time", new JValue(sw.Elapsed.TotalMilliseconds));
             message.Add("payload", payload);
 
             return new HttpResponseMessage(HttpStatusCode.OK) {

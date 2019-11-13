@@ -1,4 +1,7 @@
+const now = require('performance-now');
+
 exports.node_custom = (req, res) => {
+  let start = now();
 
   /* 
   TODO: put your code here
@@ -7,12 +10,14 @@ exports.node_custom = (req, res) => {
   and the success field as it is.
   */
 
-  res.set("Content-Type", "application/json");
+  let end = now();
+  res.set('Content-Type', 'application/json');
 	res.status(200);
   res.send(JSON.stringify({
       success: true,
       payload: {
-          "test": "custom test"
+          'test': 'custom test',
+          'time': Number((end-start).toFixed(3))
       }
   }));
 

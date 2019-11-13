@@ -1,4 +1,7 @@
+const now = require('performance-now');
+
 exports.handler = function(event, context, callback) {
+    let start = now();
 
     /* 
     TODO: put your code here
@@ -6,7 +9,8 @@ exports.handler = function(event, context, callback) {
     but please leave the return statement header
     and the success field as it is.
     */
-  
+
+    let end = now();
     const res = {
         statusCode: 200,
         headers: {
@@ -16,6 +20,7 @@ exports.handler = function(event, context, callback) {
             success: true,
             payload: {
                 'test': 'custom test',
+                'time': Number((end-start).toFixed(3))
             }
         })
       };

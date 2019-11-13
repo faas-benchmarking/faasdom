@@ -1,6 +1,8 @@
 import json
+import time
 
 def my_handler(event, context):
+    start = time.time()
 
     ''' 
     TODO: put your code here
@@ -9,6 +11,8 @@ def my_handler(event, context):
     and the success field as it is.
     '''
     
+    end = time.time()
+    elapsed = (end - start)*1000
     return {
         'statusCode': 200,
         'headers': {
@@ -17,7 +21,8 @@ def my_handler(event, context):
         'body': json.dumps({
             'success': True,
             'payload': {
-                'test': 'custom test'
+                'test': 'custom test',
+                'time': elapsed
             }
         })
     }

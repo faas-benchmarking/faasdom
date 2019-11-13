@@ -1,4 +1,7 @@
+const now = require('performance-now');
+
 module.exports = async function (context, req) {
+    let start = now();
 
     /* 
     TODO: put your code here
@@ -7,15 +10,17 @@ module.exports = async function (context, req) {
     and the success field as it is.
     */
 
+    let end = now();
     context.res = {
         statusCode: 200,
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             success: true,
             payload: {
-                "test": "custom test"
+                'test': 'custom test',
+                'time': Number((end-start).toFixed(3))
             }
         })
       };

@@ -1,4 +1,7 @@
+import time
+
 def main(request):
+    start = time.time()
 
     ''' 
     TODO: put your code here
@@ -7,9 +10,12 @@ def main(request):
     and the success field as it is.
     '''
 
+    end = time.time()
+    elapsed = (end - start)*1000
     return {
         'success': True,
         'payload': {
-            'test': 'custom test'
+            'test': 'custom test',
+            'time': elapsed
         }
     }

@@ -8,5 +8,8 @@
     "url": "https://github.com/Bschitter/benchmark-suite-serverless-computing.git"
   },
   "author": "Pascal Maissen <pascal.maissen@unifr.ch>",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "performance-now": "^2.1.0"
+  }
 }

@@ -1,6 +1,7 @@
 package function
 
 import (
+        "time"
         "fmt"
         "net/http"
         "log"
@@ -14,9 +15,11 @@ type Message struct {
         
 type Payload struct {
         Test string `json:"test"`
+        Time int `json:"time"`
 }
 
 func Go_custom(w http.ResponseWriter, r *http.Request) {
+        start := time.Now()
 
         /* 
         TODO: put your code here
@@ -25,10 +28,12 @@ func Go_custom(w http.ResponseWriter, r *http.Request) {
         and the success field as it is.
         */
 
+        elapsed := time.Since(start)
         msg := &Message{
                 Success: true,
                 Payload: Payload{
                     Test: "custom test",
+                    Time: int(elapsed / time.Millisecond),
                 },
         }
         
