@@ -32,13 +32,14 @@ const DOTNET = 'dotnet';
 
 const LATENCY = 'latency';
 const FACTORS = 'factors';
+const MATRIX = 'matrix';
 const MEMORY = 'memory';
 const FILESYSTEM = 'filesystem';
 const CUSTOM = 'custom';
 
 const providers = [AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM];
 const languages = [NODE, PYTHON, GO, DOTNET];
-const tests = [LATENCY, FACTORS, MEMORY, CUSTOM];
+const tests = [LATENCY, FACTORS, MATRIX, MEMORY, FILESYSTEM, CUSTOM];
 
 /** Constant strings */
 const AWS_CONTAINER_IMAGE = 'mikesir87/aws-cli:1.16.275';
@@ -96,6 +97,8 @@ app.get('/deploy', async function(req, res, next) {
 		deploy(req.query, LATENCY, 'Latency', 'Latency');
 	} else if(req.query.factors == 'true') {
 		deploy(req.query, FACTORS, 'Factors', 'CPU');
+	} else if(req.query.matrix == 'true') {
+		deploy(req.query, MATRIX, 'Matrix', 'Matrix');
 	} else if(req.query.memory == 'true') {
 		deploy(req.query, MEMORY, 'Memory', 'Memory');
 	} else if(req.query.filesystem == 'true') {
@@ -117,6 +120,8 @@ app.get('/run', function(req, res, next) {
 		latencyRunningInterval = setInterval(function(){latencyModule.getLatency(req.query.testName)}, timeout);
 	} else if(req.query.test == FACTORS) {
 		factorsRunningInterval = setInterval(function(){factorsModule.getFactors(req.query.n, req.query.testName)}, timeout);
+	} else if(req.query.test == MATRIX) {
+		// TODO: implement
 	} else if(req.query.test == MEMORY) {
 		// TODO: implement
 	} else if(req.query.test == FILESYSTEM) {
@@ -179,12 +184,19 @@ app.get('/testedPricing', async function(req, res, next) {
 app.get('/testedPricingAvailableTestNames', async function(req, res, next) {
 	resetLogStatus();
 	let result = '';
-	let rawData;
-	await influx.query(`
-		show tag values from ${req.query.test} with key = "test"
-	`)
-	.then( result => rawData = result )
-	.catch( error => console.error(error) );
+	let rawData = [];
+
+	let dbOnline = false;
+
+	await influx.ping(5000).then( hosts => dbOnline = hosts[0].online).catch(error => console.error(error));
+
+	if(dbOnline) {
+		await influx.query(`
+			show tag values from ${req.query.test} with key = "test"
+		`)
+		.then( result => rawData = result )
+		.catch( error => console.error(error) );
+	}
 
 	for(let i = 0; i<rawData.length; i++) {
 		result += '<option value="'+rawData[i].value+'">'+rawData[i].value+'</option>';
@@ -1221,7 +1233,7 @@ async function cleanupAzure() {
 		.then((stdout) => {
 			let azureresourcegroups = JSON.parse(stdout);
 			for(let i = 0; i<azureresourcegroups.length; i++) {
-				if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem') || azureresourcegroups[i].name.includes('custom')) {
+				if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('matrix') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem') || azureresourcegroups[i].name.includes('custom')) {
 					azureResourceGroups.push(azureresourcegroups[i].name);
 				}
 			}

@@ -43,6 +43,9 @@
                                     <label><input id="factorsTest" type="radio" name="test">CPU (Factors)</label>
                                   </div>
                                   <div class="radio">
+                                  <div class="radio">
+                                      <label><input id="matrixTest" type="radio" name="test">CPU (Matrix)</label>
+                                    </div>
                                     <label><input id="memoryTest" type="radio" name="test">Memory</label>
                                   </div>
                                   <div class="radio">
@@ -214,6 +217,9 @@
                                     <a class="nav-link" id="cpu-tab" data-toggle="tab" href="#cpuContent" role="tab" aria-controls="cpuContent" aria-selected="false">CPU (Factors)</a>
                                   </li>
                                   <li class="nav-item">
+                                      <a class="nav-link" id="matrix-tab" data-toggle="tab" href="#matrixContent" role="tab" aria-controls="matrixContent" aria-selected="false">CPU (Matrix)</a>
+                                    </li>
+                                  <li class="nav-item">
                                     <a class="nav-link" id="memory-tab" data-toggle="tab" href="#memoryContent" role="tab" aria-controls="memoryContent" aria-selected="false">Memory</a>
                                   </li>
                                   <li class="nav-item">
@@ -250,6 +256,22 @@
                                       </div>
                                     </div>
                                   </div>
+                                  <div class="tab-pane fade" id="matrixContent" role="tabpanel" aria-labelledby="matrix-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
+                                      <div class="row" style="padding-left: 10px">
+                                        <div class="col-6" style="padding-top: 10px">  
+                                          <b>n (size of matrix):</b>
+                                          <div>
+                                            <input id="nMatrix" value="100" type="number" name="nMatrix" style="max-width: 250px; text-align:right">
+                                          </div>
+                                        </div>
+                                        <div class="col-6" style="padding-top: 10px">  
+                                          <b>Test name:</b>
+                                          <div>
+                                            <input id="testNameMatrix" value="myMatrixCPUTest" type="text" name="testNameMatrix" style="max-width: 250px">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
                                   <div class="tab-pane fade" id="memoryContent" role="tabpanel" aria-labelledby="memory-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
                                     <div class="row" style="padding-left: 10px">
                                       <div class="col-6" style="padding-top: 10px">  
@@ -467,6 +489,7 @@ $('#deployButton').click(function deploy(){
   $.ajax({url: 'deploy', type: 'get',data: {
     latency: $("#latencyTest").prop('checked'),
     factors: $("#factorsTest").prop('checked'),
+    matrix: $("#matrixTest").prop('checked'),
     memory: $("#memoryTest").prop('checked'),
     filesystem: $("#filesystemTest").prop('checked'),
     custom: $("#customTest").prop('checked'),
@@ -501,6 +524,8 @@ $('#runButton').click(function cleanup(){
     data = { test: 'latency', testName: $('#testNameLatency').val() };
   } else if(activeTab == 'cpu-tab') {
     data = { test: 'factors', n: $('#nFactor').val(), testName: $('#testNameCPU').val() };
+  } else if(activeTab == 'matrix-tab') {
+    $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
   } else if(activeTab == 'memory-tab') {
     $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
   } else if(activeTab == 'filesystem-tab') {
