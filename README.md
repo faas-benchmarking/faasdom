@@ -25,6 +25,7 @@ The basic idea is that you can deploy and run various tests and see how they per
 
   - **Latency test:** measures the latency of a very simple function
   - **CPU test (factors):** calculates the factors of a number iteratively to benchmark the CPU performance
+  - **CPU test (matrix):** multiplicates two NxN matrices iteratively to benchmark the CPU performance
   - **Memory test:** uses up as much memory as possible to see how much the function can actually use
   - **Filesystem test:** writes and reads n times a x kB text file to the filesystem
   - **Custom test:** implement you own test, templates are provided
@@ -115,9 +116,14 @@ docker volume rm $(docker volume ls -q)
 ```
 
 
-## Troubleshooting
+## Bugs / Troubleshooting
 
 #### IBM
 
 - Sometimes when deleting a function the ibmcloud CLI will fail to load the resources and therefore the program will not correctly delete the resources. This mostly happens always the first time after you didn't use it for some time.
 - IBM Cloud uses an authentication token which expires. After some time you will need to login and configure it again. See section [Configure](#configure).
+- It can happen that the IBM CLI returns the error `Unable to create API: Request accepted, but processing not completed yet.` but the function will most likely be deployed correctly.
+
+#### Azure
+
+ - The timeout parameter for Azure is currently ignored because the way the deploy mechanism is implemented does not support it that easily.
