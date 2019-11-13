@@ -65,7 +65,8 @@ function main(params) {
             "n": files.length,
             "size": Number(size),
             "timewrite": (endWrite-startWrite).toFixed(3),
-            "timeread": (endRead-startRead).toFixed(3)
+            "timeread": (endRead-startRead).toFixed(3),
+            "time": ((endWrite-startWrite)+(endRead-startRead)).toFixed(3)
         },
         metrics: {
             instanceid: instance_id,

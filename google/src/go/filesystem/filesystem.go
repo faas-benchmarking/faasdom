@@ -25,6 +25,7 @@ type Payload struct {
     Size int `json:"size"`
     TimeWrite string `json:"timewrite"`
     TimeRead string `json:"timeread"`
+    Time string `json:"time"`
 }
 
 type Metrics struct {
@@ -135,6 +136,7 @@ func Go_filesystem(w http.ResponseWriter, r *http.Request) {
             Size: size,
             TimeWrite: strconv.FormatInt(int64(elapsedWrite / time.Millisecond), 10),
             TimeRead: strconv.FormatInt(int64(elapsedRead / time.Millisecond), 10),
+            Time: strconv.FormatInt(int64(elapsedWrite / time.Millisecond) + int64(elapsedRead / time.Millisecond), 10),
         },
         Metrics: Metrics{
             MachineId: "",

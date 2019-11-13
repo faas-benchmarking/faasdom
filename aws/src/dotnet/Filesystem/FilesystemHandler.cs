@@ -94,6 +94,7 @@ namespace Filesystem
             payload.Add("size", new JValue(size));
             payload.Add("timewrite", new JValue(swWrite.Elapsed.TotalMilliseconds));
             payload.Add("timeread", new JValue(swRead.Elapsed.TotalMilliseconds));
+            payload.Add("time", new JValue(swWrite.Elapsed.TotalMilliseconds+swRead.Elapsed.TotalMilliseconds));
             message.Add("payload", payload);
             JObject metrics = new JObject();
             metrics.Add("machineid", new JValue(string.Join("\n", "")));

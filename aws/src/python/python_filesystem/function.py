@@ -86,7 +86,8 @@ def my_handler(event, context):
                 "n": len(files),
                 "size": size,
                 "timewrite": (endWrite-startWrite)*1000,
-                "timeread": (endRead-startRead)*1000
+                "timeread": (endRead-startRead)*1000,
+                "time": ((endWrite-startWrite)*1000)+((endRead-startRead)*1000)
             },
             'metrics': {
                 'machineid': '',

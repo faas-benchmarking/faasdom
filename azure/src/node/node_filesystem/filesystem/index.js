@@ -96,7 +96,8 @@ module.exports = async function (context, req) {
                 "n": files.length,
                 "size": Number(size),
                 "timewrite": (endWrite-startWrite).toFixed(3),
-                "timeread": (endRead-startRead).toFixed(3)
+                "timeread": (endRead-startRead).toFixed(3),
+                "time": ((endWrite-startWrite)+(endRead-startRead)).toFixed(3)
             },
             metrics: {
                 machineid: '',

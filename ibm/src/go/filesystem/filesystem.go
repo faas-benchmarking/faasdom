@@ -120,6 +120,7 @@ func Main(params map[string]interface{}) map[string]interface{} {
     msg["payload"].(map[string]interface{})["size"] = size
     msg["payload"].(map[string]interface{})["timewrite"] = strconv.FormatInt(int64(elapsedWrite / time.Millisecond), 10)
     msg["payload"].(map[string]interface{})["timeread"] = strconv.FormatInt(int64(elapsedRead / time.Millisecond), 10)
+    msg["payload"].(map[string]interface{})["time"] = strconv.FormatInt(int64(elapsedWrite / time.Millisecond) + int64(elapsedRead / time.Millisecond), 10)
     msg["metrics"] = map[string]string{}
     msg["metrics"].(map[string]string)["machineid"] = machine_id
     msg["metrics"].(map[string]string)["instanceid"] = instance_id
