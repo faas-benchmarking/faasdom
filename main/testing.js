@@ -6,7 +6,7 @@ const constants = require('./constants.js')
 const tags = ['test', 'provider', 'language', 'memory'];
 
 const influx = new Influx.InfluxDB({
-    host: 'db',
+    host: 'localhost',
     port: 8086,
     database: 'results',
     username: 'benchmark-suite',
@@ -136,22 +136,22 @@ async function get(test, testName, qs) {
                     success = jsonBody.success;
                 }
 
-                let measured_ms = -1;
+                let measured_ms = 0;
                 if(!jsonBody.hasOwnProperty('payload').hasOwnProperty('time')) {
                     measured_ms = jsonBody.payload.time;
                 }
 
-                let measured_write_ms = -1;
+                let measured_write_ms = 0;
                 if(!jsonBody.hasOwnProperty('payload').hasOwnProperty('timewrite')) {
                     measured_write_ms = jsonBody.payload.timewrite;
                 }
 
-                let measured_read_ms = -1;
+                let measured_read_ms = 0;
                 if(!jsonBody.hasOwnProperty('payload').hasOwnProperty('timeread')) {
                     measured_read_ms = jsonBody.payload.timeread;
                 }
 
-                let n = -1;
+                let n = 0;
                 if(!jsonBody.hasOwnProperty('payload').hasOwnProperty('n')) {
                     n = jsonBody.payload.n;
                 }

@@ -1,7 +1,7 @@
 const Influx = require('influx');
 
 const influx = new Influx.InfluxDB({
-    host: 'db',
+    host: 'localhost',
     port: 8086,
     database: 'results',
     username: 'benchmark-suite',
@@ -209,7 +209,7 @@ async function calcAllPricesFromTest(calls, testName, test, runtime) {
         and provider = 'aws'
     `)
     .then( result => execTimeAWS = result[0].mean )
-    .catch( error => execTimeAWS = -1 );
+    .catch( error => execTimeAWS = 0 );
 
     var execTimeAzure = 0;
     await influx.query(`
@@ -219,7 +219,7 @@ async function calcAllPricesFromTest(calls, testName, test, runtime) {
         and provider = 'azure'
     `)
     .then( result => execTimeAzure = result[0].mean )
-    .catch( error => execTimeAzure = -1 );
+    .catch( error => execTimeAzure = 0 );
 
     var execTimeAzureWindows = 0;
     await influx.query(`
@@ -229,7 +229,7 @@ async function calcAllPricesFromTest(calls, testName, test, runtime) {
         and provider = 'azureWindows'
     `)
     .then( result => execTimeAzureWindows = result[0].mean )
-    .catch( error => execTimeAzureWindows = -1 );
+    .catch( error => execTimeAzureWindows = 0 );
 
     var execTimeGoogle = 0;
     await influx.query(`
@@ -239,7 +239,7 @@ async function calcAllPricesFromTest(calls, testName, test, runtime) {
         and provider = 'google'
     `)
     .then( result => execTimeGoogle = result[0].mean )
-    .catch( error => execTimeGoogle = -1 );
+    .catch( error => execTimeGoogle = 0 );
 
     var execTimeIBM = 0;
     await influx.query(`
@@ -249,7 +249,7 @@ async function calcAllPricesFromTest(calls, testName, test, runtime) {
         and provider = 'ibm'
     `)
     .then( result => execTimeIBM = result[0].mean )
-    .catch( error => execTimeIBM = -1 );
+    .catch( error => execTimeIBM = 0 );
 
     var memory = 0;
     await influx.query(`
@@ -258,7 +258,7 @@ async function calcAllPricesFromTest(calls, testName, test, runtime) {
         and test = '${testName}'
     `)
     .then( result => memory = result[0].memory )
-    .catch( error => memory = -1 );
+    .catch( error => memory = 128 );
 
     var kb = 1;
 
