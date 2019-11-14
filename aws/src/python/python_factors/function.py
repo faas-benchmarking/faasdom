@@ -7,7 +7,7 @@ def my_handler(event, context):
 
     f=open('/proc/self/cgroup', 'r')
     if f.mode == 'r':
-        insatnceId =f.read()
+        instanceId =f.read()
     f.close()
         
     f=open('/proc/cpuinfo', 'r')
@@ -53,7 +53,7 @@ def my_handler(event, context):
             },
             'metrics': {
                 'machineid': '',
-                'instanceid': insatnceId,
+                'instanceid': instanceId,
                 'cpu': cpuinfo,
                 'mem': meminfo,
                 'uptime': uptime
