@@ -18,8 +18,12 @@ services:
     container_name: ibm-cli
 
   alpine-zip:
-    image: bschitter/alpine-with-zip:latest
+    image: bschitter/alpine-with-zip:0.1
     container_name: alpine-zip
+
+  alpine-wrl2:
+    image: bschitter/alpine-with-wrk2:0.1
+    container_name: alpine-wrk2
 
   node:
     image: node:8.16.2-alpine
@@ -67,6 +71,7 @@ services:
       - grafana
     ports:
       - "3001:3001"
+    #network_mode: "host"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
