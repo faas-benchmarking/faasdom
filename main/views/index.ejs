@@ -344,7 +344,7 @@
                       </div>
                       <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                         <div class="card-body">
-                          TODO
+                          TODO: implement
                         </div>
                       </div>
                     </div>
@@ -422,7 +422,8 @@
                                   <b>Test</b>
                                   <div>
                                       <select id="testedPricingTest" class="custom-select">
-                                          <option value="factors">Factors (CPU)</option>
+                                          <option value="factors">CPU (Factors)</option>
+                                          <option value="matrix">CPU (Matrix)</option>
                                           <option value="custom">Custom</option>
                                         </select>
                                       </div>
@@ -525,13 +526,14 @@ $('#runButton').click(function cleanup(){
   } else if(activeTab == 'cpu-tab') {
     data = { test: 'factors', n: $('#nFactor').val(), testName: $('#testNameCPU').val() };
   } else if(activeTab == 'matrix-tab') {
-    $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
+    data = { test: 'matrix', n: $('#nMatrix').val(), testName: $('#testNameMatrix').val() };
   } else if(activeTab == 'memory-tab') {
     $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
+    return;
   } else if(activeTab == 'filesystem-tab') {
-    $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
+    data = { test: 'filesystem', n: $('#nFilesystem').val(), size: $('#bytesFilesystem').val(), testName: $('#testNameFilesystem').val() };
   } else if(activeTab == 'custom-tab') {
-    $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
+    data = { test: 'custom', testName: $('#testNameCustom').val() };
   }
 
   $.ajax({url: 'run', type: 'get', data: data, success:function(res){

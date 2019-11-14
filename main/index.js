@@ -99,13 +99,13 @@ app.get('/run', function(req, res, next) {
 	} else if(req.query.test == constants.FACTORS) {
 		factorsRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n})}, timeout);
 	} else if(req.query.test == constants.MATRIX) {
-		// TODO: implement
+		matrixRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n})}, timeout);
 	} else if(req.query.test == constants.MEMORY) {
-		// TODO: implement
+		// TODO: implement, different than others
 	} else if(req.query.test == constants.FILESYSTEM) {
-		// TODO: implement
+		filesystemRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n, size: req.query.size})}, timeout);
 	} else if(req.query.test == constants.CUSTOM) {
-		// TODO: implement
+		customRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {})}, timeout);
 	} else {
 		console.error('invalid test');
 	}
@@ -235,7 +235,7 @@ app.get('/status', function(req, res, next) {
 });
 
 loadConfig();
-// only for testing
+// TODO: only for testing
 //copyDockerData();
 app.listen(3001, function () {
 	console.log('INFO: App listening on port 3001!')
@@ -253,7 +253,6 @@ async function copyDockerData() {
 	await execShellCommand('docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip:latest').catch((err) => {
 		error = true;
 	});
-	// TODO: only for testing
 	await execShellCommand('docker cp ../. helper:/data').catch((err) => {
 		error = true;
 	});
