@@ -10,7 +10,7 @@ const locks = require('locks');
 const Influx = require('influx');
 
 const influx = new Influx.InfluxDB({
-    host: 'db',
+    host: 'localhost',
     port: 8086,
     database: 'results',
     username: 'benchmark-suite',
@@ -145,17 +145,21 @@ app.get('/theoreticalPricing', function(req, res, next) {
 app.get('/testedPricing', async function(req, res, next) {
 	resetLogStatus();
 	let tables = await pricing.calcAllPricesFromTest(Number(req.query.calls), req.query.testName, req.query.test, req.query.runtime);
-	let result = '';
+	let result = '<h4>'+req.query.test+' - '+req.query.testName+' - '+req.query.runtime+'</h4>';
 	for(let i=0; i<tables.length; i++) {
 		result += '<div class="row" style="min-height: 20px"></div>';
-		result += '<style>table {font-family: arial, sans-serif;border-collapse: collapse; width: 95%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 2px;}</style>';
-		result += '<div class="row"><table><tr><th>'+tables[i].provider+', mean time: '+tables[i].execTime.toFixed(0)+' ms</th><th>Gross Value</th><th>Free Tier</th><th>Net Value</th><th>Unit Price</th><th>Total Price</th> </tr>';
-		result += '<tr><td>Invocations</td><td>'+tables[i].invocations.gross.toLocaleString()+'</td><td>'+tables[i].invocations.free.toLocaleString()+'</td><td>'+tables[i].invocations.net.toLocaleString()+'</td><td>'+tables[i].invocations.unit.toFixed(7)+' $</td><td>'+tables[i].invocations.total.toFixed(2)+' $</td></tr>';
-		result += '<tr><td>GB-seconds</td><td>'+tables[i].gb_seconds.gross.toLocaleString()+'</td><td>'+tables[i].gb_seconds.free.toLocaleString()+'</td><td>'+tables[i].gb_seconds.net.toLocaleString()+'</td><td>'+tables[i].gb_seconds.unit.toFixed(10)+' $</td><td>'+tables[i].gb_seconds.total.toFixed(2)+' $</td></tr>';
-		result += '<tr><td>GHz-seconds</td><td>'+tables[i].ghz_seconds.gross.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.free.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.net.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.unit.toFixed(5)+' $</td><td>'+tables[i].ghz_seconds.total.toFixed(2)+' $</td></tr>';
-		result += '<tr><td>Networking</td><td>'+tables[i].networking.gross.toLocaleString()+' GB</td><td>'+tables[i].networking.free.toLocaleString()+' GB</td><td>'+tables[i].networking.net.toLocaleString()+' GB</td><td>'+tables[i].networking.unit.toFixed(3)+' $</td><td>'+tables[i].networking.total.toFixed(2)+' $</td></tr>';
-		result += '<tr><th>Total / Month</th><th></th><th></th><th></th><th></th><th>'+tables[i].total_price.toFixed(2)+' $</th></tr>';
-		result += '</table></div>';
+		if(tables[i].execTime.toFixed(0) != 0) {
+			result += '<style>table {font-family: arial, sans-serif;border-collapse: collapse; width: 95%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 2px;}</style>';
+			result += '<div class="row"><table><tr><th>'+tables[i].provider+', mean time: '+tables[i].execTime.toFixed(0)+' ms</th><th>Gross Value</th><th>Free Tier</th><th>Net Value</th><th>Unit Price</th><th>Total Price</th> </tr>';
+			result += '<tr><td>Invocations</td><td>'+tables[i].invocations.gross.toLocaleString()+'</td><td>'+tables[i].invocations.free.toLocaleString()+'</td><td>'+tables[i].invocations.net.toLocaleString()+'</td><td>'+tables[i].invocations.unit.toFixed(7)+' $</td><td>'+tables[i].invocations.total.toFixed(2)+' $</td></tr>';
+			result += '<tr><td>GB-seconds</td><td>'+tables[i].gb_seconds.gross.toLocaleString()+'</td><td>'+tables[i].gb_seconds.free.toLocaleString()+'</td><td>'+tables[i].gb_seconds.net.toLocaleString()+'</td><td>'+tables[i].gb_seconds.unit.toFixed(10)+' $</td><td>'+tables[i].gb_seconds.total.toFixed(2)+' $</td></tr>';
+			result += '<tr><td>GHz-seconds</td><td>'+tables[i].ghz_seconds.gross.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.free.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.net.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.unit.toFixed(5)+' $</td><td>'+tables[i].ghz_seconds.total.toFixed(2)+' $</td></tr>';
+			result += '<tr><td>Networking</td><td>'+tables[i].networking.gross.toLocaleString()+' GB</td><td>'+tables[i].networking.free.toLocaleString()+' GB</td><td>'+tables[i].networking.net.toLocaleString()+' GB</td><td>'+tables[i].networking.unit.toFixed(3)+' $</td><td>'+tables[i].networking.total.toFixed(2)+' $</td></tr>';
+			result += '<tr><th>Total / Month</th><th></th><th></th><th></th><th></th><th>'+tables[i].total_price.toFixed(2)+' $</th></tr>';
+			result += '</table></div>';
+		} else {
+			result += '<div class="row" style="min-height: 20px; color: darkred">No data for '+tables[i].provider+'</div>';
+		}
 	}
 	res.send({data: result, running: runningStatus});
 });
