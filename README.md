@@ -26,7 +26,6 @@ The basic idea is that you can deploy and run various tests and see how they per
   - **Latency test:** measures the latency of a very simple function
   - **CPU test (factors):** calculates the factors of a number iteratively to benchmark the CPU performance
   - **CPU test (matrix):** multiplicates two NxN matrices iteratively to benchmark the CPU performance
-  - **Memory test:** uses up as much memory as possible to see how much the function can actually use
   - **Filesystem test:** writes and reads n times a x kB text file to the filesystem
   - **Custom test:** implement you own test, templates are provided
 

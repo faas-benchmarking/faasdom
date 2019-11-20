@@ -13,15 +13,14 @@ const DOTNET = 'dotnet';
 const LATENCY = 'latency';
 const FACTORS = 'factors';
 const MATRIX = 'matrix';
-const MEMORY = 'memory';
 const FILESYSTEM = 'filesystem';
 const CUSTOM = 'custom';
 
 const PROVIDERS = [AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM];
 const LANGUAGES = [NODE, PYTHON, GO, DOTNET];
-const TESTS = [LATENCY, FACTORS, MATRIX, MEMORY, FILESYSTEM, CUSTOM];
+const TESTS = [LATENCY, FACTORS, MATRIX, FILESYSTEM, CUSTOM];
 
 module.exports = {  AWS, AZURE, AZUREWINDOWS, GOOGLE, IBM,
                     NODE, PYTHON, GO, DOTNET,
-                    LATENCY, FACTORS, MATRIX, MEMORY, FILESYSTEM, CUSTOM,
+                    LATENCY, FACTORS, MATRIX, FILESYSTEM, CUSTOM,
                     PROVIDERS, LANGUAGES, TESTS}

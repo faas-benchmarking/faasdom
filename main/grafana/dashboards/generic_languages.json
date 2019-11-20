@@ -2613,11 +2613,6 @@
           },
           {
             "selected": false,
-            "text": "memory",
-            "value": "memory"
-          },
-          {
-            "selected": false,
             "text": "filesystem",
             "value": "filesystem"
           },
@@ -2627,7 +2622,7 @@
             "value": "custom"
           }
         ],
-        "query": "latency, factors, matrix, memory, filesystem, custom",
+        "query": "latency, factors, matrix, filesystem, custom",
         "skipUrlSync": false,
         "type": "custom"
       },

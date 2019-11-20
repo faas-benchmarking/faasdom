@@ -52,7 +52,6 @@ var amountOfCallsCounter = 0;
 var latencyRunningInterval;
 var factorsRunningInterval;
 var matrixRunningInterval;
-var memoryRunningInterval;
 var filesystemRunningInterval;
 var customRunningInterval;
 
@@ -79,8 +78,6 @@ app.get('/deploy', async function(req, res, next) {
 		deploy(req.query, constants.FACTORS, 'Factors', 'CPU');
 	} else if(req.query.matrix == 'true') {
 		deploy(req.query, constants.MATRIX, 'Matrix', 'Matrix');
-	} else if(req.query.memory == 'true') {
-		deploy(req.query, constants.MEMORY, 'Memory', 'Memory');
 	} else if(req.query.filesystem == 'true') {
 		deploy(req.query, constants.FILESYSTEM, 'Filesystem', 'Filesystem');
 	} else if(req.query.custom == 'true') {
@@ -102,8 +99,6 @@ app.get('/run', function(req, res, next) {
 		factorsRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
 	} else if(req.query.test == constants.MATRIX) {
 		matrixRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
-	} else if(req.query.test == constants.MEMORY) {
-		// TODO: implement, different than others
 	} else if(req.query.test == constants.FILESYSTEM) {
 		filesystemRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n, size: req.query.size}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
 	} else if(req.query.test == constants.CUSTOM) {
@@ -120,7 +115,6 @@ app.get('/stop', function(req, res, next) {
 	clearInterval(latencyRunningInterval);
 	clearInterval(factorsRunningInterval);
 	clearInterval(matrixRunningInterval);
-	clearInterval(memoryRunningInterval);
 	clearInterval(filesystemRunningInterval);
 	clearInterval(customRunningInterval);
 	res.send({data: currentLogStatus, running: runningStatus});
@@ -1214,7 +1208,7 @@ async function cleanupAzure() {
 		.then((stdout) => {
 			let azureresourcegroups = JSON.parse(stdout);
 			for(let i = 0; i<azureresourcegroups.length; i++) {
-				if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('matrix') || azureresourcegroups[i].name.includes('memory') || azureresourcegroups[i].name.includes('filesystem') || azureresourcegroups[i].name.includes('custom')) {
+				if(azureresourcegroups[i].name.includes('latency') || azureresourcegroups[i].name.includes('factors') || azureresourcegroups[i].name.includes('matrix') || azureresourcegroups[i].name.includes('filesystem') || azureresourcegroups[i].name.includes('custom')) {
 					azureResourceGroups.push(azureresourcegroups[i].name);
 				}
 			}

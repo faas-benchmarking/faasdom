@@ -39,15 +39,6 @@ const influx = new Influx.InfluxDB({
             tags: tags
         },
         {
-            measurement: constants.MEMORY,
-            fields: {
-                ms: Influx.FieldType.INTEGER,
-                n: Influx.FieldType.INTEGER,
-                success: Influx.FieldType.BOOLEAN
-            },
-            tags: tags
-        },
-        {
             measurement: constants.FILESYSTEM,
             fields: {
                 ms: Influx.FieldType.INTEGER,
@@ -74,7 +65,6 @@ var allUrls = {
     latency: [],
     factors: [],
     matrix: [],
-    memory: [],
     filesystem: [],
     custom: []
 };
@@ -111,7 +101,6 @@ function resetURLs() {
         latency: [],
         factors: [],
         matrix: [],
-        memory: [],
         filesystem: [],
         custom: []
     };
@@ -192,10 +181,6 @@ function insertIntoDB(test, testName, ms, success, language, provider, memory, m
     if(test == constants.FILESYSTEM) {
         data[0].fields.measured_write_ms = measured_write_ms;
         data[0].fields.measured_read_ms = measured_read_ms;
-    }
-
-    if(test == constants.MEMORY) {
-        data[0].fields.n = n;
     }
 
     influx.writePoints(data)

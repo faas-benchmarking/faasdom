@@ -43,11 +43,8 @@
                                     <label><input id="factorsTest" type="radio" name="test">CPU (Factors)</label>
                                   </div>
                                   <div class="radio">
-                                  <div class="radio">
                                       <label><input id="matrixTest" type="radio" name="test">CPU (Matrix)</label>
                                     </div>
-                                    <label><input id="memoryTest" type="radio" name="test">Memory</label>
-                                  </div>
                                   <div class="radio">
                                     <label><input id="filesystemTest" type="radio" name="test">Filesystem</label>
                                   </div>
@@ -220,9 +217,6 @@
                                       <a class="nav-link" id="matrix-tab" data-toggle="tab" href="#matrixContent" role="tab" aria-controls="matrixContent" aria-selected="false">CPU (Matrix)</a>
                                     </li>
                                   <li class="nav-item">
-                                    <a class="nav-link" id="memory-tab" data-toggle="tab" href="#memoryContent" role="tab" aria-controls="memoryContent" aria-selected="false">Memory</a>
-                                  </li>
-                                  <li class="nav-item">
                                     <a class="nav-link" id="filesystem-tab" data-toggle="tab" href="#filesystemContent" role="tab" aria-controls="filesystemContent" aria-selected="false">Filesystem</a>
                                   </li>
                                   <li class="nav-item">
@@ -272,22 +266,6 @@
                                         </div>
                                       </div>
                                     </div>
-                                  <div class="tab-pane fade" id="memoryContent" role="tabpanel" aria-labelledby="memory-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
-                                    <div class="row" style="padding-left: 10px">
-                                      <div class="col-6" style="padding-top: 10px">  
-                                        <b>n (# characters appended to string):</b>
-                                        <div>
-                                          <input id="nMemory" value="100000" type="number" name="nMemory" style="max-width: 250px; text-align:right">
-                                        </div>
-                                      </div>
-                                      <div class="col-6" style="padding-top: 10px">  
-                                        <b>Test name:</b>
-                                        <div>
-                                          <input id="testNameMemory" type="text" name="testNameMemory" style="max-width: 250px">
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
                                   <div class="tab-pane fade" id="filesystemContent" role="tabpanel" aria-labelledby="filesystem-tab" style="min-height: 100px; border: 1px solid rgba(0,0,0,.125); border-top: 0">
                                     <div class="row" style="padding-left: 10px">
                                       <div class="col-4" style="padding-top: 10px">  
@@ -492,7 +470,6 @@ $('#deployButton').click(function deploy(){
     latency: $("#latencyTest").prop('checked'),
     factors: $("#factorsTest").prop('checked'),
     matrix: $("#matrixTest").prop('checked'),
-    memory: $("#memoryTest").prop('checked'),
     filesystem: $("#filesystemTest").prop('checked'),
     custom: $("#customTest").prop('checked'),
     ram: document.querySelector('input[name="ram"]:checked').value,
@@ -528,9 +505,6 @@ $('#runButton').click(function cleanup(){
     data = { test: 'factors', n: $('#nFactor').val(), testName: $('#testNameCPU').val() };
   } else if(activeTab == 'matrix-tab') {
     data = { test: 'matrix', n: $('#nMatrix').val(), testName: $('#testNameMatrix').val() };
-  } else if(activeTab == 'memory-tab') {
-    $("#resultStart").html($("#resultStart").html() + '<span style="color:red">Not yet implemented.</span><br>');
-    return;
   } else if(activeTab == 'filesystem-tab') {
     data = { test: 'filesystem', n: $('#nFilesystem').val(), size: $('#bytesFilesystem').val(), testName: $('#testNameFilesystem').val() };
   } else if(activeTab == 'custom-tab') {
@@ -671,7 +645,6 @@ $(document).ready( function() {
   $('#testNameLatency').val(new Date().toISOString().slice(0,10) + '-LatencyTest');
   $('#testNameCPU').val(new Date().toISOString().slice(0,10) + '-FactorsTest');
   $('#testNameMatrix').val(new Date().toISOString().slice(0,10) + '-MatrixTest');
-  $('#testNameMemory').val(new Date().toISOString().slice(0,10) + '-MemoryTest');
   $('#testNameFilesystem').val(new Date().toISOString().slice(0,10) + '-FilesystemTest');
   $('#testNameCustom').val(new Date().toISOString().slice(0,10) + '-CustomTest');
 });
