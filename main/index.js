@@ -47,6 +47,8 @@ var runningStatusAzureWindows = false;
 var runningStatusGoogle = false;
 var runningStatusIBM = false;
 
+var amountOfCallsCounter = 0;
+
 var latencyRunningInterval;
 var factorsRunningInterval;
 var matrixRunningInterval;
@@ -92,20 +94,20 @@ app.get('/deploy', async function(req, res, next) {
 app.get('/run', function(req, res, next) {
 	runningStatus = true;
 	resetLogStatus();
-	currentLogStatus = 'Running...';
+	amountOfCallsCounter = 0;
 	let timeout = 5000;
 	if(req.query.test == constants.LATENCY) {
-		latencyRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {})}, timeout);
+		latencyRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
 	} else if(req.query.test == constants.FACTORS) {
-		factorsRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n})}, timeout);
+		factorsRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
 	} else if(req.query.test == constants.MATRIX) {
-		matrixRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n})}, timeout);
+		matrixRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
 	} else if(req.query.test == constants.MEMORY) {
 		// TODO: implement, different than others
 	} else if(req.query.test == constants.FILESYSTEM) {
-		filesystemRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n, size: req.query.size})}, timeout);
+		filesystemRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {n: req.query.n, size: req.query.size}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
 	} else if(req.query.test == constants.CUSTOM) {
-		customRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {})}, timeout);
+		customRunningInterval = setInterval(function(){testingModule.get(req.query.test, req.query.testName, {}); amountOfCallsCounter++; currentLogStatus = 'Running...<br>Counter: ' + amountOfCallsCounter}, timeout);
 	} else {
 		console.error('invalid test');
 	}
@@ -131,11 +133,17 @@ app.get('/theoreticalPricing', function(req, res, next) {
 	for(let i=0; i<tables.length; i++) {
 		result += '<div class="row" style="min-height: 20px"></div>';
 		result += '<style>table {font-family: arial, sans-serif;border-collapse: collapse; width: 95%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 2px;}</style>';
-		result += '<div class="row"><table><tr><th>'+tables[i].provider+'</th><th>Gross Value</th><th>Free Tier</th><th>Net Value</th><th>Unit Price</th><th>Total Price</th> </tr>';
-		result += '<tr><td>Invocations</td><td>'+tables[i].invocations.gross.toLocaleString()+'</td><td>'+tables[i].invocations.free.toLocaleString()+'</td><td>'+tables[i].invocations.net.toLocaleString()+'</td><td>'+tables[i].invocations.unit.toFixed(7)+' $</td><td>'+tables[i].invocations.total.toFixed(2)+' $</td></tr>';
+		result += '<div class="row"><table><tr><th><p class="text-primary">'+tables[i].provider+'</p></th><th>Gross Value</th><th>Free Tier</th><th>Net Value</th><th>Unit Price</th><th>Total Price</th> </tr>';
+		if(tables[i].provider != constants.IBM) {
+			result += '<tr><td>Invocations</td><td>'+tables[i].invocations.gross.toLocaleString()+'</td><td>'+tables[i].invocations.free.toLocaleString()+'</td><td>'+tables[i].invocations.net.toLocaleString()+'</td><td>'+tables[i].invocations.unit.toFixed(7)+' $</td><td>'+tables[i].invocations.total.toFixed(2)+' $</td></tr>';
+		}
 		result += '<tr><td>GB-seconds</td><td>'+tables[i].gb_seconds.gross.toLocaleString()+'</td><td>'+tables[i].gb_seconds.free.toLocaleString()+'</td><td>'+tables[i].gb_seconds.net.toLocaleString()+'</td><td>'+tables[i].gb_seconds.unit.toFixed(10)+' $</td><td>'+tables[i].gb_seconds.total.toFixed(2)+' $</td></tr>';
-		result += '<tr><td>GHz-seconds</td><td>'+tables[i].ghz_seconds.gross.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.free.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.net.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.unit.toFixed(5)+' $</td><td>'+tables[i].ghz_seconds.total.toFixed(2)+' $</td></tr>';
-		result += '<tr><td>Networking</td><td>'+tables[i].networking.gross.toLocaleString()+' GB</td><td>'+tables[i].networking.free.toLocaleString()+' GB</td><td>'+tables[i].networking.net.toLocaleString()+' GB</td><td>'+tables[i].networking.unit.toFixed(3)+' $</td><td>'+tables[i].networking.total.toFixed(2)+' $</td></tr>';
+		if(tables[i].provider == constants.GOOGLE) {
+			result += '<tr><td>GHz-seconds</td><td>'+tables[i].ghz_seconds.gross.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.free.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.net.toLocaleString()+'</td><td>'+tables[i].ghz_seconds.unit.toFixed(5)+' $</td><td>'+tables[i].ghz_seconds.total.toFixed(2)+' $</td></tr>';
+		}
+		if(tables[i].provider != constants.IBM) {
+			result += '<tr><td>Networking</td><td>'+tables[i].networking.gross.toLocaleString()+' GB</td><td>'+tables[i].networking.free.toLocaleString()+' GB</td><td>'+tables[i].networking.net.toLocaleString()+' GB</td><td>'+tables[i].networking.unit.toFixed(3)+' $</td><td>'+tables[i].networking.total.toFixed(2)+' $</td></tr>';
+		}
 		result += '<tr><th>Total / Month</th><th></th><th></th><th></th><th></th><th>'+tables[i].total_price.toFixed(2)+' $</th></tr>';
 		result += '</table></div>';
 	}

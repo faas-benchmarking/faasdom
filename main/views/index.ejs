@@ -26,7 +26,7 @@
                       <div class="card-header" id="headingOne">
                         <h5 class="mb-0">
                           <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Deploy/Remove Tests
+                            Deploy/Delete Tests
                           </button>
                         </h5>
                       </div>
@@ -190,7 +190,7 @@
                         <br>
                         <div class="row">
                           <button id='deployButton' type="button" class="btn btn-primary" style="margin: 5px">Deploy</button>
-                          <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Cleanup All</button>
+                          <button id='cleanupButton' type="button" class="btn btn-danger" style="margin: 5px">Delete All</button>
                         </div>  
                         </div>
                       </div>
@@ -235,7 +235,7 @@
                                       <div class="col-12" style="padding-top: 10px">  
                                         <b>Test name:</b>
                                         <div>
-                                          <input id="testNameLatency" value="myLatencyTest" type="text" name="testNameLatency" style="max-width: 250px">
+                                          <input id="testNameLatency" type="text" name="testNameLatency" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
@@ -251,7 +251,7 @@
                                       <div class="col-6" style="padding-top: 10px">  
                                         <b>Test name:</b>
                                         <div>
-                                          <input id="testNameCPU" value="myCPUTest" type="text" name="testNameCPU" style="max-width: 250px">
+                                          <input id="testNameCPU" type="text" name="testNameCPU" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
@@ -267,7 +267,7 @@
                                         <div class="col-6" style="padding-top: 10px">  
                                           <b>Test name:</b>
                                           <div>
-                                            <input id="testNameMatrix" value="myMatrixCPUTest" type="text" name="testNameMatrix" style="max-width: 250px">
+                                            <input id="testNameMatrix" type="text" name="testNameMatrix" style="max-width: 250px">
                                           </div>
                                         </div>
                                       </div>
@@ -283,7 +283,7 @@
                                       <div class="col-6" style="padding-top: 10px">  
                                         <b>Test name:</b>
                                         <div>
-                                          <input id="testNameMemory" value="myMemoryTest" type="text" name="testNameMemory" style="max-width: 250px">
+                                          <input id="testNameMemory" type="text" name="testNameMemory" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
@@ -305,7 +305,7 @@
                                       <div class="col-4" style="padding-top: 10px">  
                                         <b>Test name:</b>
                                         <div>
-                                          <input id="testNameFilesystem" value="myFilesystemTest" type="text" name="testNameFilesystem" style="max-width: 250px">
+                                          <input id="testNameFilesystem" type="text" name="testNameFilesystem" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
@@ -315,7 +315,7 @@
                                       <div class="col-12" style="padding-top: 10px">  
                                         <b>Test name:</b>
                                         <div>
-                                          <input id="testNameCustom" value="myCustomTest" type="text" name="testNameCustom" style="max-width: 250px">
+                                          <input id="testNameCustom" type="text" name="testNameCustom" style="max-width: 250px">
                                         </div>
                                       </div>
                                     </div>
@@ -469,6 +469,7 @@
         <div id="spinnerGoogle" class="spinner-border text-primary"></div>
         <div id="resultIBM" class="console"><%= data %></div>
         <div id="spinnerIBM" class="spinner-border text-primary"></div>
+        <div id="spinnerGeneral" class="spinner-border text-primary"></div>
         <div id="resultEnd" class="console"><%= data %></div>
   </div>
   
@@ -536,6 +537,8 @@ $('#runButton').click(function cleanup(){
     data = { test: 'custom', testName: $('#testNameCustom').val() };
   }
 
+  $('#spinnerGeneral').show();
+
   $.ajax({url: 'run', type: 'get', data: data, success:function(res){
       $("#resultStart").html(res.data);
       update();
@@ -543,6 +546,7 @@ $('#runButton').click(function cleanup(){
 });
 
 $('#stopButton').click(function cleanup(){
+  $('#spinnerGeneral').hide();
   $.ajax({url: 'stop', type: 'get', success:function(res){
 
   }});
@@ -631,6 +635,7 @@ function update() {
         $('#spinnerAzureWindows').hide();
         $('#spinnerGoogle').hide();
         $('#spinnerIBM').hide();
+        $('#spinnerGeneral').hide();
       }
   }});
 }
@@ -661,7 +666,14 @@ $(document).ready( function() {
   $('#spinnerAzureWindows').hide();
   $('#spinnerGoogle').hide();
   $('#spinnerIBM').hide();
+  $('#spinnerGeneral').hide();
   loadTestNames("factors");
+  $('#testNameLatency').val(new Date().toISOString().slice(0,10) + '-LatencyTest');
+  $('#testNameCPU').val(new Date().toISOString().slice(0,10) + '-FactorsTest');
+  $('#testNameMatrix').val(new Date().toISOString().slice(0,10) + '-MatrixTest');
+  $('#testNameMemory').val(new Date().toISOString().slice(0,10) + '-MemoryTest');
+  $('#testNameFilesystem').val(new Date().toISOString().slice(0,10) + '-FilesystemTest');
+  $('#testNameCustom').val(new Date().toISOString().slice(0,10) + '-CustomTest');
 });
 </script>
 
