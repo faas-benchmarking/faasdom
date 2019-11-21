@@ -1,5 +1,6 @@
 const constants = require('./constants.js')
 const testingModule = require('./testing.js');
+const loadtestModule = require('./loadtest.js');
 const pricing = require ('./pricing.js');
 const fs = require('fs');
 const exec = require('child_process').exec;
@@ -119,6 +120,26 @@ app.get('/stop', function(req, res, next) {
 	clearInterval(customRunningInterval);
 	res.send({data: currentLogStatus, running: runningStatus});
 });
+
+app.get('/loadtest', function(req, res, next) {
+	runningStatus = true;
+	resetLogStatus();
+	currentLogStatus = 'Running Benchmark...';
+	loadtest(req.query.test, req.query.testName, req.query.rps, req.query.duration, req.query.n);
+	res.send({data: currentLogStatus, running: runningStatus});
+});
+
+async function loadtest(test, testName, rps, duration, n) {
+	let result = await loadtestModule.loadtest(test, testName, rps, duration, n);
+	if(result) {
+		resetLogStatus();
+		currentLogStatus = 'Benchmark finished.';
+	} else {
+		resetLogStatus();
+		currentLogStatus = 'Benchmark failed.';
+	}
+	runningStatus = false;
+}
 
 app.get('/theoreticalPricing', function(req, res, next) {
 	resetLogStatus();

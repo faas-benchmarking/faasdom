@@ -316,13 +316,58 @@
                       <div class="card-header" id="headingThree">
                         <h5 class="mb-0">
                           <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Run Loadtest
+                            Run Benchmark
                           </button>
                         </h5>
                       </div>
                       <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                         <div class="card-body">
-                          TODO: implement
+                          Benchmark with <a href="https://github.com/giltene/wrk2" target="_blank">wrk2</a> certain functions. You can choose how many requests per second should be sent and how long the benchmark should run.
+                          <div class="row">
+                              <div class="col-2" style="padding-top: 10px">  
+                                <b>Requests per second</b>
+                                <div>
+                                  <input id="benchmarkRPS" value="100" type="number" name="benchmarkRPS" style="max-width: 100px">
+                                </div>
+                              </div>
+                              <div class="col-2" style="padding-top: 10px">  
+                                <b>Duration (seconds)</b>
+                                <div>
+                                  <input id="benchmarkDuration" value="60" type="number" name="benchmarkDuration" style="max-width: 100px">
+                                </div>
+                              </div>
+                              <div class="col-2" style="padding-top: 10px">  
+                                  <b>Test</b>
+                                  <div>
+                                      <select id="benchmarkTest" class="custom-select">
+                                          <option value="latency">Latency</option>
+                                          <option value="factors">CPU (Factors)</option>
+                                          <option value="matrix">CPU (Matrix)</option>
+                                          <option value="custom">Custom</option>
+                                        </select>
+                                      </div>
+                                </div>
+                                <div class="col-3" style="padding-top: 10px">  
+                                    <b>N (if applicable):</b>
+                                    <div>
+                                      <input id="benchmarkN" value="200" type="number" name="benchmarkN" style="max-width: 200px">
+                                    </div>
+                                  </div>
+                              <div class="col-3" style="padding-top: 10px">  
+                                <b>Test Name</b>
+                                <div>
+                                  <input id="benchmarkTestName" type="text" name="benchmarkTestName" style="max-width: 200px">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <button id="benchmarkButton" type="button" class="btn btn-primary" style="margin: 5px">Run Benchmark</button>
+                              </div>
+                              <div class="col-6">
+                                <b>Results:</b> <a href="http://localhost:3000" target="_blank">Grafana - http://localhost:3000</a>
+                              </div>
+                            </div>
                         </div>
                       </div>
                     </div>
@@ -526,6 +571,20 @@ $('#stopButton').click(function cleanup(){
   }});
 });
 
+$('#benchmarkButton').click(function cleanup(){
+
+  var data = {};
+
+  data = { rps: $('#benchmarkRPS').val(), duration: $('#benchmarkDuration').val(), test: $('#benchmarkTest').val(), n: $('#benchmarkN').val(), testName: $('#benchmarkTestName').val() };
+
+  $('#spinnerGeneral').show();
+
+  $.ajax({url: 'loadtest', type: 'get', data: data, success:function(res){
+      $("#resultStart").html(res.data);
+      update();
+  }});
+});
+
 $('#theoreticalPricingButton').click(function calcTheoreticalPricing(){
   $.ajax({url: 'theoreticalPricing', type: 'get', data: {
     calls: $('#theoreticPricingCalls').val(),
@@ -647,6 +706,7 @@ $(document).ready( function() {
   $('#testNameMatrix').val(new Date().toISOString().slice(0,10) + '-MatrixTest');
   $('#testNameFilesystem').val(new Date().toISOString().slice(0,10) + '-FilesystemTest');
   $('#testNameCustom').val(new Date().toISOString().slice(0,10) + '-CustomTest');
+  $('#benchmarkTestName').val(new Date().toISOString().slice(0,10) + '-Benchmark');
 });
 </script>
 
