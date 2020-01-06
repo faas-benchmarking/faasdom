@@ -2,15 +2,15 @@ version: '3.3'
 
 services:
   aws-cli:
-    image: mikesir87/aws-cli:1.16.275
+    image: mikesir87/aws-cli:1.16.310
     container_name: aws-cli
 
   azure-cli:
-    image: mcr.microsoft.com/azure-cli:2.0.76
+    image: mcr.microsoft.com/azure-cli:2.0.78
     container_name: azure-cli
 
   google-cli:
-    image: google/cloud-sdk:270.0.0-alpine
+    image: google/cloud-sdk:274.0.1-alpine
     container_name: google-cli
 
   ibm-cli:
