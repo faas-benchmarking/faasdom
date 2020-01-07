@@ -76,7 +76,7 @@ docker volume create ibm-secrets
 docker volume create azure-secrets
 
 # copy all data into the docker volume (IMPORTANT: run from the project root directory!)
-docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip
+docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip:0.1
 docker cp . helper:/data
 docker rm helper
 
