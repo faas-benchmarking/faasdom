@@ -26,7 +26,7 @@ services:
     container_name: alpine-wrk2
 
   node:
-    image: node:8.16.2-alpine
+    image: node:10.16.2-alpine
     container_name: node
 
   golang:

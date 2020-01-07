@@ -384,7 +384,8 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(constants.AWS, constants.NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs8.10', '', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram, params.timeout);
+			// TODO: change node runtime, 8 no longer supported
+			let p = deployFunction(constants.AWS, constants.NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs10.x', '', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
@@ -424,7 +425,7 @@ async function deployAzure(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(constants.AZURE, constants.NODE, func, 'node-' + func, '', '', 'node', '8', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
+			let p = deployFunction(constants.AZURE, constants.NODE, func, 'node-' + func, '', '', 'node', '10', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
@@ -463,7 +464,7 @@ async function deployAzureWindows(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(constants.AZUREWINDOWS, constants.NODE, func, 'node-' + func, '', '', 'node', '8', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
+			let p = deployFunction(constants.AZUREWINDOWS, constants.NODE, func, 'node-' + func, '', '', 'node', '10', '', '/azure/src/node/node_' + func, 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
@@ -501,7 +502,7 @@ async function deployGoogle(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			let p = deployFunction(constants.GOOGLE, constants.NODE, func, 'node_' + func, '', '', 'nodejs8', '', '', '/google/src/node/' + func, 'Node.js', '', '', params.ram, params.timeout);
+			let p = deployFunction(constants.GOOGLE, constants.NODE, func, 'node_' + func, '', '', 'nodejs10', '', '', '/google/src/node/' + func, 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
 		if(params.python == 'true') {
@@ -540,7 +541,7 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 		//var promises = [];
 
 		if(params.node == 'true') {
-			await deployFunction(constants.IBM, constants.NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:8', '', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
+			await deployFunction(constants.IBM, constants.NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
 			//promises.push(p);
 		}
 		if(params.python == 'true') {
@@ -585,7 +586,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			if(language == constants.NODE) {
 
 				/** Run npm install */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:8.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 					error = true;
 					currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
@@ -793,7 +794,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				azureNodeMutex.lock(async function() {
 
 					/** Run npm install */
-					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:8.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+					await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 						error = true;
 						if(provider == constants.AZURE) {
 							currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
@@ -992,7 +993,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			if(language == constants.NODE) {
 
 				/** Run npm install */
-				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:8.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
+				await execShellCommand('docker run --rm -v serverless-data:' + dockerMountPoint + ' node:10.16.2-alpine npm --prefix ' + dockerMountPoint + srcPath + ' install ' + dockerMountPoint + srcPath).catch((err) => {
 					error = true;
 					currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Error happened while running "npm install". Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 				});
@@ -1127,6 +1128,7 @@ async function cleanupAWS() {
 			.then((stdout) => {
 				let awslambda = JSON.parse(stdout);
 				for(let i = 0; i<awslambda.Functions.length; i++) {
+					// TODO: also push function region, otherwise wont work
 					awsFunctions.push(awslambda.Functions[i].FunctionName);
 				}
 			})
@@ -1169,6 +1171,7 @@ async function cleanupAWS() {
 
 		for(let i = 0; i<awsFunctions.length; i++) {
 			let start = now();
+			// TODO: use saved region
 			let p = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws lambda delete-function --function-name ' + awsFunctions[i] + ' --region ' + config.aws.region)
 			.then((stdout) => {
 				let end = now();
@@ -1189,6 +1192,7 @@ async function cleanupAWS() {
 			if(i>0) {
 				await new Promise(resolve => setTimeout(resolve, 30000));
 			}
+			// TODO: use saved region
 			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws apigateway delete-rest-api --rest-api-id ' + awsGateways[i] + ' --region ' + config.aws.region)
 			.then((stdout) => {
 				let end = now();
@@ -1305,6 +1309,7 @@ async function cleanupGoogle() {
 				let row = array[i];
 				row = row.replace(/\s+/g, ' ');
 				let elements = row.split(' ');
+				//TODO: google save correct region
 				googleFunctions.push(elements[0]);
 			}
 		})
@@ -1327,6 +1332,7 @@ async function cleanupGoogle() {
 		var promises = [];
 		for(let i = 0; i<googleFunctions.length; i++) {
 			let start = now();
+			//TODO: google use correct region
 			let p = execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud ' + GOOGLE_CONTAINER_IMAGE + ' gcloud functions delete ' + googleFunctions[i] + ' --region ' + config.google.region + ' --quiet')
 			.then((stdout) => {
 				let end = now();
