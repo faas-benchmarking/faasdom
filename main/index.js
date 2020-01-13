@@ -1372,6 +1372,7 @@ async function cleanupGoogle() {
 
 /** Cleanup Function for IBM */
 async function cleanupIBM() {
+	// TODO: check if other regions work properly
 
 	return new Promise(async (resolve, reject) => {
 
