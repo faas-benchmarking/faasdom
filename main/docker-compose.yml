@@ -34,12 +34,8 @@ services:
     container_name: golang
 
   dotnet:
-    image: mcr.microsoft.com/dotnet/core/sdk:3.1-alpine3.10
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2-alpine3.9
     container_name: dotnet
-
-  dotnet2.1:
-    image: mcr.microsoft.com/dotnet/core/sdk:2.1-alpine3.10
-    container_name: dotnet2.1
 
   db:
     image: influxdb:1.7.7-alpine
