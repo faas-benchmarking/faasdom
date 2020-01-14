@@ -1304,8 +1304,7 @@ async function cleanupGoogle() {
 				let row = array[i];
 				row = row.replace(/\s+/g, ' ');
 				let elements = row.split(' ');
-				//TODO: google save correct region
-				googleFunctions.push(elements[0]);
+				googleFunctions.push({function: elements[0], region: elements[4]});
 			}
 		})
 		.catch((err) => {
@@ -1327,15 +1326,14 @@ async function cleanupGoogle() {
 		var promises = [];
 		for(let i = 0; i<googleFunctions.length; i++) {
 			let start = now();
-			//TODO: google use correct region
-			let p = execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud ' + GOOGLE_CONTAINER_IMAGE + ' gcloud functions delete ' + googleFunctions[i] + ' --region ' + config.google.region + ' --quiet')
+			let p = execShellCommand('docker run --rm -v google-secrets:/root/.config/gcloud ' + GOOGLE_CONTAINER_IMAGE + ' gcloud functions delete ' + googleFunctions[i].function + ' --region ' + googleFunctions[i].region + ' --quiet')
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
-				currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Function "' + googleFunctions[i] + '" deleted ' + time + '</li>';
+				currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Function "' + googleFunctions[i].function + ' in ' + googleFunctions[i].region + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
-				currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Function "' + googleFunctions[i] + '" could not be deleted</li>';
+				currentLogStatusGoogle += '<li><span style="color:red">ERROR:</span> Function "' + googleFunctions[i].function + ' in ' + googleFunctions[i].region + '" could not be deleted</li>';
 			});
 			promises.push(p);
 		}
