@@ -384,7 +384,6 @@ async function deployAWS(params, func, funcFirstUpperCase, testName) {
 		var promises = [];
 
 		if(params.node == 'true') {
-			// TODO: change node runtime, 8 no longer supported
 			let p = deployFunction(constants.AWS, constants.NODE, func, 'node_' + func, 'node_' + func, 'node_' + func, 'nodejs10.x', '', 'index.handler', '/aws/src/node/node_' + func + '/', 'Node.js', '', '', params.ram, params.timeout);
 			promises.push(p);
 		}
@@ -1126,9 +1125,8 @@ async function cleanupAWS() {
 			let p1 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws lambda list-functions --region ' + config.aws.region_options[i])
 			.then((stdout) => {
 				let awslambda = JSON.parse(stdout);
-				for(let i = 0; i<awslambda.Functions.length; i++) {
-					// TODO: also push function region, otherwise wont work
-					awsFunctions.push(awslambda.Functions[i].FunctionName);
+				for(let j = 0; j<awslambda.Functions.length; j++) {
+					awsFunctions.push({function: awslambda.Functions[j].FunctionName, region: config.aws.region_options[i]});
 				}
 			})
 			.catch((err) => {
@@ -1140,8 +1138,8 @@ async function cleanupAWS() {
 			let p2 = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws apigateway get-rest-apis --region ' + config.aws.region_options[i])
 			.then((stdout) => {
 				let awsapi = JSON.parse(stdout);
-				for(let i = 0; i<awsapi.items.length; i++) {
-					awsGateways.push(awsapi.items[i].id);
+				for(let j = 0; j<awsapi.items.length; j++) {
+					awsGateways.push({api: awsapi.items[j].id, region: config.aws.region_options[i]});
 				}
 			})
 			.catch((err) => {
@@ -1170,15 +1168,14 @@ async function cleanupAWS() {
 
 		for(let i = 0; i<awsFunctions.length; i++) {
 			let start = now();
-			// TODO: use saved region
-			let p = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws lambda delete-function --function-name ' + awsFunctions[i] + ' --region ' + config.aws.region)
+			let p = execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws lambda delete-function --function-name ' + awsFunctions[i].function + ' --region ' + awsFunctions[i].region)
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
-				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Function "' + awsFunctions[i] + '" deleted ' + time + '</li>';
+				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Function "' + awsFunctions[i].function + ' in ' + awsFunctions[i].region + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
-				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Function "' + awsFunctions[i] + '" could not be deleted</li>';
+				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Function "' + awsFunctions[i].function + ' in ' + awsFunctions[i].region + '" could not be deleted</li>';
 			});
 			promises.push(p);
 
@@ -1191,15 +1188,14 @@ async function cleanupAWS() {
 			if(i>0) {
 				await new Promise(resolve => setTimeout(resolve, 30000));
 			}
-			// TODO: use saved region
-			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws apigateway delete-rest-api --rest-api-id ' + awsGateways[i] + ' --region ' + config.aws.region)
+			await execShellCommand('docker run --rm -v aws-secrets:/root/.aws ' + AWS_CONTAINER_IMAGE + ' aws apigateway delete-rest-api --rest-api-id ' + awsGateways[i].api + ' --region ' + awsGateways[i].region)
 			.then((stdout) => {
 				let end = now();
 				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
-				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> API with ID "' + awsGateways[i] + '" deleted ' + time + '</li>';
+				currentLogStatusAWS += '<li><span style="color:green">INFO:</span> API with ID "' + awsGateways[i].api + ' in ' + awsGateways[i].region + '" deleted ' + time + '</li>';
 			})
 			.catch((err) => {
-				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> API with ID "' + awsGateways[i] + '" could not be deleted</li>';
+				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> API with ID "' + awsGateways[i].api + ' in ' + awsGateways[i].region +  '" could not be deleted</li>';
 			});
 		}
 
