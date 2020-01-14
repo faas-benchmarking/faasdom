@@ -3,7 +3,7 @@ const fs = require('fs');
 const Influx = require('influx');
 const constants = require('./constants.js')
 
-const tags = ['test', 'provider', 'language', 'memory'];
+const tags = ['test', 'provider', 'language', 'memory', 'region'];
 
 const influx = new Influx.InfluxDB({
     host: 'localhost',
@@ -75,10 +75,10 @@ for(let i = 0; i<constants.TESTS.length; i++) {
     allUrls[constants.TESTS[i]] = urls;
 }
 
-function pushURL(test, provider, language, url, memory) {
+function pushURL(test, provider, language, url, memory, region) {
     if(constants.PROVIDERS.includes(provider) && constants.LANGUAGES.includes(language)) {
         let index = constants.TESTS.findIndex(x => x == test);
-        allUrls[test].push({provider: provider, language: language, url: url, memory: memory});
+        allUrls[test].push({provider: provider, language: language, url: url, memory: memory, region: region});
         fs.writeFile('./urls/'+constants.TESTS[index]+'_urls.json', JSON.stringify(allUrls[test]), function(err) {
             if (err) {
                 console.error(err);
@@ -145,18 +145,18 @@ async function get(test, testName, qs) {
                     n = jsonBody.payload.n;
                 }
 
-                insertIntoDB(test, testName, response.elapsedTime, success, allUrls[test][i].language, allUrls[test][i].provider, allUrls[test][i].memory, measured_ms, measured_write_ms, measured_read_ms, n);
+                insertIntoDB(test, testName, response.elapsedTime, success, allUrls[test][i].language, allUrls[test][i].provider, allUrls[test][i].memory, allUrls[test][i].region, measured_ms, measured_write_ms, measured_read_ms, n);
 
             } catch (e) {
 
-                insertIntoDB(test, testName, response.elapsedTime, false, allUrls[test][i].language, allUrls[test][i].provider, allUrls[test][i].memory, -1, -1, -1, -1);
+                insertIntoDB(test, testName, response.elapsedTime, false, allUrls[test][i].language, allUrls[test][i].provider, allUrls[test][i].memory, allUrls[test][i].region, -1, -1, -1, -1);
             }
  
         });
     }
 }
 
-function insertIntoDB(test, testName, ms, success, language, provider, memory, measured_ms, measured_write_ms, measured_read_ms, n) {
+function insertIntoDB(test, testName, ms, success, language, provider, memory, region, measured_ms, measured_write_ms, measured_read_ms, n) {
 
     var data = [
         {
@@ -165,7 +165,8 @@ function insertIntoDB(test, testName, ms, success, language, provider, memory, m
             test: testName,
             language: language,
             provider: provider,
-            memory: memory
+            memory: memory,
+            region: region
           },
           fields: {
             ms: ms,

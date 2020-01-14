@@ -541,6 +541,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 	if(constants.PROVIDERS.includes(provider) && constants.LANGUAGES.includes(language)) {
 
 		let url = '';
+		let region = '';
 		let error = false;
 		
 		let dockerMountPoint = '/app';
@@ -730,6 +731,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
 
 			url = 'https://' + apiid + '.execute-api.' + config.aws.region + '.amazonaws.com/test/' + APIPath;
+			region = config.aws.region;
 			currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusAWS += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
         } 
@@ -748,12 +750,12 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let os = '';
 			if(provider == constants.AZURE) {
 				resourcegroupname += '-linux' + '-' + config.azure.region;
-				storagename += 'linux';
+				storagename += 'linux' + rnd;
 				functionNamePostfix = '-linux-';
 				os = 'Linux';
 			} else {
 				resourcegroupname += '-windows' + '-' + config.azure.region;
-				storagename += 'win';
+				storagename += 'win' + rnd;
 				functionNamePostfix = '-windows-';
 				os = 'Windows';
 			}
@@ -920,6 +922,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
 
 			url = 'https://' + functionName + functionNamePostfix + rnd + '-' + config.azure.region + '.azurewebsites.net/api/' + test;
+			region = config.azure.region;
 			if(provider == constants.AZURE) {
 				currentLogStatusAzure += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 				currentLogStatusAzure += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
@@ -948,6 +951,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
 
 			url = 'https://' + config.google.region + '-' + config.google.project + '.cloudfunctions.net/' + functionName;
+			region = config.google.region;
 			currentLogStatusGoogle += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusGoogle += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
 		}
@@ -1033,13 +1037,14 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
 
 			url = 'https://' + config.ibm.region + '.functions.cloud.ibm.com/api/v1/web/' + config.ibm.organization + '_' + config.ibm.space + '/default/' + APIName + '.' + responseType;
+			region = config.ibm.region;
 			currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusIBM += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
 		}
 
 		console.log(url);
 
-		testingModule.pushURL(test, provider, language, url, ram);
+		testingModule.pushURL(test, provider, language, url, ram, region);
 
 	}
 }
