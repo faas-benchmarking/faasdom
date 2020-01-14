@@ -213,7 +213,6 @@ app.get('/testedPricingAvailableTestNames', async function(req, res, next) {
 app.get('/cleanup', function(req, res, next) {
 	runningStatus = true;
 	resetLogStatus();
-	config.aws.region = req.query.awslocation;
 	cleanup();
 	res.send({data: currentLogStatus, running: runningStatus});
 });
@@ -262,8 +261,6 @@ app.get('/status', function(req, res, next) {
 });
 
 loadConfig();
-// TODO: only for testing
-//copyDockerData();
 app.listen(3001, function () {
 	console.log('INFO: App listening on port 3001!')
 });
@@ -272,25 +269,6 @@ app.listen(3001, function () {
 function loadConfig() {
 	config_file = fs.readFileSync("./config.json");
 	config = JSON.parse(config_file);
-}
-
-/** Copy data to docker volume serverless-data */
-async function copyDockerData() {
-	var error = false;
-	await execShellCommand('docker run -v serverless-data:/data --name helper bschitter/alpine-with-zip:0.1').catch((err) => {
-		error = true;
-	});
-	await execShellCommand('docker cp ../. helper:/data').catch((err) => {
-		error = true;
-	});
-	await execShellCommand('docker rm helper').catch((err) => {
-		error = true;
-	});
-	if(!error) {
-		console.log('INFO: Data copied to docker volume "serverless-data".');
-	} else {
-		console.error('ERROR: Could not copy data to docker volume "serverless-data".');
-	}
 }
 
 /** reset all log variables */
@@ -1352,7 +1330,6 @@ async function cleanupGoogle() {
 
 /** Cleanup Function for IBM */
 async function cleanupIBM() {
-	// TODO: check if other regions work properly, no they don't. for each CF do this...
 
 	return new Promise(async (resolve, reject) => {
 
@@ -1363,85 +1340,101 @@ async function cleanupIBM() {
 		currentLogStatusIBMEnd += '</ul>';
 		runningStatusIBM = true;
 
-		let ibmFunctions = [], ibmGateways = [];
-
 		let error = false;
+		loadConfig();
 
-		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn api list')
-		.then((stdout) => {
-			let ibmapi = stdout;
-			let array2 = ibmapi.split('\n');
-			array2.pop();
-			array2.shift();
-			array2.shift();
-			for(let i = 0; i<array2.length; i++) {
-				let row = array2[i];
-				row = row.replace(/\s+/g, ' ');
-				let elements = row.split(' ');
-				let parts = elements[3].split('/');
-				ibmGateways.push(parts[parts.length-1])
+		for(let r = 0; r<config.ibm.region_options.length; r++) {
+
+			let ibmFunctions = [], ibmGateways = [];
+
+			let startOfLoading = now();
+	
+			/** Set location, organization, space */
+			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud target -r ' + config.ibm.region_options[r] + ' --cf-api https://api.' + config.ibm.region_options[r] + '.cf.cloud.ibm.com -o ' + config.ibm.organization + ' -s ' + config.ibm.space).catch((err) => {
+				error = true;
+				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Error happened while setting CLI to region ' + config.ibm.region_options[r] + '.</li>';
+			});
+			if(error) {
+				return;
 			}
-		})
-		.catch((err) => {
-			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
-			error = true;
-		});
-
-		await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn action list')
-		.then((stdout) => {
-			let ibmactions = stdout;
-			let array3 = ibmactions.split('\n');
-			array3.pop();
-			array3.shift();
-			for(let i = 0; i<array3.length; i++) {
-				let row = array3[i];
-				row = row.replace(/\s+/g, ' ');
-				let elements = row.split(' ');
-				let parts = elements[0].split('/');
-				ibmFunctions.push(parts[2])
-			}
-		})
-		.catch((err) => {
-			currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
-			error = true;
-		});
-
-		if(error) {
-			runningStatusIBM = false;
-			resolve();
-			return;
-		} else {
-			currentLogStatusIBM += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-start).toFixed(3));
-		}
-
-		if(ibmFunctions.length == 0 && ibmGateways.length == 0) {
-			currentLogStatusIBM += '<li><span style="color:orange">SKIP:</span> Nothing to clean up.</li>';
-		}
-
-		for(let i = 0; i<ibmGateways.length; i++) {
-			let start = now();
-			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn api delete / /' + ibmGateways[i])
+	
+			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn api list')
 			.then((stdout) => {
-				let end = now();
-				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
-				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" deleted ' + time + '</li>';
+				let ibmapi = stdout;
+				let array2 = ibmapi.split('\n');
+				array2.pop();
+				array2.shift();
+				array2.shift();
+				for(let i = 0; i<array2.length; i++) {
+					let row = array2[i];
+					row = row.replace(/\s+/g, ' ');
+					let elements = row.split(' ');
+					let parts = elements[3].split('/');
+					ibmGateways.push(parts[parts.length-1])
+				}
 			})
 			.catch((err) => {
-				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" could not be deleted</li>';
+				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud APIs</li>';
+				error = true;
 			});
-		}
-
-		for(let i = 0; i<ibmFunctions.length; i++) {
-			let start = now();
-			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn action delete ' + ibmFunctions[i])
+	
+			await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn action list')
 			.then((stdout) => {
-				let end = now();
-				let time = millisToMinutesAndSeconds((end-start).toFixed(3));
-				currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Action "' + ibmFunctions[i] + '" deleted ' + time + '</li>';
+				let ibmactions = stdout;
+				let array3 = ibmactions.split('\n');
+				array3.pop();
+				array3.shift();
+				for(let i = 0; i<array3.length; i++) {
+					let row = array3[i];
+					row = row.replace(/\s+/g, ' ');
+					let elements = row.split(' ');
+					let parts = elements[0].split('/');
+					ibmFunctions.push(parts[2])
+				}
 			})
 			.catch((err) => {
-				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Action "' + ibmFunctions[i] + '" could not be deleted</li>';
+				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Could not load existing IBM Cloud actions</li>';
+				error = true;
 			});
+	
+			if(error) {
+				runningStatusIBM = false;
+				resolve();
+				return;
+			} else {
+				currentLogStatusIBM += 'Functions/APIs loaded ' + millisToMinutesAndSeconds((now()-startOfLoading).toFixed(3)) + ' for region ' + config.ibm.region_options[r];
+			}
+	
+			if(ibmFunctions.length == 0 && ibmGateways.length == 0) {
+				currentLogStatusIBM += '<li><span style="color:orange">SKIP:</span> Nothing to clean up for region ' + config.ibm.region_options[r] + '.</li>';
+			}
+	
+			for(let i = 0; i<ibmGateways.length; i++) {
+				let start = now();
+				await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn api delete / /' + ibmGateways[i])
+				.then((stdout) => {
+					let end = now();
+					let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+					currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" in ' + config.ibm.region_options[r] + ' deleted ' + time + '</li>';
+				})
+				.catch((err) => {
+					currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Method "/' + ibmGateways[i] + '" on API Gateway "/" in ' + config.ibm.region_options[r] + ' could not be deleted</li>';
+				});
+			}
+	
+			for(let i = 0; i<ibmFunctions.length; i++) {
+				let start = now();
+				await execShellCommand('docker run --rm -v ibm-secrets:/root/.bluemix ' + IBM_CONTAINER_IMAGE + ' ibmcloud fn action delete ' + ibmFunctions[i])
+				.then((stdout) => {
+					let end = now();
+					let time = millisToMinutesAndSeconds((end-start).toFixed(3));
+					currentLogStatusIBM += '<li><span style="color:green">INFO:</span> Action "' + ibmFunctions[i] + ' in ' + config.ibm.region_options[r] + '" deleted ' + time + '</li>';
+				})
+				.catch((err) => {
+					currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Action "' + ibmFunctions[i] + ' in ' + config.ibm.region_options[r] + '" could not be deleted</li>';
+				});
+			}
+
 		}
 
 		let end = now();
