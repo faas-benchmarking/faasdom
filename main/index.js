@@ -764,7 +764,8 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			currentLogStatusAWS += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 			currentLogStatusAWS += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
         } 
-        
+		
+		// TODO: put region into RG
 		else if(provider == constants.AZURE || provider == constants.AZUREWINDOWS) {
 
 			let start = now();
@@ -1034,8 +1035,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 				srcPath = srcPath + functionName + '.zip';
 			}
 			/** Set location, organization, space */
-			
-			await execShellCommand(dockerPrefixOnlyCLIVolume + 'ibmcloud target -r ' + config.ibm.region + ' --cf-api https://api.' + config.ibm.region + '.bluemix.net -o ' + config.ibm.organization + ' -s ' + config.ibm.space).catch((err) => {
+			await execShellCommand(dockerPrefixOnlyCLIVolume + 'ibmcloud target -r ' + config.ibm.region + ' --cf-api https://api.' + config.ibm.region + '.cf.cloud.ibm.com -o ' + config.ibm.organization + ' -s ' + config.ibm.space).catch((err) => {
 				error = true;
 				currentLogStatusIBM += '<li><span style="color:red">ERROR:</span> Error happened while deploying API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
@@ -1359,7 +1359,7 @@ async function cleanupGoogle() {
 
 /** Cleanup Function for IBM */
 async function cleanupIBM() {
-	// TODO: check if other regions work properly
+	// TODO: check if other regions work properly, no they don't. for each CF do this...
 
 	return new Promise(async (resolve, reject) => {
 

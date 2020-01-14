@@ -87,7 +87,7 @@ docker run --rm -tiv google-secrets:/root/.config/gcloud google/cloud-sdk:274.0.
 docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.20.0 ibmcloud login
 
 # with ibm you also have to set the region -r, the API endpoint --cf-api, the organization -o and the space -s
-docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.20.0 ibmcloud target -r <YOUR_REGION> --cf-api https://api.<YOUR_REGION>.bluemix.net -o <YOUR_ORGANIZATION> -s <YOUR_SPACE>
+docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.20.0 ibmcloud target -r <YOUR_REGION> --cf-api https://api.<YOUR_REGION>.cf.cloud.ibm.com -o <YOUR_ORGANIZATION> -s <YOUR_SPACE>
 ```
 
 To start the main application (in the folder [main](main/)) run:
