@@ -148,10 +148,10 @@ async function get(test, testName, qs) {
                 insertIntoDB(test, testName, response.elapsedTime, success, allUrls[test][i].language, allUrls[test][i].provider, allUrls[test][i].memory, allUrls[test][i].region, measured_ms, measured_write_ms, measured_read_ms, n);
 
             } catch (e) {
-
-                insertIntoDB(test, testName, response.elapsedTime, false, allUrls[test][i].language, allUrls[test][i].provider, allUrls[test][i].memory, allUrls[test][i].region, -1, -1, -1, -1);
+                console.error(e);
+                insertIntoDB(test, testName, -1, false, allUrls[test][i].language, allUrls[test][i].provider, allUrls[test][i].memory, allUrls[test][i].region, -1, -1, -1, -1);
             }
- 
+
         });
     }
 }
