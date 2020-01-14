@@ -515,26 +515,18 @@ async function deployIBM(params, func, funcFirstUpperCase, testName) {
 		currentLogStatusIBMEnd += '</ul>';
 		runningStatusIBM = true;
 
-		//var promises = [];
-
 		if(params.node == 'true') {
 			await deployFunction(constants.IBM, constants.NODE, func, 'node_' + func, 'node_' + func, '', 'nodejs:10', '', '', '/ibm/src/node/' + func + '/', 'Node.js', ' ', 'json', params.ram, params.timeout);
-			//promises.push(p);
 		}
 		if(params.python == 'true') {
 			await deployFunction(constants.IBM, constants.PYTHON, func, 'python_' + func, 'python_' + func, '', 'python:3.7', '', '', '/ibm/src/python/' + func + '/main.py', 'Python', ' ', 'json', params.ram, params.timeout);
-			//promises.push(p);
 		}
 		if(params.go == 'true') {
 			await deployFunction(constants.IBM, constants.GO, func, 'go_' + func, 'go_' + func, '', 'go:1.11', '', '', '/ibm/src/go/' + func + '/' + func + '.go', 'Go', ' ', 'json', params.ram, params.timeout);
-			//promises.push(p);
 		}
 		if(params.dotnet == 'true') {
 			await deployFunction(constants.IBM, constants.DOTNET, func, 'dotnet_' + func, 'dotnet_' + func, '', 'dotnet:2.2', '', '', '/ibm/src/dotnet/' + funcFirstUpperCase + '/', '.NET', ' --main ' + funcFirstUpperCase + '::' + funcFirstUpperCase + '.' + funcFirstUpperCase + 'Dotnet::Main', 'json', params.ram, params.timeout)
-			//promises.push(p);
 		}
-
-		//await Promise.all(promises);
 
 		let end = now();
 		currentLogStatusIBM += 'Completed ' + millisToMinutesAndSeconds((end-start).toFixed(3));
