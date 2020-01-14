@@ -765,7 +765,6 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			currentLogStatusAWS += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
         } 
 		
-		// TODO: put region into RG
 		else if(provider == constants.AZURE || provider == constants.AZUREWINDOWS) {
 
 			let start = now();
@@ -779,12 +778,12 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let functionNamePostfix = '';
 			let os = '';
 			if(provider == constants.AZURE) {
-				resourcegroupname += '-linux';
+				resourcegroupname += '-linux' + '-' + config.azure.region;
 				storagename += 'linux';
 				functionNamePostfix = '-linux-';
 				os = 'Linux';
 			} else {
-				resourcegroupname += '-windows';
+				resourcegroupname += '-windows' + '-' + config.azure.region;
 				storagename += 'win';
 				functionNamePostfix = '-windows-';
 				os = 'Windows';
@@ -900,7 +899,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** Create a function app */
-			await execShellCommand(dockerPrefixOnlyCLIVolume + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + functionNamePostfix + rnd + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --runtime-version ' + runtimeVersion + ' --os-type ' + os).catch((err) => {
+			await execShellCommand(dockerPrefixOnlyCLIVolume + 'az functionapp create --resource-group ' + resourcegroupname + ' --consumption-plan-location ' + config.azure.region + ' --name ' + functionName + functionNamePostfix + rnd + '-' + config.azure.region + ' --storage-account ' + storagename + ' --runtime ' + runtime + ' --runtime-version ' + runtimeVersion + ' --os-type ' + os).catch((err) => {
 				error = true;
 				if(provider == constants.AZURE) {
 					currentLogStatusAzure += '<li><span style="color:red">ERROR:</span> Error happened while creating function app. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
@@ -913,7 +912,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** Deploy a function */
-			await execShellCommand(dockerPrefixBothVolumes + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + functionNamePostfix + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip').catch((err) => {
+			await execShellCommand(dockerPrefixBothVolumes + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + functionNamePostfix + rnd + '-' + config.azure.region + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip').catch((err) => {
 				error = true;
 			});
 			if(error) {
@@ -924,7 +923,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 
 					error = false;
 					
-					await execShellCommand(dockerPrefixBothVolumes + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + functionNamePostfix + rnd + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip').catch((err) => {
+					await execShellCommand(dockerPrefixBothVolumes + 'az functionapp deployment source config-zip -g ' + resourcegroupname + ' -n ' + functionName + functionNamePostfix + rnd + '-' + config.azure.region + ' --src ' + dockerMountPoint + srcPath + '/' + functionName + '.zip').catch((err) => {
 						error = true;
 					});
 
@@ -951,7 +950,7 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			let end = now();
 			let time = millisToMinutesAndSeconds((end-start).toFixed(3));
 
-			url = 'https://' + functionName + functionNamePostfix + rnd + '.azurewebsites.net/api/' + test;
+			url = 'https://' + functionName + functionNamePostfix + rnd + '-' + config.azure.region + '.azurewebsites.net/api/' + test;
 			if(provider == constants.AZURE) {
 				currentLogStatusAzure += '<li><span style="color:green">INFO:</span> Deployed ' + languageName + ' function ' + time;
 				currentLogStatusAzure += '<br><a href="' + url + '" target="_blank">' + url + '</a></li>';
