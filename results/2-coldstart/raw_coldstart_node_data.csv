@@ -1,0 +1,51 @@
+Cloud,time (ms)
+AWS,301
+AWS,295
+AWS,291
+AWS,845
+AWS,275
+AWS,319
+AWS,302
+AWS,278
+AWS,283
+AWS,326
+Azure,2601
+Azure,2275
+Azure,2518
+Azure,2342
+Azure,2795
+Azure,2446
+Azure,2673
+Azure,2640
+Azure,2382
+Azure,2438
+Azure (Win),4273
+Azure (Win),3336
+Azure (Win),4126
+Azure (Win),3966
+Azure (Win),3226
+Azure (Win),4974
+Azure (Win),4921
+Azure (Win),3906
+Azure (Win),3741
+Azure (Win),4386
+Google,2294
+Google,2285
+Google,1653
+Google,1559
+Google,1728
+Google,1870
+Google,1923
+Google,2259
+Google,1678
+Google,2081
+IBM,925
+IBM,814
+IBM,859
+IBM,779
+IBM,794
+IBM,856
+IBM,800
+IBM,780
+IBM,823
+IBM,833

@@ -1,0 +1,8 @@
+x <- read.csv("raw_coldstart_ibm_data.csv",header=T,sep=",")
+x <- t(x)
+a <- as.numeric(x[2,1:10])
+b <- as.numeric(x[2,11:20])
+c <- as.numeric(x[2,21:30])
+d <- as.numeric(x[2,31:40])
+png(file = "boxplot_coldstart_ibm.png", width=1000, height=1000, units="px", pointsize=24)
+boxplot(a,b,c,d,names=c("Node.js","Python","Go",".NET"), xlab = "Runtime",ylab = "time (ms)", main = "IBM Cold Start Latency", ylim = c(0, 2000))

@@ -1,0 +1,7 @@
+x <- read.csv("raw_coldstart_google_data.csv",header=T,sep=",")
+x <- t(x)
+a <- as.numeric(x[2,1:10])
+b <- as.numeric(x[2,11:20])
+c <- as.numeric(x[2,21:30])
+png(file = "boxplot_coldstart_google.png", width=1000, height=1000, units="px", pointsize=24)
+boxplot(a,b,c,names=c("Node.js","Python","Go"), xlab = "Runtime",ylab = "time (ms)", main = "Google Cold Start Latency", ylim = c(0, 4000))

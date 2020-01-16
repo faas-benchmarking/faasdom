@@ -1,0 +1,8 @@
+x <- read.csv("raw_coldstart_dotnet_data.csv",header=T,sep=",")
+x <- t(x)
+a <- as.numeric(x[2,1:10])
+b <- as.numeric(x[2,11:20])
+c <- as.numeric(x[2,21:30])
+d <- as.numeric(x[2,31:40])
+png(file = "boxplot_coldstart_dotnet.png", width=1000, height=1000, units="px", pointsize=24)
+boxplot(a,b,c,d,names=c("AWS","Azure", "Azure (Win)", "IBM"), xlab = "Cloud Provider",ylab = "time (ms)", main = ".NET Cold Start Latency", ylim = c(0, 5000))
