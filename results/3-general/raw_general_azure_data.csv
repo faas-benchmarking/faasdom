@@ -1,0 +1,501 @@
+cloud,runtime,memory_mb,region,total_ms,measured_ms,latency_ms,name
+azure,dotnet,1536,westeurope,417,86,331,.NET
+azure,dotnet,1536,westeurope,243,87,156,.NET
+azure,dotnet,1536,westeurope,197,84,113,.NET
+azure,dotnet,1536,westeurope,226,83,143,.NET
+azure,dotnet,1536,westeurope,228,96,132,.NET
+azure,dotnet,1536,westeurope,240,89,151,.NET
+azure,dotnet,1536,westeurope,260,127,133,.NET
+azure,dotnet,1536,westeurope,336,100,236,.NET
+azure,dotnet,1536,westeurope,233,87,146,.NET
+azure,dotnet,1536,westeurope,246,107,139,.NET
+azure,dotnet,1536,westeurope,227,88,139,.NET
+azure,dotnet,1536,westeurope,224,97,127,.NET
+azure,dotnet,1536,westeurope,236,97,139,.NET
+azure,dotnet,1536,westeurope,236,89,147,.NET
+azure,dotnet,1536,westeurope,319,87,232,.NET
+azure,dotnet,1536,westeurope,208,85,123,.NET
+azure,dotnet,1536,westeurope,248,109,139,.NET
+azure,dotnet,1536,westeurope,218,88,130,.NET
+azure,dotnet,1536,westeurope,234,85,149,.NET
+azure,dotnet,1536,westeurope,237,97,140,.NET
+azure,dotnet,1536,westeurope,210,88,122,.NET
+azure,dotnet,1536,westeurope,338,92,246,.NET
+azure,dotnet,1536,westeurope,207,83,124,.NET
+azure,dotnet,1536,westeurope,255,107,148,.NET
+azure,dotnet,1536,westeurope,225,88,137,.NET
+azure,dotnet,1536,westeurope,206,86,120,.NET
+azure,dotnet,1536,westeurope,233,85,148,.NET
+azure,dotnet,1536,westeurope,227,94,133,.NET
+azure,dotnet,1536,westeurope,289,87,202,.NET
+azure,dotnet,1536,westeurope,204,89,115,.NET
+azure,dotnet,1536,westeurope,321,100,221,.NET
+azure,dotnet,1536,westeurope,266,104,162,.NET
+azure,dotnet,1536,westeurope,251,95,156,.NET
+azure,dotnet,1536,westeurope,247,95,152,.NET
+azure,dotnet,1536,westeurope,206,85,121,.NET
+azure,dotnet,1536,westeurope,603,85,518,.NET
+azure,dotnet,1536,westeurope,214,96,118,.NET
+azure,dotnet,1536,westeurope,243,89,154,.NET
+azure,dotnet,1536,westeurope,231,85,146,.NET
+azure,dotnet,1536,westeurope,244,99,145,.NET
+azure,dotnet,1536,westeurope,224,87,137,.NET
+azure,dotnet,1536,westeurope,191,89,102,.NET
+azure,dotnet,1536,westeurope,320,83,237,.NET
+azure,dotnet,1536,westeurope,216,97,119,.NET
+azure,dotnet,1536,westeurope,224,89,135,.NET
+azure,dotnet,1536,westeurope,232,91,141,.NET
+azure,dotnet,1536,westeurope,210,88,122,.NET
+azure,dotnet,1536,westeurope,217,100,117,.NET
+azure,dotnet,1536,westeurope,280,100,180,.NET
+azure,dotnet,1536,westeurope,336,94,242,.NET
+azure,dotnet,1536,westeurope,232,95,137,.NET
+azure,dotnet,1536,westeurope,244,87,157,.NET
+azure,dotnet,1536,westeurope,243,90,153,.NET
+azure,dotnet,1536,westeurope,245,84,161,.NET
+azure,dotnet,1536,westeurope,219,90,129,.NET
+azure,dotnet,1536,westeurope,233,91,142,.NET
+azure,dotnet,1536,westeurope,334,97,237,.NET
+azure,dotnet,1536,westeurope,219,93,126,.NET
+azure,dotnet,1536,westeurope,392,87,305,.NET
+azure,dotnet,1536,westeurope,205,84,121,.NET
+azure,dotnet,1536,westeurope,260,88,172,.NET
+azure,dotnet,1536,westeurope,228,92,136,.NET
+azure,dotnet,1536,westeurope,370,94,276,.NET
+azure,dotnet,1536,westeurope,247,91,156,.NET
+azure,dotnet,1536,westeurope,236,95,141,.NET
+azure,dotnet,1536,westeurope,264,106,158,.NET
+azure,dotnet,1536,westeurope,237,103,134,.NET
+azure,dotnet,1536,westeurope,277,100,177,.NET
+azure,dotnet,1536,westeurope,224,91,133,.NET
+azure,dotnet,1536,westeurope,337,90,247,.NET
+azure,dotnet,1536,westeurope,240,107,133,.NET
+azure,dotnet,1536,westeurope,218,89,129,.NET
+azure,dotnet,1536,westeurope,215,88,127,.NET
+azure,dotnet,1536,westeurope,250,97,153,.NET
+azure,dotnet,1536,westeurope,234,89,145,.NET
+azure,dotnet,1536,westeurope,257,87,170,.NET
+azure,dotnet,1536,westeurope,341,80,261,.NET
+azure,dotnet,1536,westeurope,234,99,135,.NET
+azure,dotnet,1536,westeurope,241,89,152,.NET
+azure,dotnet,1536,westeurope,238,90,148,.NET
+azure,dotnet,1536,westeurope,627,100,527,.NET
+azure,dotnet,1536,westeurope,317,89,228,.NET
+azure,dotnet,1536,westeurope,214,83,131,.NET
+azure,dotnet,1536,westeurope,338,86,252,.NET
+azure,dotnet,1536,westeurope,242,92,150,.NET
+azure,dotnet,1536,westeurope,255,88,167,.NET
+azure,dotnet,1536,westeurope,249,88,161,.NET
+azure,dotnet,1536,westeurope,217,87,130,.NET
+azure,dotnet,1536,westeurope,201,85,116,.NET
+azure,dotnet,1536,westeurope,252,88,164,.NET
+azure,dotnet,1536,westeurope,313,87,226,.NET
+azure,dotnet,1536,westeurope,217,83,134,.NET
+azure,dotnet,1536,westeurope,232,81,151,.NET
+azure,dotnet,1536,westeurope,209,85,124,.NET
+azure,dotnet,1536,westeurope,214,93,121,.NET
+azure,dotnet,1536,westeurope,347,87,260,.NET
+azure,dotnet,1536,westeurope,304,89,215,.NET
+azure,dotnet,1536,westeurope,290,127,163,.NET
+azure,dotnet,1536,westeurope,195,86,109,.NET
+azure,dotnet,1536,westeurope,240,92,148,.NET
+azureWindows,dotnet,1536,westeurope,724,282,442,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,710,278,432,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,441,250,191,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,355,245,110,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,407,258,149,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,373,231,142,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,379,260,119,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,536,248,288,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,371,257,114,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,374,257,117,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,385,245,140,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,378,254,124,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,371,243,128,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,382,242,140,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,703,400,303,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,374,252,122,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,365,260,105,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,373,251,122,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,374,252,122,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,388,243,145,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,354,245,109,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,516,244,272,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,361,250,111,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,350,250,100,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,374,246,128,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,388,243,145,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,356,242,114,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,370,258,112,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,533,243,290,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,346,247,99,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,359,253,106,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,367,241,126,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,398,245,153,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,365,244,121,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,353,246,107,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,848,269,579,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,356,252,104,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,362,250,112,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,400,248,152,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,366,248,118,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,361,243,118,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,385,257,128,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,540,239,301,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,362,257,105,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,365,253,112,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,383,244,139,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,389,250,139,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,352,244,108,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,395,249,146,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,509,238,271,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,402,255,147,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,363,249,114,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,385,240,145,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,366,253,113,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,368,246,122,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,379,257,122,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,522,254,268,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,366,247,119,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,367,252,115,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,350,236,114,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,429,273,156,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,377,248,129,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,561,259,302,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,578,283,295,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,369,253,116,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,396,276,120,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,328,249,79,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,376,247,129,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,395,247,148,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,511,250,261,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,369,249,120,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,366,256,110,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,376,251,125,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,365,250,115,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,390,250,140,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,363,246,117,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,514,245,269,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,364,253,111,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,371,245,126,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,348,237,111,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,735,266,469,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,592,276,316,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,362,254,108,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,523,245,278,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,356,246,110,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,383,250,133,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,441,280,161,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,374,247,127,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,350,240,110,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,378,249,129,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,514,242,272,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,379,247,132,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,405,285,120,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,369,237,132,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,370,258,112,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,383,244,139,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,551,286,265,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,369,250,119,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,365,238,127,.NET (Windows)
+azureWindows,dotnet,1536,westeurope,356,246,110,.NET (Windows)
+azure,node,1536,westeurope,2810,2484,326,Node.js
+azure,node,1536,westeurope,2674,2460,214,Node.js
+azure,node,1536,westeurope,2258,2064,194,Node.js
+azure,node,1536,westeurope,2365,2231,134,Node.js
+azure,node,1536,westeurope,2310,2126,184,Node.js
+azure,node,1536,westeurope,2729,2552,177,Node.js
+azure,node,1536,westeurope,2457,2282,175,Node.js
+azure,node,1536,westeurope,2434,2167,267,Node.js
+azure,node,1536,westeurope,2359,2158,201,Node.js
+azure,node,1536,westeurope,2352,2186,166,Node.js
+azure,node,1536,westeurope,2380,2182,198,Node.js
+azure,node,1536,westeurope,2441,2282,159,Node.js
+azure,node,1536,westeurope,2270,2069,201,Node.js
+azure,node,1536,westeurope,2507,2311,196,Node.js
+azure,node,1536,westeurope,2344,2104,240,Node.js
+azure,node,1536,westeurope,2343,2152,191,Node.js
+azure,node,1536,westeurope,2246,2059,187,Node.js
+azure,node,1536,westeurope,2281,2064,217,Node.js
+azure,node,1536,westeurope,2396,2196,200,Node.js
+azure,node,1536,westeurope,2263,2047,216,Node.js
+azure,node,1536,westeurope,2290,2089,201,Node.js
+azure,node,1536,westeurope,2303,2027,276,Node.js
+azure,node,1536,westeurope,2206,2045,161,Node.js
+azure,node,1536,westeurope,2283,2095,188,Node.js
+azure,node,1536,westeurope,2250,2036,214,Node.js
+azure,node,1536,westeurope,2407,2236,171,Node.js
+azure,node,1536,westeurope,2434,2202,232,Node.js
+azure,node,1536,westeurope,2818,2252,566,Node.js
+azure,node,1536,westeurope,2378,2136,242,Node.js
+azure,node,1536,westeurope,2415,2247,168,Node.js
+azure,node,1536,westeurope,2259,2046,213,Node.js
+azure,node,1536,westeurope,2287,2101,186,Node.js
+azure,node,1536,westeurope,2534,2299,235,Node.js
+azure,node,1536,westeurope,2525,2307,218,Node.js
+azure,node,1536,westeurope,2455,2245,210,Node.js
+azure,node,1536,westeurope,2612,2056,556,Node.js
+azure,node,1536,westeurope,2160,2005,155,Node.js
+azure,node,1536,westeurope,2225,2006,219,Node.js
+azure,node,1536,westeurope,2250,2044,206,Node.js
+azure,node,1536,westeurope,2339,2138,201,Node.js
+azure,node,1536,westeurope,2200,1993,207,Node.js
+azure,node,1536,westeurope,2455,2242,213,Node.js
+azure,node,1536,westeurope,2386,2115,271,Node.js
+azure,node,1536,westeurope,2283,2123,160,Node.js
+azure,node,1536,westeurope,2196,2013,183,Node.js
+azure,node,1536,westeurope,2274,2078,196,Node.js
+azure,node,1536,westeurope,2364,2130,234,Node.js
+azure,node,1536,westeurope,2252,2047,205,Node.js
+azure,node,1536,westeurope,2534,2283,251,Node.js
+azure,node,1536,westeurope,2448,2151,297,Node.js
+azure,node,1536,westeurope,2312,2098,214,Node.js
+azure,node,1536,westeurope,2850,2215,635,Node.js
+azure,node,1536,westeurope,2327,2098,229,Node.js
+azure,node,1536,westeurope,2503,2291,212,Node.js
+azure,node,1536,westeurope,2306,2116,190,Node.js
+azure,node,1536,westeurope,2485,2254,231,Node.js
+azure,node,1536,westeurope,2442,2154,288,Node.js
+azure,node,1536,westeurope,2329,2130,199,Node.js
+azure,node,1536,westeurope,2230,2083,147,Node.js
+azure,node,1536,westeurope,2295,2117,178,Node.js
+azure,node,1536,westeurope,2560,2329,231,Node.js
+azure,node,1536,westeurope,2230,2044,186,Node.js
+azure,node,1536,westeurope,2546,2241,305,Node.js
+azure,node,1536,westeurope,2372,2178,194,Node.js
+azure,node,1536,westeurope,2428,2223,205,Node.js
+azure,node,1536,westeurope,2579,2380,199,Node.js
+azure,node,1536,westeurope,2239,2060,179,Node.js
+azure,node,1536,westeurope,2479,2267,212,Node.js
+azure,node,1536,westeurope,2408,2199,209,Node.js
+azure,node,1536,westeurope,2548,2225,323,Node.js
+azure,node,1536,westeurope,2196,2011,185,Node.js
+azure,node,1536,westeurope,2293,2132,161,Node.js
+azure,node,1536,westeurope,2213,2027,186,Node.js
+azure,node,1536,westeurope,2399,2183,216,Node.js
+azure,node,1536,westeurope,2533,2323,210,Node.js
+azure,node,1536,westeurope,2411,2183,228,Node.js
+azure,node,1536,westeurope,2537,2175,362,Node.js
+azure,node,1536,westeurope,2227,2028,199,Node.js
+azure,node,1536,westeurope,2276,2073,203,Node.js
+azure,node,1536,westeurope,2286,2083,203,Node.js
+azure,node,1536,westeurope,2615,2077,538,Node.js
+azure,node,1536,westeurope,2571,2286,285,Node.js
+azure,node,1536,westeurope,2310,2112,198,Node.js
+azure,node,1536,westeurope,2403,2131,272,Node.js
+azure,node,1536,westeurope,2221,2067,154,Node.js
+azure,node,1536,westeurope,2535,2040,495,Node.js
+azure,node,1536,westeurope,2201,2008,193,Node.js
+azure,node,1536,westeurope,2265,2063,202,Node.js
+azure,node,1536,westeurope,2391,2215,176,Node.js
+azure,node,1536,westeurope,2277,2053,224,Node.js
+azure,node,1536,westeurope,2497,2207,290,Node.js
+azure,node,1536,westeurope,2367,2172,195,Node.js
+azure,node,1536,westeurope,2224,2063,161,Node.js
+azure,node,1536,westeurope,2486,2266,220,Node.js
+azure,node,1536,westeurope,2229,2059,170,Node.js
+azure,node,1536,westeurope,2663,2470,193,Node.js
+azure,node,1536,westeurope,2426,2153,273,Node.js
+azure,node,1536,westeurope,2288,2069,219,Node.js
+azure,node,1536,westeurope,2274,2077,197,Node.js
+azure,node,1536,westeurope,2380,2182,198,Node.js
+azureWindows,node,1536,westeurope,6196,5742,454,Node.js (Windows)
+azureWindows,node,1536,westeurope,6351,6185,166,Node.js (Windows)
+azureWindows,node,1536,westeurope,8210,5460,2750,Node.js (Windows)
+azureWindows,node,1536,westeurope,5570,5366,204,Node.js (Windows)
+azureWindows,node,1536,westeurope,5387,5238,149,Node.js (Windows)
+azureWindows,node,1536,westeurope,5461,5279,182,Node.js (Windows)
+azureWindows,node,1536,westeurope,5445,5191,254,Node.js (Windows)
+azureWindows,node,1536,westeurope,39269,12717,26552,Node.js (Windows)
+azureWindows,node,1536,westeurope,5444,5236,208,Node.js (Windows)
+azureWindows,node,1536,westeurope,5637,5469,168,Node.js (Windows)
+azureWindows,node,1536,westeurope,11941,11631,310,Node.js (Windows)
+azureWindows,node,1536,westeurope,7057,6952,105,Node.js (Windows)
+azureWindows,node,1536,westeurope,6659,6506,153,Node.js (Windows)
+azureWindows,node,1536,westeurope,6011,5890,121,Node.js (Windows)
+azureWindows,node,1536,westeurope,5701,5566,135,Node.js (Windows)
+azureWindows,node,1536,westeurope,11350,11116,234,Node.js (Windows)
+azureWindows,node,1536,westeurope,5514,5313,201,Node.js (Windows)
+azureWindows,node,1536,westeurope,8022,7887,135,Node.js (Windows)
+azureWindows,node,1536,westeurope,5497,5332,165,Node.js (Windows)
+azureWindows,node,1536,westeurope,8386,8163,223,Node.js (Windows)
+azureWindows,node,1536,westeurope,5502,5327,175,Node.js (Windows)
+azureWindows,node,1536,westeurope,8181,7950,231,Node.js (Windows)
+azureWindows,node,1536,westeurope,5694,5526,168,Node.js (Windows)
+azureWindows,node,1536,westeurope,8084,7917,167,Node.js (Windows)
+azureWindows,node,1536,westeurope,5536,5374,162,Node.js (Windows)
+azureWindows,node,1536,westeurope,7479,7296,183,Node.js (Windows)
+azureWindows,node,1536,westeurope,5549,5343,206,Node.js (Windows)
+azureWindows,node,1536,westeurope,6378,6241,137,Node.js (Windows)
+azureWindows,node,1536,westeurope,5750,5392,358,Node.js (Windows)
+azureWindows,node,1536,westeurope,5973,5890,83,Node.js (Windows)
+azureWindows,node,1536,westeurope,5571,5398,173,Node.js (Windows)
+azureWindows,node,1536,westeurope,5875,5679,196,Node.js (Windows)
+azureWindows,node,1536,westeurope,5519,5299,220,Node.js (Windows)
+azureWindows,node,1536,westeurope,6525,6406,119,Node.js (Windows)
+azureWindows,node,1536,westeurope,5511,5334,177,Node.js (Windows)
+azureWindows,node,1536,westeurope,6024,5425,599,Node.js (Windows)
+azureWindows,node,1536,westeurope,6484,6388,96,Node.js (Windows)
+azureWindows,node,1536,westeurope,5965,5754,211,Node.js (Windows)
+azureWindows,node,1536,westeurope,6449,6302,147,Node.js (Windows)
+azureWindows,node,1536,westeurope,5582,5408,174,Node.js (Windows)
+azureWindows,node,1536,westeurope,6573,6453,120,Node.js (Windows)
+azureWindows,node,1536,westeurope,5474,5301,173,Node.js (Windows)
+azureWindows,node,1536,westeurope,6549,6300,249,Node.js (Windows)
+azureWindows,node,1536,westeurope,5917,5785,132,Node.js (Windows)
+azureWindows,node,1536,westeurope,6811,6582,229,Node.js (Windows)
+azureWindows,node,1536,westeurope,5500,5279,221,Node.js (Windows)
+azureWindows,node,1536,westeurope,6735,6570,165,Node.js (Windows)
+azureWindows,node,1536,westeurope,5447,5304,143,Node.js (Windows)
+azureWindows,node,1536,westeurope,6593,6428,165,Node.js (Windows)
+azureWindows,node,1536,westeurope,5533,5300,233,Node.js (Windows)
+azureWindows,node,1536,westeurope,6439,6298,141,Node.js (Windows)
+azureWindows,node,1536,westeurope,5539,5402,137,Node.js (Windows)
+azureWindows,node,1536,westeurope,6422,6249,173,Node.js (Windows)
+azureWindows,node,1536,westeurope,5384,5238,146,Node.js (Windows)
+azureWindows,node,1536,westeurope,6306,6159,147,Node.js (Windows)
+azureWindows,node,1536,westeurope,5429,5290,139,Node.js (Windows)
+azureWindows,node,1536,westeurope,6798,6575,223,Node.js (Windows)
+azureWindows,node,1536,westeurope,5476,5354,122,Node.js (Windows)
+azureWindows,node,1536,westeurope,6454,6333,121,Node.js (Windows)
+azureWindows,node,1536,westeurope,8647,8517,130,Node.js (Windows)
+azureWindows,node,1536,westeurope,6602,6434,168,Node.js (Windows)
+azureWindows,node,1536,westeurope,5464,5237,227,Node.js (Windows)
+azureWindows,node,1536,westeurope,6649,6387,262,Node.js (Windows)
+azureWindows,node,1536,westeurope,5508,5366,142,Node.js (Windows)
+azureWindows,node,1536,westeurope,6660,6520,140,Node.js (Windows)
+azureWindows,node,1536,westeurope,5416,5282,134,Node.js (Windows)
+azureWindows,node,1536,westeurope,6511,6392,119,Node.js (Windows)
+azureWindows,node,1536,westeurope,6015,5864,151,Node.js (Windows)
+azureWindows,node,1536,westeurope,6518,6419,99,Node.js (Windows)
+azureWindows,node,1536,westeurope,5492,5230,262,Node.js (Windows)
+azureWindows,node,1536,westeurope,6435,6325,110,Node.js (Windows)
+azureWindows,node,1536,westeurope,5412,5269,143,Node.js (Windows)
+azureWindows,node,1536,westeurope,6331,6186,145,Node.js (Windows)
+azureWindows,node,1536,westeurope,5361,5233,128,Node.js (Windows)
+azureWindows,node,1536,westeurope,6445,6314,131,Node.js (Windows)
+azureWindows,node,1536,westeurope,5447,5310,137,Node.js (Windows)
+azureWindows,node,1536,westeurope,6332,6123,209,Node.js (Windows)
+azureWindows,node,1536,westeurope,5498,5283,215,Node.js (Windows)
+azureWindows,node,1536,westeurope,6690,6542,148,Node.js (Windows)
+azureWindows,node,1536,westeurope,5413,5282,131,Node.js (Windows)
+azureWindows,node,1536,westeurope,5783,5279,504,Node.js (Windows)
+azureWindows,node,1536,westeurope,5433,5346,87,Node.js (Windows)
+azureWindows,node,1536,westeurope,11584,11363,221,Node.js (Windows)
+azureWindows,node,1536,westeurope,5676,5322,354,Node.js (Windows)
+azureWindows,node,1536,westeurope,6381,6229,152,Node.js (Windows)
+azureWindows,node,1536,westeurope,5362,5235,127,Node.js (Windows)
+azureWindows,node,1536,westeurope,6634,6443,191,Node.js (Windows)
+azureWindows,node,1536,westeurope,5498,5313,185,Node.js (Windows)
+azureWindows,node,1536,westeurope,7203,7082,121,Node.js (Windows)
+azureWindows,node,1536,westeurope,5310,5190,120,Node.js (Windows)
+azureWindows,node,1536,westeurope,6342,6042,300,Node.js (Windows)
+azureWindows,node,1536,westeurope,5401,5245,156,Node.js (Windows)
+azureWindows,node,1536,westeurope,6643,6514,129,Node.js (Windows)
+azureWindows,node,1536,westeurope,5495,5355,140,Node.js (Windows)
+azureWindows,node,1536,westeurope,6872,6737,135,Node.js (Windows)
+azureWindows,node,1536,westeurope,5350,5208,142,Node.js (Windows)
+azureWindows,node,1536,westeurope,6729,6425,304,Node.js (Windows)
+azureWindows,node,1536,westeurope,5359,5235,124,Node.js (Windows)
+azureWindows,node,1536,westeurope,7344,7225,119,Node.js (Windows)
+azureWindows,node,1536,westeurope,5437,5286,151,Node.js (Windows)
+azure,python,1536,westeurope,1601,1226,375,Python
+azure,python,1536,westeurope,1575,1391,184,Python
+azure,python,1536,westeurope,1375,1246,129,Python
+azure,python,1536,westeurope,1342,1205,137,Python
+azure,python,1536,westeurope,1350,1197,153,Python
+azure,python,1536,westeurope,1382,1224,158,Python
+azure,python,1536,westeurope,1321,1205,116,Python
+azure,python,1536,westeurope,1457,1198,259,Python
+azure,python,1536,westeurope,1561,1389,172,Python
+azure,python,1536,westeurope,1413,1264,149,Python
+azure,python,1536,westeurope,1418,1288,130,Python
+azure,python,1536,westeurope,1324,1191,133,Python
+azure,python,1536,westeurope,1392,1243,149,Python
+azure,python,1536,westeurope,1405,1172,233,Python
+azure,python,1536,westeurope,1403,1213,190,Python
+azure,python,1536,westeurope,1532,1270,262,Python
+azure,python,1536,westeurope,1341,1167,174,Python
+azure,python,1536,westeurope,1448,1271,177,Python
+azure,python,1536,westeurope,1399,1188,211,Python
+azure,python,1536,westeurope,1362,1205,157,Python
+azure,python,1536,westeurope,1439,1280,159,Python
+azure,python,1536,westeurope,1464,1227,237,Python
+azure,python,1536,westeurope,1429,1249,180,Python
+azure,python,1536,westeurope,1422,1239,183,Python
+azure,python,1536,westeurope,1405,1261,144,Python
+azure,python,1536,westeurope,1386,1216,170,Python
+azure,python,1536,westeurope,1388,1216,172,Python
+azure,python,1536,westeurope,1374,1213,161,Python
+azure,python,1536,westeurope,1647,1407,240,Python
+azure,python,1536,westeurope,1330,1210,120,Python
+azure,python,1536,westeurope,1438,1272,166,Python
+azure,python,1536,westeurope,1426,1229,197,Python
+azure,python,1536,westeurope,1405,1196,209,Python
+azure,python,1536,westeurope,1345,1194,151,Python
+azure,python,1536,westeurope,1614,1406,208,Python
+azure,python,1536,westeurope,1678,1229,449,Python
+azure,python,1536,westeurope,1337,1206,131,Python
+azure,python,1536,westeurope,1554,1335,219,Python
+azure,python,1536,westeurope,1391,1212,179,Python
+azure,python,1536,westeurope,1387,1203,184,Python
+azure,python,1536,westeurope,1363,1197,166,Python
+azure,python,1536,westeurope,1345,1200,145,Python
+azure,python,1536,westeurope,1366,1219,147,Python
+azure,python,1536,westeurope,1394,1221,173,Python
+azure,python,1536,westeurope,1519,1353,166,Python
+azure,python,1536,westeurope,1421,1281,140,Python
+azure,python,1536,westeurope,1475,1304,171,Python
+azure,python,1536,westeurope,1421,1235,186,Python
+azure,python,1536,westeurope,1420,1207,213,Python
+azure,python,1536,westeurope,1590,1378,212,Python
+azure,python,1536,westeurope,1481,1312,169,Python
+azure,python,1536,westeurope,1767,1548,219,Python
+azure,python,1536,westeurope,1434,1231,203,Python
+azure,python,1536,westeurope,1696,1506,190,Python
+azure,python,1536,westeurope,1764,1451,313,Python
+azure,python,1536,westeurope,1551,1330,221,Python
+azure,python,1536,westeurope,1490,1310,180,Python
+azure,python,1536,westeurope,1881,1663,218,Python
+azure,python,1536,westeurope,1802,1448,354,Python
+azure,python,1536,westeurope,1578,1381,197,Python
+azure,python,1536,westeurope,1414,1213,201,Python
+azure,python,1536,westeurope,1665,1435,230,Python
+azure,python,1536,westeurope,1630,1370,260,Python
+azure,python,1536,westeurope,1467,1299,168,Python
+azure,python,1536,westeurope,1414,1262,152,Python
+azure,python,1536,westeurope,1917,1764,153,Python
+azure,python,1536,westeurope,1361,1211,150,Python
+azure,python,1536,westeurope,1525,1353,172,Python
+azure,python,1536,westeurope,1419,1204,215,Python
+azure,python,1536,westeurope,1370,1222,148,Python
+azure,python,1536,westeurope,1414,1190,224,Python
+azure,python,1536,westeurope,1377,1210,167,Python
+azure,python,1536,westeurope,1411,1275,136,Python
+azure,python,1536,westeurope,1533,1361,172,Python
+azure,python,1536,westeurope,1563,1314,249,Python
+azure,python,1536,westeurope,1361,1209,152,Python
+azure,python,1536,westeurope,1436,1204,232,Python
+azure,python,1536,westeurope,1318,1194,124,Python
+azure,python,1536,westeurope,1425,1231,194,Python
+azure,python,1536,westeurope,1412,1209,203,Python
+azure,python,1536,westeurope,1914,1343,571,Python
+azure,python,1536,westeurope,1538,1246,292,Python
+azure,python,1536,westeurope,1467,1220,247,Python
+azure,python,1536,westeurope,1416,1183,233,Python
+azure,python,1536,westeurope,1397,1203,194,Python
+azure,python,1536,westeurope,1375,1219,156,Python
+azure,python,1536,westeurope,1409,1213,196,Python
+azure,python,1536,westeurope,1515,1300,215,Python
+azure,python,1536,westeurope,1414,1216,198,Python
+azure,python,1536,westeurope,1450,1268,182,Python
+azure,python,1536,westeurope,1387,1179,208,Python
+azure,python,1536,westeurope,1372,1191,181,Python
+azure,python,1536,westeurope,1348,1192,156,Python
+azure,python,1536,westeurope,1352,1189,163,Python
+azure,python,1536,westeurope,1406,1272,134,Python
+azure,python,1536,westeurope,1443,1230,213,Python
+azure,python,1536,westeurope,1425,1225,200,Python
+azure,python,1536,westeurope,1355,1195,160,Python
+azure,python,1536,westeurope,1410,1167,243,Python
+azure,python,1536,westeurope,1371,1227,144,Python
