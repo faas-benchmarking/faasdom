@@ -1,0 +1,16 @@
+x <- read.csv("google.csv",header=T,sep=",")
+x <- t(x)
+node <- as.numeric(x[4,1:8])
+python <- as.numeric(x[3,1:8])
+go <- as.numeric(x[2,1:8])
+theo <- as.numeric(x[1,1:8])
+png(file = "plot_google.png", width=800, height=800, units="px", pointsize=24)
+plot(theo, type="l", lwd=2, lty=3, col = "black", xlab = "requests per second", ylab = "%", main = "Google Load Test",ylim=c(40,100), xaxt="n", las=1)
+axis(1, at=1:8, labels=c("10", "25", "50", "100", "200", "400", "800", "1000"))
+lines(go, type = "l", lwd=2, col = "blue")
+lines(python, type = "l", lwd=2, col = "green")
+lines(node, type = "l", lwd=2, col = "red")
+grid (NULL,NULL,nx=0,col = "lightgray")
+legend(4, 68, legend=c("Theoretical Limit", "Node", "Python", "Go"),
+       col=c("black", "red", "green", "blue"), lwd=2, lty=c(3,1,1,1), cex=0.8)
+
