@@ -8,4 +8,7 @@ stripchart(input$ms ~ input$cloud, pch = 21, frame = FALSE, vertical = TRUE, met
     "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", "#56B4E9", 
     "#00BA38", "#00BA38", "#00BA38", "#00BA38", "#00BA38", "#00BA38", "#00BA38", 
     "#E33939", "#E33939", "#E33939", "#E33939", "#E33939"),at=0.01:41)
-grid (NULL,NULL,nx=0,col = "lightgray") 
+grid (NULL,NULL,nx=0,col = "lightgray")
+legend(6, 2200, legend=c("AWS", "Azure", "Google", "IBM"),
+col=c("#E69F00", "#56B4E9", "#00BA38", "#E33939"),
+pch=c(21,21,21,21), cex=1)

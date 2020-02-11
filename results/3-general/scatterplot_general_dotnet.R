@@ -5,3 +5,6 @@ stripchart(input$measured_ms ~ input$name, pch = 21, frame = FALSE, vertical = T
 col = c("#E69F00", "#E69F00", "#E69F00", "#E69F00", "#E69F00", "#56B4E9", "#56B4E9", "#E33939", "#E33939", "#E33939", "#E33939", "#E33939"))
 title(ylab = "time (ms)", mgp=c(4,1,1))
 grid (NULL,NULL,nx=0,col = "lightgray")
+legend(10, 700, legend=c("AWS", "Azure", "IBM"),
+col=c("#E69F00", "#56B4E9", "#E33939"),
+pch=c(21,21,21), cex=1)
