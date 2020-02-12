@@ -15,8 +15,9 @@ google_node_99 <- as.numeric(x[13,1:40])
 ibm_node_50 <- as.numeric(x[14,1:40])
 ibm_node_95 <- as.numeric(x[15,1:40])
 ibm_node_99 <- as.numeric(x[16,1:40])
-png(file = "plot_percentile_latency_node.png", width=1600, height=800, units="px", pointsize=24)
-plot(aws_node_50, type="l", lwd=2, lty=1, col = "#E69F00", xlab = expression(bold("requests per second")), ylab = expression(bold("time (ms)")), main = "Node.js percentiles 50% - 95% - 99%",ylim=c(0,5000), xaxt="n", las=1)
+png(file = "plot_percentile_latency_node.png", width=1500, height=700, units="px", pointsize=24)
+par(mar=c(4,5,2,0)+.1)
+plot(aws_node_50, type="l", lwd=2, lty=1, col = "#E69F00", xlab = expression(bold("requests per second")), ylab = "", main = "Node.js percentiles 50% - 95% - 99%",ylim=c(0,15000), xaxt="n", las=1, frame=FALSE)
 axis(1, at=1:40, labels=c("10", "25", "50", "100", "200", "400", "800", "1000", "10", "25", "50", "100", "200", "400", "800", "1000", "10", "25", "50", "100", "200", "400", "800", "1000", "10", "25", "50", "100", "200", "400", "800", "1000", "10", "25", "50", "100", "200", "400", "800", "1000"), las=2)
 lines(aws_node_95,lty=2, type = "l", lwd=2, col = "#E69F00")
 lines(aws_node_99,lty=3, type = "l", lwd=2, col = "#E69F00")
@@ -34,7 +35,8 @@ lines(ibm_node_95,lty=2, type = "l", lwd=2, col = "#E33939")
 lines(ibm_node_99,lty=3, type = "l", lwd=2, col = "#E33939")
 abline(v=c(8.5,16.5,24.5,32.5), col="gray")
 grid (NULL,NULL,nx=0,col = "lightgray")
-legend(1, 4500, legend=c("AWS", "Azure", "Azure (Win)", "Google", "IBM", "50%", "95%", "99%"),
+legend(1, 14500, legend=c("AWS", "Azure", "Azure (Win)", "Google", "IBM", "99%", "95%", "50%"),
 col=c("#E69F00", "#56B4E9", "purple", "#00BA38", "#E33939", "black", "black", "black"), lwd=2,
-lty=c(1,1,1,1,1,1,2,3), cex=0.8)
+lty=c(1,1,1,1,1,3,2,1), cex=0.8)
+title(ylab = expression(bold("time (ms)")), mgp=c(3.5,1,1))
 
