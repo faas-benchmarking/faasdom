@@ -1,9 +1,10 @@
 # benchmark-suite-serverless-computing
 Repository used for the master thesis "A Benchmark Suite for Serverless Computing".
 
-## About
+![Overview](images/main_app.png)
 
-**IMPORTANT:** This project is currently in development and not all features are implemented or working. Use with caution!
+
+## About
 
 With this tool written in [Node.js](https://nodejs.org/) you can benchmark **serverless** platforms from the following cloud computing providers:
 
@@ -90,11 +91,86 @@ docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools
 docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools-amd64:0.20.0 ibmcloud target -r <YOUR_REGION> --cf-api https://api.<YOUR_REGION>.cf.cloud.ibm.com -o <YOUR_ORGANIZATION> -s <YOUR_SPACE>
 ```
 
+## Usage
+
+### Starting the application
+
 To start the main application (in the folder [main](main/)) run:
 
 ```bash
 docker-compose up -d db grafana app
 ```
+
+The application web interface will be exposed on port 3001 [http://localhost:3001](http://localhost:3001)
+
+Grafana will be exposed on port 3000 LINK [http://localhost:3000](http://localhost:3000)
+
+### Actions
+
+The following actions can be performed:
+
+#### Deploy/Delete
+
+A user can deploy and delete tests. Following parameters exist:
+
+ - **Test:** The tast that will be deployed
+ - **Memory:** Amount of memory the function instance will have (not applicable for Azure)
+ - **Timeout:** Function timeout (not applicable for Azure)
+ - **Clouds:** The clouds to deploy the function to
+ - **Languages:** Runtimes to deploy
+ - **Locations:** Choose the region for each cloud
+
+The **Deploy** button will iniciate a deploy process and the **Cleanup All** button will clenaup everything.
+Status can be seen on the right.
+
+ **IMPORTANT:** The cleanup process will delete all API gateways and Lambda functions on AWS, all resource groups containing the name of a test on Azure, all functions in the configured project for Google and all IBM functions and gateways. Use with caution!
+
+#### Run Comparison Tests
+
+Run a comparison test. Following parameters exist:
+
+ - **Test name:** Name to identify the test later
+ - **Function dependant paramters:** various function dependant parameters
+
+The test can be startet with the **Run** button and stopped with the **Stop** button.
+Results will be viewable in Grafana.
+
+#### Run Benchmark
+
+Run a load test for deployed functions. Following parameters exist:
+
+ - **Requests per second:** how many request per second should be sent to the function
+ - **Duration:** duration of the benchmark
+ - **Test:** whcih one of the tests should be benchmarked
+ - **N:** function dependant parameter
+ - **Test name:** Name to identify the test later
+
+The application will benchmark the deployed functions with [wrk2](https://github.com/giltene/wrk2).
+Results will be viewable in Grafana.
+
+#### Calculate Theoretical Pricing
+
+Calculate hypothetical prices by providing following parameters:
+
+ - **Calls:** Number of calls per month
+ - **Execution Time:** Estimated execution time of the function in ms
+ - **Return Size:** return size of the returned function body in KB
+ - **Memory:** memory allocation chosen for the function
+
+The button **Calculate / Update** will do the calculation and they will be shown on the right side.
+
+#### Calculate Pricing regarding to tests
+
+Calculate prices regarding a specific test:
+
+ - **Calls:** Number of calls per month
+ - **Test:** Factors, Matrix, Custom
+ - **Test Name:** Name given during comparison test
+ - **Runtime:** Runtime to be calculated
+
+The button **Calculate / Update** will do the calculation and they will be shown on the right side.
+
+### Cleanup
 
 To stop and remove containers run:
 
@@ -113,7 +189,6 @@ To delete all volumes:
 ```bash
 docker volume rm $(docker volume ls -q)
 ```
-
 
 ## Bugs / Troubleshooting
 
