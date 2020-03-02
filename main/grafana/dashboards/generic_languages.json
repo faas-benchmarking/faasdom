@@ -1560,7 +1560,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$latency Go",
+      "title": "$test Go",
       "tooltip": {
         "shared": true,
         "sort": 0,
