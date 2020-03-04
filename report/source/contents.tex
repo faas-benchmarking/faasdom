@@ -1,0 +1,804 @@
+\chapter{Introduction}
+This chapter explains the motivation behind the project and the importance to test and benchmark the different available platforms from cloud providers. It introduces the topics of cloud computing and particularly serverless computing and briefly explains the term benchmarking.
+\section{Motivation}
+In today's world cloud computing is for many companies and organizations a good and maybe the best option to set up their computing infrastructure or migrate to it. Smaller or newer companies often cannot afford to invest in high-performance hardware which they also need to manage themselves. Sometimes companies don't have the knowledge to maintain hardware properly and just want their databases and web servers to work, instead of worrying about a hardware failure or a power outage. Furthermore most businesses want to focus on their core business which many times means using computing resources and tools instead of managing them.\\
+This thesis is going to investigate a specific region of cloud computing; generally known as \textit{serverless computing} or also often referred to as Function as a Service (\gls{FaaS}) (although this is only a subset of serverless computing). As the name suggests, it is a serverless service meaning the user does not have to set up a server or manage its operating system. In general, when using serverless computing, the user provides the application code, deploys it to the cloud and the cloud provider handles the load the application generates and other important elements like availability and scaling. Hence, the name function is often used.\\
+However, some issues remain unresolved and some questions stay open. Which cloud provider to choose to run an application on? Can the cloud provider handle the load? How much is it going to cost? This thesis tries to answer these questions by providing a benchmark and testing suite for serverless computing. With this suite a potential cloud user can run some tests to see how each different cloud provider performs and the suite helps to make the decision easier.\\
+So far, only few efforts have been made to test or benchmark serverless computing \cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34} and related research has only given little attention to serverless computing \cite{Gan:2019:OBS:3297858.3304013}. There is some more research which treats the topic serverless computing but not in regards to benchmarking \cite{Baldini2017, riseofserverless, vanEyk:2017:SCG:3154847.3154848}.
+\section{Cloud Computing}
+The \gls{NIST} defines cloud computing as a model which enables ubiquitous, on-demand network access to computing resources which can be rapidly and easily provisioned and released \cite{Mell:2011:SND:2206223}. Computing resources can be servers (dedicated hardware or \gls{VM}s), storage, applications, services, etc. Those resources are managed by a cloud service provider in their data centers and are normally accessible to everyone on a pay per usage model. The \gls{NIST} also states the following \textbf{essential characteristics} of cloud computing \cite{Mell:2011:SND:2206223}.
+\begin{itemize}
+    \item \textbf{On-demand self service:} A user can provision computing resources automatically and by himself.
+    \item \textbf{Broad network access:} The resources are available over network, typically over a website or a \gls{CLI}.
+    \item \textbf{Resource pooling:} Physical and virtual resources are pooled, used in a multi-tenant model and dynamically assigned depending on demand. The user has no control neither knowledge of the specific location where his resources are allocated, only on a higher level e.g. which data center.
+    \item \textbf{Rapid elasticity:} Services and resources can be elastically and mostly automatically provisioned and scale rapidly. To a user, the available resources seem unlimited at any time.
+    \item \textbf{Measured service:} Resource allocation happens automatically and is optimized by gathering metrics about the resources. The usage of resources can be controlled and monitored transparently for both parties and also benefits both.
+\end{itemize}
+
+Besides the essential characteristics there are also three service models and four deployment models which will be described in the following \cite{Mell:2011:SND:2206223, IBMCC}.\\
+\newline
+\textbf{Service models}
+\begin{itemize}
+    \item \textbf{\gls{IaaS}:} The consumer can provision processing (i.e. servers), storage and network components. The user does not control the underlying infrastructure. However, he has control over the operating system, storage and applications. There is also only limited control over the network (i.e. firewalls). A good example would be a \gls{VM} on \gls{AWS} \gls{EC2}.
+    \item \textbf{\gls{PaaS}:} The user can deploy applications on the cloud infrastructure within the provider's supported programming languages, services and tools. He has no control over the \gls{OS} nor the storage, only the application itself, its data and some configuration parameters. An example for \gls{PaaS} is Google App Engine.
+    \item \textbf{\gls{SaaS}:} The consumer uses the provider's applications as they are. The user has no control over the applications capabilities. Usually such software is accessed through a web browser (i.e. website) or other clients. An example of this model is Microsoft Office 365.
+\end{itemize}
+Figure \ref{fig:iaas} shows where the responsibilities are with which service model.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{bilder/iaas.png}
+\captionsetup[table]{justification=centering, labelfont=bf}
+\caption[On premises - IaaS - PaaS - SaaS]{On premises - IaaS - PaaS - SaaS\\Source: Alibaba Cloud \cite{alibaba}}
+\label{fig:iaas}
+\end{center}
+\end{figure}
+
+\textbf{Deployment models} \cite{Mell:2011:SND:2206223}
+\begin{itemize}
+    \item \textbf{Private cloud:} The infrastructure is exclusive to an organization. It can be owned and managed by the organization itself, but also by a third party. The private cloud can exist on or off premise.
+    \item \textbf{Community cloud:} A community cloud is very similar to a private cloud with the difference that it is provided for a specific community with common interests. It can be owned and managed by the community or a third party and can also be on or off premise.
+    \item \textbf{Public cloud:} The infrastructure is generally available to the public. It is typically owned and managed by the organization that runs it and is located on their premises.
+    \item \textbf{Hybrid cloud:} A hybrid cloud is a mixture of the above three types. Each type remains a separate unit, but is interconnected with the other units. In practice, this is often seen with companies who switch to a public cloud. They use a combination of private and public cloud and can therefore migrate application by application to the public cloud until all runs in the public cloud.
+\end{itemize}
+The German Federal Office for Information Security also shares this definition of cloud computing from the \gls{NIST} and has adopted it in principle more or less literally \cite{BSICC}.\\
+This thesis will be only treating public clouds and a slightly different service model called Function as a Service (\gls{FaaS}). It will be explained in the next section \ref{sec:serverless}.
+
+\newpage
+\section{Serverless Computing}
+\label{sec:serverless}
+The term \textit{serverless} reckons by no means that there are no servers involved, but rather that the user does not have to manage them, because the cloud provider does.
+\gls{IBM}'s definition of serverless computing is: "Serverless is an approach to computing that offloads responsibility for common infrastructure management tasks (e.g., scaling, scheduling, patching, provisioning, etc.) to cloud providers and tools, allowing engineers to focus their time and effort on the business logic specific to their applications or process." \cite{serverlessibm}\\
+Using serverless technologies requires much less expertise than non serverless self managed implementations. Although those technologies might come with certain limitations or performance bottlenecks that won't fit to the user's needs.\\
+The most important key features of serverless computing are the following: No server or infrastructure management of the user is required, the workload is scaled dynamically and automatically and it is usually paid per usage, e.g. only charged for the occupied storage in a service \cite{serverlessaws, serverlessazure}.\\
+Mainly three popular serverless categories exist, namely FaaS (Function as a Service, e.g. \gls{AWS} Lambda), DBaaS (Database as a Service, e.g. Microsoft Azure Database for PostgreSQL) and STaaS (Storage as a service, e.g. Google Cloud Storage \cite{serverlessgoogle}). This thesis will treat the domain of FaaS.
+\subsection*{FaaS (Function as a Service)}
+\gls{FaaS} is defined in between the \gls{PaaS} and the \gls{SaaS} service model, since the data is managed by the provider but not the application (see figure \ref{fig:iaas}). With most cloud service providers, the user can upload an application (this can be in the form of source code, binaries or even a Docker image) and define a trigger (\gls{HTTP}, Storage, Database, etc.) which invokes the function. This can be useful for application backends and data processing \cite{AWSLambda, GoogleFunctions}. By the help of this technology, users can implement their services without either buying or renting a server or a \gls{VM} in the cloud. They can for example create a backend service without thinking about hardware and server management. Figure \ref{fig:faas_achritecture} illustrates a typical \gls{FaaS} infrastructure.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.78\textwidth]{bilder/FaaS_architecture.png}
+\captionsetup[table]{justification=centering, labelfont=bf}
+\caption[High-level serverless FaaS platform architecture]{High-level serverless FaaS platform architecture. Source: \cite{riseofserverless}}
+\label{fig:faas_achritecture}
+\end{center}
+\end{figure}
+
+\newpage
+\section{Benchmarking}
+Benchmarking is a method to analyze and test the performance of a system, to discover its benefits and weaknesses and to compare it directly to other systems. In this thesis, the systems will be serverless platforms and they will be tested with different applications to see how fast they run, how well they scale and how much they cost. In order to get meaningful results, these tests should be executed as similar as possible on each system and repeated enough times to avoid coincidental data. In the following chapters the systems, the tests, the benchmark process and the results will be carefully discussed and explained in detail.
+
+
+\chapter{Benchmarking Serverless Computing}
+In this chapter, the choice of serverless computing providers and the choice of runtimes respectively programming languages is derived. Furthermore, the implemented tests will be explained in detail and it is shown what their effect and importance is.
+
+\section{Choosing Serverless Computing Providers}
+\label{sec:CSP}
+
+There are a lot of cloud providers available and many of them are trying to grow and therefore investing more and more in their infrastructure. So this benchmark suite could have taken into account as many cloud providers as possible, assumed they provide serverless computing, but that would have exceeded the scope of this thesis. Figure \ref{fig:market_share} illustrates on the left hand side the global revenue of the cloud infrastructure services market which has reached nearly \$23 billion in the second quarter of 2019. What's more interesting for choosing cloud providers for this benchmark suite is the market share. As one can see in figure \ref{fig:market_share} on the right hand side the market share of cloud computing is mainly dominated by a few big players: Amazon, Microsoft, Google, \gls{IBM} and Alibaba. Amazon still is the unprecedented leader in this field of business. Nevertheless, other competitors are heavily investing in the cloud business. Google will invest 3 billion euros in its European data centers as Sundar Pichai, the \gls{CEO} of Google, stated in the Google blog \cite{GoogleBlog}. And also Microsoft has recently been given a \$10 billion contract by the US Department of Defense to transform the military's cloud computing systems \cite{NYJEDI, JEDI}.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.6]{bilder/synergy.jpg}
+\captionsetup[table]{justification=centering, labelfont=bf}
+\caption[Cloud Infrastructure Services Market Share]{Cloud Infrastructure Services Market Share\\Source: Synergy Research Group \cite{Synergy}}
+\label{fig:market_share}
+\end{center}
+\end{figure}
+
+For the above mentioned reasons, the following top four providers were taken into consideration.
+\begin{itemize}
+  \item Amazon Web Services
+  \item Microsoft Azure
+  \item Google Cloud
+  \item IBM Cloud
+\end{itemize}
+All of them offer a serverless platform which will be described for each cloud provider in the following sections.
+
+\begin{remark}
+At the beginning of this thesis, a deployment on Apache OpenWhisk was considered on the private cluster of the university of Neuchâtel. After several time wasting and failed attempts to set up OpenWhisk and contradicting documentation on the OpenWhisk website respectively the GitHub page of OpenWhisk the idea was dropped. Since \gls{IBM} uses an implementation based on OpenWhisk, the performance is expected to be similar. Nevertheless, it would have been interesting to compare those two very similar or even identical systems on a private and on a public cloud.
+\end{remark}
+
+\subsection{Amazon Web Services Lambda}
+
+The service of Amazon is named \textit{\gls{AWS} Lambda} \cite{AWSLambda}. It was released on the 13th of November in 2014 \cite{AWSLambdaRelease} and today it supports six different runtimes including seven different programming languages \cite{AWSLambdaLanguages}. Amazon claims, depending on the region where the function is deployed, a concurrency of 500 to 3000 instances will be provisioned at most \cite{AWSLambdaScaling}. The memory allocated to a function instance can vary from 128 \gls{MB} up to 3008 \gls{MB} in steps of 64 \gls{MB} \cite{AWSLambdaConfig}. \gls{AWS} Lambda is available in 18 out of 18 publicly accessible regions (not counting two chinese regions) \cite{AWSRegions}. Amazon also mentions that the \gls{CPU} power will increase linearly with memory allocation and at 1792 \gls{MB} the function will get 1 \gls{vCPU} \cite{AWSLambdaConfig}. As the paper by Wang et al. \cite{216063} suggests, AWS Lambda uses mostly two different \gls{CPU}s, the Intel Xeon E5-2666 and the Intel Xeon E5-2680, which have a clock rate of 2.90 \gls{GHz} and 2.80 \gls{GHz} respectively. This information was extracted by Wang et al. from the file \texttt{/proc/cpuinfo} in the Linux operating system.
+\begin{remark} From my own experience I can tell that cloud providers generally don't like to tell their customers every detail of hardware they use or how exactly services are implemented. The first point might be true because they don't want to tell a customer what exact \gls{CPU}s he gets, because then he will certainly complain if it differs from the specification and the provider has to take responsibility. The second point should be obvious for economic and competition related reasons.
+\end{remark}
+Knowing that, one can more or less estimate the theoretical computing power that the virtual \gls{CPU} will provide. 
+\begin{remark}
+The pricing of \gls{AWS} Lambda and all the other services will be discussed in section \ref{sec:pricing} Pricing.
+\end{remark}
+
+\subsection{Microsoft Azure Functions}
+
+Azure offers the service called \textit{Azure Functions} \cite{AzureFunctions}. It was first released in March 2016 in preview (Microsoft's term for beta) and then later in November 2016 it became generally available \cite{AzureFunctionsAnnouncement}. Currently there are five supported runtimes including seven different programming languages \cite{AzureFunctionsLanguages}.
+Compared to the other three cloud providers, Azure offers three different hosting plans \cite{AzureFunctionsPlans}:
+%Something a little different with Azure compared to the other three cloud providers is that one can select between three different hosting plans \cite{AzureFunctionsPlans}:
+\begin{itemize}
+\item[] \textbf{Consumption plan:} It adds and removes instances dynamically depending on the load on the function and cost only arise when functions are running. This is the most 'serverless' option among those three.
+\item[] \textbf{Premium plan:} The premium plan is similar to the consumption plan but offers more integration and control over the functions. Instance sizes can be chosen and instances can be pre-warmed. The cost is calculated with \gls{CPU} and \gls{GB} memory used per second.
+\item[] \textbf{App Service plan:} How many and on which \gls{VM}s the functions run can be decided in the App Service plan. Scaling happens manually, time based or based on metrics such as \gls{CPU} usage.
+\end{itemize}
+This thesis will only consider the consumption plan, as it is the default plan and fully managed, and therefore \textit{more} serverless than the others. Additionally, it is similar to the services of the other providers.\\
+There are currently three different generations of the service available \cite{AzureFunctionsGenerations}, this project uses generation 2.
+
+Azure Functions can deploy up to 200 instances and provide up to a maximum amount of 1.5GB memory \cite{AzureFunctionsPlans}. The service can run either on Windows or Linux and is offered in 28 out of 46 publicly accessible regions \cite{AzureRegions}, but the consumption plan is only available in 11 regions for both Linux and Windows. For computing power, Azure has its own term named \gls{ACU}. The instances in the Azure functions consumption plan have an \gls{ACU} of 100 which is about the equivalent of 1 \gls{vCPU}. Azure functions is likely to use the \gls{VM} type \textit{Av2} which is the only one who corresponds to the declared \gls{ACU} \cite{AzureFunctionsVMs}. These \gls{VM}s use three different \gls{CPU}s: the Intel Xeon 8171M at 2.1 \gls{GHz}, the Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and the Intel Xeon E5-2673 v3 at 2.4 \gls{GHz} \cite{AzureFunctionsVMs}.
+
+\subsection{Google Cloud Functions}
+
+On the Google Cloud Platform, the serverless service is simply called \textit{Functions} \cite{GoogleFunctions}. The service was first released on the 9th of March in 2017 in beta and then on the 24th of July in 2018 as stable and usable in production \cite{GoogleFunctionsReleases}. Compared to AWS and Azure that is two and a half years respectively one year later for the first release. Google Cloud Functions currently only supports three programming languages \cite{GoogleFunctionsLanguages}. The documentation does not mention a limit of maximum allocated instances per function. However, it states that at maximum 1000 functions can be concurrently in execution \cite{GoogleFunctionsQuotas}. Possible options for CPU and memory allocation per instance are shown in table \ref{table:google_functions_cpu_ram} \cite{GoogleFunctionsPricing}. The service is available in seven out of twenty regions \cite{GoogleFunctionsLocations}.
+
+\begin{table}[htp]
+\centering
+%\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|r|r|r|r|r|} 
+ \hline
+	\textbf{Memory} & 128\gls{MB} & 256\gls{MB} & 512\gls{MB} & 1024\gls{MB} & 2048\gls{MB} \\ \hline
+	\textbf{CPU} & 200\gls{MHz} & 400\gls{MHz} & 800\gls{MHz} & 1.4 \gls{GHz} & 2.4 \gls{GHz} \\
+	\hline
+\end{tabular}
+\caption[Google Cloud Functions - Possible memory allocation and corresponding CPU frequency]{Google Cloud Functions - Possible memory allocation and corresponding CPU frequency\\Source: Google Cloud documentation \cite{GoogleFunctionsPricing}}
+\label{table:google_functions_cpu_ram}
+\end{table}
+
+Google does not mention what type of CPU they use for functions on the underlying infrastructure. The CPU type could also not be extracted by Wang et al. \cite{216063} and the file \texttt{/proc/cpuinfo} does not show information on the CPU model name. It shows however information for the fields \texttt{vendor\_id}, \texttt{cpu\_family} and \texttt{model}. Those values reveal that Intel processors are used and can give an indication from which generation the CPU is. See the example file content \ref{lst:cpuinfo} in the appendix. 
+
+\subsection{IBM Cloud Functions}
+
+The solution of \gls{IBM} is called Cloud Functions \cite{IBMFunctions}. It is based on Apache OpenWhisk which is an open source serverless cloud platform using Docker containers \cite{OpenWhisk}. \gls{IBM} Cloud Functions supports nine different runtimes including a Docker runtime \cite{IBMRuntimes}. The service is restricted to 1000 concurrently active executions (also counting queued for execution) per namespace \cite{IBMLimits}. However this limit can be increased for a specific business case but needs to be applied for via the ticketing system of the \gls{IBM} support \cite{IBMLimits}. Memory allocation can be set from 128 \gls{MB} to 2048 \gls{MB} in steps of 32 \gls{MB}. \gls{IBM} Cloud Functions is available in five out of six regions \cite{IBMLocations}, but one region has no support for cloud foundry \cite{IBMCloudFoundry} and can therefore not be deployed with the \gls{CLI} and is not included in this project. The documentation does not mention anything on \gls{CPU} or machines they are using. The file \texttt{/proc/cpuinfo} reveals that one possible \gls{CPU} processing the functions is the Intel Xeon E5-2683 v3 at 2.00 \gls{GHz}. See the example file content \ref{lst:cpuinfo2} in the appendix.
+
+\section{Choosing Runtimes}
+After the technical description and specification of each provider, the following section will deduct which runtimes respectively programming languages were chosen and why.\\
+Table \ref{table:programming_languages} shows an overview of all supported runtimes for each cloud service provider mentioned in section \ref{sec:CSP}. On the right hand side there is the sum for each runtime, which indicates the number of cloud service providers supporting that runtime.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|c||l|} 
+ \hline
+ & \multirow{2}{*}{AWS} & \multicolumn{2}{c|}{Azure} & \multirow{2}{*}{Google} & \multirow{2}{*}{IBM} & \multirow{2}{*}{Sum} \\ \cline{3-4}
+  & & Linux & Windows & & & \\ \hline
+  Node.js &  \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 4.0 \\ \hline
+  Python & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.5 \\ \hline
+  .NET Core & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 3.0 \\ \hline
+  Go & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.0 \\ \hline
+  Java & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.5 \\ \hline
+  Ruby & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.0 \\ \hline
+%  PowerShell & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & 1.5 \\ \hline
+  Swift & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
+  PHP & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
+  Docker & \cellcolor{yellow!25}ECS & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{yellow!25}Cloud Run & \cellcolor{green!25}yes & 1.5 \\
+ \hline
+\end{tabular}
+\caption[Supported runtimes in serverless computing]{Supported runtimes in serverless computing.  Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\ \textbf{Remark:} Since Azure has Linux and Windows as underlying \gls{OS}, only half a point is counted per \gls{OS}.}
+\label{table:programming_languages}
+\end{table}
+
+It is obviously more interesting to compare runtimes and programming languages that are supported in multiple clouds and are therefore directly comparable. As the table \ref{table:programming_languages} shows Node.js is supported in each cloud, Python in all except Azure with Windows as \gls{OS}, .NET Core in all but Google and so forth. For this thesis, the top four runtimes where chosen to limit the scope. A brief summary of each runtime will be given in the following subsections.
+\begin{remark}
+Azure has currently 3 generations of its function service available. generation 1 is currently in maintenance mode and generation 2 and 3 are generally available. The available runtimes in the next section will only consider generation 2 (which is also used in this project):
+\end{remark}
+
+\subsection{Node.js}
+
+Node.js is a JavaScript runtime and is built on Chrome's V8 JavaScript engine \cite{Nodejs}. As the name indicates, JavaScript is a scripting language and was first released on the 4th December 1995 by Netscape \cite{JavaScript}. It was mostly used in addition to \gls{HTML} and \gls{CSS} in web browsers \cite{JavaScript}. Because of the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications. Table \ref{table:nodejs} shows supported Node.js versions of each cloud provider. 
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ Node.js & AWS & Azure & Google & IBM \\ \hline
+6.x  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{yellow!25}yes  & \cellcolor{red!25}no\\ \hline
+8.x  & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes   & \cellcolor{green!25}yes \\ \hline
+10.x & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{yellow!25}yes  & \cellcolor{green!25}yes \\ \hline
+12.x & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no \\ \hline
+\end{tabular}
+\caption[Supported Node.js runtimes]{Supported Node.js runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\ \textbf{Remark:} The yellow color means \textit{deprecated} and \textit{beta} for version 6.x respectively 10.x.}
+\label{table:nodejs}
+\end{table}
+
+This benchmark suite will deploy all Node.js applications in version 10 as all providers support this version. In particular, \gls{AWS} uses version 10.x \cite{AWSLambdaLanguages}, Azure does not specify more than version 10 \cite{AzureFunctionsLanguages}, Google uses version 10.15.3 \cite{GoogleFunctionsRuntimes} and \gls{IBM} implements version 10.15.0 \cite{IBMRuntimes}.
+
+\begin{remark}
+Google has Node.js version 10 still in beta while Node.js version 8 End-of-life was on December 31, 2019 \cite{NodejsReleases}.
+\end{remark}
+
+\newpage
+
+\subsection{Python}
+
+Python is a universal, open-source and very popular programming language. It was released in 1991 and created by Guido van Rossum \cite{PythonIntro} and runs basically anywhere \cite{PythonAbout}. Python was designed to be very easy to learn and to have readable code \cite{PythonIntro}. It only uses indentation and whitespaces to define the scope of loops, functions and classes \cite{PythonIntro}. Because of those characteristics, developers can implement new features very fast. Cuong Do, software architect of YouTube, said: "Python is fast enough for our site and allows us to produce maintainable features in record times, with a minimum of developers." \cite{PythonQuotes}. Table \ref{table:python} shows which of the four cloud provider supports which Python versions.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ Python & AWS & Azure & Google & IBM \\ \hline
+2.7  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
+3.6  & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no   & \cellcolor{green!25}yes \\ \hline
+3.7 & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes  & \cellcolor{green!25}yes \\ \hline
+3.8 & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no  & \cellcolor{red!25}no  \\ \hline
+\end{tabular}
+\caption[Supported Python runtimes]{Supported Python runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
+\label{table:python}
+\end{table}
+
+All clouds support version 3.7, therefore this version will be used in the benchmark functions.
+
+\subsection{Go}
+Go is a procedural open source programming language developed by a team at Google and other contributors \cite{GoDoc, GoProject}. It is a relatively new language and was first released in March 2012 \cite{GoProject}. It is compiled and therefore more efficient than interpreted languages and it has good concurrency mechanisms to benefit from today's multi-core architecture \cite{GoDoc}. Go also has a garbage collector in contrast to C \cite{GoDoc}. On the Go website the following statement can be found: "It's a fast, statically typed, compiled language that feels like a dynamically typed, interpreted language." \cite{GoDoc}. Today, Go is a popular language given that is is easy to learn and write like Python but also very efficient like C. Table \ref{table:go} shows the supported Go versions.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ Go & AWS & Azure & Google & IBM \\ \hline
+1.11  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{green!25}yes  & \cellcolor{green!25}yes\\ \hline
+\end{tabular}
+\caption[Supported Go runtimes]{Supported Go runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\ \textbf{Remark:} AWS supports all versions of Go 1.x, depending on the version the binary was compiled with and deployed to Lambda.}
+\label{table:go}
+\end{table}
+
+This thesis will use Go 1.11 for its benchmark functions.
+\subsection{.NET Core}
+
+.NET Core is a free and open-source software framework developed by Microsoft and its community \cite{.NETCore}. The first version was released in June 2016 \cite{.NETCoreReleases}. It supports as languages C\texttt{\#}, F\texttt{\#} and Visual Basic \cite{.NETAbout} and is currently on version 3.1 which was released in December 2019 \cite{.NETCoreBlog}. Microsoft has declared its love for Linux when Satya Nadella in the end of 2014 at a Microsoft Cloud Briefing in San Francisco presented a slide which stated "Microsoft \heart \text{ }Linux" \cite{MicrosoftCloudBlog}. Since then the company has embraced Linux, open-source software and cross-platform support. Table \ref{table:dotnet} shows supported .NET Core versions.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ .NET Core & AWS & Azure & Google & IBM \\ \hline
+2.1  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
+2.2  & \cellcolor{red!25}no    & \cellcolor{green!25}yes    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
+3.1  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
+\end{tabular}
+\caption[Supported .NET Core runtimes]{Supported .NET Core runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
+\label{table:dotnet}
+\end{table}
+
+Because there is no common supported version, this project will use 2.1 on \gls{AWS} and 2.2 on Azure and \gls{IBM}. The language the test functions are implemented is C\texttt{\#}.
+
+\section{Test Functions}
+\label{sec:tests}
+This section will briefly explain all the implemented test functions, what they test and how they are implemented. All the functions are implemented with a \gls{HTTP} trigger, since it is one that all clouds support and is the easiest to test across all platforms. For the same programming language and the same test, the implementation will vary from cloud to cloud a little bit. This is due to slightly different function calls and return statements each cloud defines on their own. However, these differences are not relevant regarding performance results.
+\subsection{Latency Test}
+\label{subsec:latency}
+The latency test  is fairly simple. The function is called and then immediately returns a small \gls{JSON} body with \gls{HTTP} status code 200. The test function is intended to be as fast and simple as possible to measure latency for each cloud and runtime. The following code listing \ref{code:latency} shows exemplary the implementation of the latency test on \gls{AWS} in Node.js.
+
+\begin{minipage}{\linewidth}
+\lstset{escapeinside={<@}{@>}}
+\begin{lstlisting}[frame=single,caption={Latency test implementation on AWS in Node.js},label=code:latency,linewidth=.82\textwidth,xleftmargin=.18\textwidth]
+  exports.handler <@\textcolor{javascriptbrown}{=}@> <@\textcolor{javascriptpurple}{function}@>(<@\textcolor{javascriptblue}{event}@>, <@\textcolor{javascriptblue}{context}@>, <@\textcolor{javascriptblue}{callback}@>) {
+      <@\textcolor{javascriptpurple}{const}@> <@\textcolor{javascriptblue}{res}@> <@\textcolor{javascriptbrown}{=}@> {
+          statusCode: <@\textcolor{javascriptroyalblue}{200}@>,
+          headers: {
+              <@\textcolor{javascriptred}{'Content-Type'}@>: <@\textcolor{javascriptred}{'application/json'}@>
+          },
+          body: JSON.stringify({
+              success: <@\textcolor{javascriptpurple}{true}@>,
+              payload: {
+                  <@\textcolor{javascriptred}{'test'}@>: <@\textcolor{javascriptred}{'latency test'}@>,
+              }
+          })
+      };
+    <@\textcolor{javascriptblue}{callback}@>(<@\textcolor{javascriptpurple}{null}@>, <@\textcolor{javascriptblue}{res}@>);
+  }
+\end{lstlisting}
+\end{minipage}
+
+\subsection{CPU Test (Factorization)}
+\label{sec:factors_test}
+This test describes the first of the two \gls{CPU} tests. The \gls{CPU} is the component of a system which does effectively do the calculations of a program. It is therefore the most important criterion of serverless computing and logically also the most expensive. This test is targeting mostly the \gls{CPU} by calculating all integer factors/divisors imperatively of an integer number. Listing \ref{code:factors} shows pseudo code of such a number factorization.
+
+\begin{minipage}{\linewidth}
+\lstset{escapeinside={<@}{@>}}
+\begin{lstlisting}[frame=single,caption={Factorization test pseudo code},label=code:factors,linewidth=.75\textwidth,xleftmargin=.25\textwidth]
+  for(i = 1; i < SquareRoot(Number), i++) {
+      if(Number modulo i == 0) {
+          factors.add(i)
+          if(Number / i != i) {
+              factors.add(Number / i)
+          }
+      }
+  }
+\end{lstlisting}
+\end{minipage}
+\newline
+
+The algorithm works as follows: one iterates from 1 to the square root of the number $N$ to be factorized. For each value $i$ it is tested if $N$ is dividable by $i$ without rest (modulo operator). If so, a factor of $N$ has been found and $i$ is added to the results. In addition, if $N$ divided by $i$ does not equal $i$ itself, the matching part $x$ of $i$ has also been found where $x \cdot i = N$. This is also the reason why only the numbers up to the square root of $N$ need to be considered. The algorithm has a complexity of $\mathcal{O}(n^{\frac{1}{2}})$.
+
+\begin{remark}
+The algorithm is not to be confused with prime factorization. In this case, all factors of a number are calculated but with prime factorization only prime numbers are calculated. The approach and results share some characteristics.
+\end{remark}
+
+\newpage
+\subsection{CPU Test (Matrix Multiplication)}
+The matrix multiplication is the second \gls{CPU} test in this benchmark suite. The user can input a number $n$ which defines the width and height of two matrices. The two matrices are both filled with random integer numbers between 0 and 100. The product of those two matrices is calculated by multiplication. The algorithm is defined in listing \ref{code:matrix} in pseudo code.
+
+\begin{minipage}{\linewidth}
+\lstset{escapeinside={<@}{@>}}
+\begin{lstlisting}[frame=single,caption={Matrix multiplication test pseudo code},label=code:matrix,linewidth=0.8\textwidth,xleftmargin=.2\textwidth]
+  matrixA = randomMatrix[n][n]
+  matrixB = randomMatrix[n][n]
+  matrixMult = [n][n];
+  
+  for(i = 0; i < matrixA.height; i++) {
+      for(j = 0; j < matrixB.width; j++) {
+          sum = 0;
+          for(k = 0; k < matrixA.width; k++) {
+              sum += matrixA[i][k] * matrixB[k][j];
+          }
+          matrixMult[i][j] = sum;
+      }
+  }
+\end{lstlisting}
+\end{minipage}
+\newline
+
+First, two matrices of height and width $n$ are defined and filled with random integer numbers from 0 to 100. Also an empty matrix for the result is initialized. For each field of the resulting matrix one needs to calculate the dot product of row $i$ from matrix $A$ and column $j$ of matrix $B$. This is achieved by multiplying each field of row $i$ from matrix $A$ with each field of column $j$ from matrix $B$ and accumulating the sum over $k$. The sum is then stored as field $i,j$ in the resulting matrix. The algorithm has a complexity of $\mathcal{O}(n^{3})$.
+\subsection{I/O Test}
+The fourth test in this benchmark suite is a disk test. Each serverless cloud provides a temporary file system which the functions can use. The function can for example write a file with some intermediate results which it will later read again for further use. Other function calls which run in the same instance share this file system and can also access the file. Given that serverless tends to be or should be stateless, the feature of a temporary storage is not of great importance. Nevertheless, specific applications might benefit from such a feature and therefore it is included in this thesis. I/O operations are often expensive and in a synchronous function that can lead to \gls{CPU} wait.\\
+The implementation of the test is fairly simple. Listing \ref{code:filesystem} shows the pseudo code of the test.
+
+
+\begin{minipage}{\linewidth}
+\lstset{escapeinside={<@}{@>}}
+\begin{lstlisting}[frame=single,caption={I/O test pseudo code},label=code:filesystem,linewidth=0.75\textwidth,xleftmargin=.25\textwidth]
+  text = ""
+    
+  for(i = 0; i < s; i++) {
+      text += "A";
+  }
+  
+  startWrite = Time.Now()
+  for(i = 0; i < n; i++) {
+      writeFile(i+'.txt', text, 'utf-8');
+  }
+  endWrite = Time.Now()
+  
+  startRead = Time.Now()
+  for(i = 0; i < n; i++) {
+      file = readFile(i+'.txt', 'utf-8');
+  }
+  endRead = Time.Now()
+  
+  writeTime = endWrite - startWrite
+  readTime = endRead - startRead
+\end{lstlisting}
+\end{minipage}
+\newline
+
+The algorithm writes files and then reads them. It takes two input parameters $n$ defining the number of files and $s$ the size of each file in bytes. A string \texttt{text} is generated with length equal to $s$. Since the encoding used is \texttt{utf-8} each normal character takes 8 bits or 1 byte of storage. Then $n$ many files are written to the file system. After that all the written files are read. Both these operations are timed and the result will be the time it took to write respectively read the files. The complexity of the algorithm is $\mathcal{O}(n)$.
+
+\subsection{Custom Test}
+Last but not least there is a customizable test. The objective of this test is that the user can easily implement his own function and then benchmark it. The skeleton is provided for each one of the four clouds in each of the four languages. A timer is included to measure the execution time which can later be further analysed.
+
+\chapter{Implementation}
+In this chapter, the implementation of the main application which orchestrates everything will be presented and explained. First, the components and their functions will be briefly explained and later every main task the user can do will be explained in detail.
+
+\section{Overview}
+The main application is implemented in JavaScript and uses the Node.js framework. It manages all user input and executes the actions or delegates them to other components. This application is nicely packaged with Docker and runs completely on it. Only the Linux packages \texttt{docker-ce} and \texttt{docker-compose} are needed to execute this program. Figure \ref{fig:architecture} depicts all components and gives an overview of this benchmarking suite.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.77\textwidth]{bilder/main_app.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Benchmark Suite Architecture]{Benchmark Suite Architecture. Source: illustration by author}
+\label{fig:architecture}
+\end{center}
+\end{figure}
+
+The four clouds and their services can be seen on the left side, the involved Docker images in the middle and they ways to interact with the system can be seen on the right side. Each component will be explained step by step in the following.
+\begin{itemize}
+    \item \textbf{Main application:} The main application is the core of this benchmark suite and manages the four main tasks: deployment to the clouds, running simple tests, running benchmarks and calculating and estimating prices. It is available to the user through a web \gls{GUI} and also through an \gls{API}. In a first step, the user can deploy the five different tests described in section \ref{sec:tests}. Once the tests are deployed, they can be tested and benchmarked. Additionally there is a pricing calculator which calculates the cost for all four clouds either by setting the parameters manually or in regards to a previously executed test.\\
+    Since the main application runs on Docker and invokes other containers which also run in Docker, the main container needs access to \texttt{/var/run/docker.sock} i.e. mounting it as volume. Otherwise a container cannot run or start another container for security and integrity reasons. This concept is called Docker-in-Docker and should generally not be used and is more of a hack than a feature. In this case it serves a simple purpose and does not implicate any issues.
+    \item \textbf{InlfuxDB:} In this time series database, all the results from tests will be stored for later use in Grafana or pricing calculation.
+    \item \textbf{Grafana:} Grafana is an open source tool to display, plot and monitor data stored in a database. The results gathered by the tests and stored in InfluxDB will be displayed in Grafana.
+    \item \textbf{CLIs:} Each cloud provides a Docker image of their \gls{CLI} (with the exception of \gls{AWS}) to use with Docker rather than to install it on the host. Resources can be deployed, deleted and managed completely by the \gls{CLI} and no interaction on the web portal is needed. 
+    \item \textbf{Runtimes (node, golang, dotnet):} In addition to the source code, a built and packaged zip file is needed for the deployment on all cloud except for Google. Therefore these three images are necessary in order to install packages and build the source code for Node.js, Go and .NET.
+    \item \textbf{zip:} This simple image zips the files that need to be deployed to the clouds. Therefore there is no need to have zip installed on the machine the benchmark suite runs.
+    \item \textbf{wrk2:} wrk2 is a powerful \gls{HTTP} benchmark used in this application. For simplification it is also containerized.
+\end{itemize}
+
+\newpage
+
+\section{Requirements}
+To use this application, there are some prerequisite steps necessary. First of all, the user needs to have or create accounts on the clouds he intends to test on. This process will be not described in detail since it is straightforward to do. There is however a small guidance for each cloud provider in the documentation on GitHub.\\
+Secondly, the user needs to have a Docker environment installed. This is not too difficult on Linux and described exemplary for Ubuntu 18.04 on GitHub.\\
+After these steps have been completed some more manual initialization and configuration steps are required from the user. He needs to create a few Docker volumes and perform the login process for each \gls{CLI} belonging to the cloud intended to be tested.\\
+As last point some free storage is required because some Docker images are quite large, in total around 5.15 GB. In addition, some free space should be reserved for the data that will be stored in the database, 1 GB should be sufficient. Table \ref{table:images} shows all images and their sizes.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|l|r|}\hline
+\textbf{Repository} & \textbf{Tag} & \textbf{Size} \\ \hline
+bschitter/benchmark-suite-serverless-computing	&	0.1	&	358MB	\\ \hline
+mikesir87/aws-cli	&	1.16.310	&	186MB	\\ \hline
+google/cloud-sdk	&	274.0.1-alpine	&	287MB	\\ \hline
+mcr.microsoft.com/azure-cli	&	2.0.78	&	1.04GB	\\ \hline
+mcr.microsoft.com/dotnet/core/sdk	&	2.2-alpine3.9	&	1.48GB	\\ \hline
+bschitter/alpine-with-zip	&	0.1	&	6.32MB	\\ \hline
+bschitter/alpine-with-wrk2	&	0.1	&	232MB	\\ \hline
+ibmcom/ibm-cloud-developer-tools-amd64	&	0.20.0	&	309MB	\\ \hline
+golang	&	1.11-stretch	&	757MB	\\ \hline
+node	&	10.16.2-alpine	&	76.4MB	\\ \hline
+grafana/grafana	&	6.3.2	&	254MB	\\ \hline
+influxdb	&	1.7.7-alpine	&	137MB	\\ \hline
+\textbf{Total size} & & \textbf{5.15GB}\\ \hline
+\end{tabular}
+\caption[Docker images]{Docker images}
+\label{table:images}
+\end{table}
+
+\newpage
+\section{Deployment and Cleanup}
+This section will describe the deployment and the cleanup process.\\
+After the application has been started, the user can use the web interface (exposed on port 3001) to take actions. The first thing he needs to do is deploy a test. The figure \ref{fig:ui} shows a screenshot of the web interface.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{bilder/ui.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Web GUI - Deploy/Delete Tests]{Web GUI - Deploy/Delete Tests, source: screenshot of the application}
+\label{fig:ui}
+\end{center}
+\end{figure}
+
+The following paramters can be chosen:
+\begin{itemize}
+    \item \textbf{Test:} The test that will be deployed (as described in section \ref{sec:tests}).
+    \item \textbf{Memory:} The amount of memory the function will have available.\\ \textbf{Remark:} Not applicable for Azure as memory is assigned dynamically at a maximum of 1536 \gls{MB}.
+    \item \textbf{Timeout:} The time limit after which a running function will time out.\\ \textbf{Remark:} Not applicable for Azure since it handles timeout configuration in a configuration file.
+    \item \textbf{Clouds:} The cloud providers the tests will be deployed on, multiple choices possible.
+    \item \textbf{Languages:} Runtimes respectively languages to deploy the function in, multiple choices possible.
+    \item \textbf{Locations:} The region where the function will be deployed to.
+\end{itemize}
+
+Next the \textit{Deploy} button can be pressed and the application will initiate the deployment. On the right hand side of the web interface there will be information about the progress. The deployment process is highly parallelized (if possible) to make it as fast as possible. In the appendix \ref{chapter:flow_charts}, flow charts are illustrating the deployment and cleanup process for each cloud. For a cleanup the user can invoke the \textit{Delete All} button. Considering the cleanup is implemented very minimalist it will delete all deployed Lambda functions and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. It should therefore be used very carefully and ideally with separate accounts only for this purpose.
+
+\section{Testing}
+In this section it is briefly explained how to execute a test and see its results. The test will send every five seconds a request to the functions previously deployed to see how they perform under a low, constant load. As options, a name for the test and the functions parameter can be set. The emerging result will serve as a starting point for comparison to the benchmark and optimally the function should deliver the same performance under heavy load. Figure \ref{fig:grafana} illustrates a screenshot of Grafana containing test results of a latency test in Node.js. At the top, there are three drop down menus to choose the test type, the test name (given at the start of the test) and the data points interval.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{bilder/grafana.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Test results in Grafana]{Test results in Grafana. Source: screenshot Grafana}
+\label{fig:grafana}
+\end{center}
+\end{figure}
+
+The plots can be grouped by cloud provider or by runtime. There is a predefined Grafana dashboard for both options, the user can switch depending on his interests. An example result of a general test can be seen in section \ref{sec:general_test}.
+
+
+\section{Benchmarking}
+The benchmarking part mainly relies on the wrk2 image. The parameters can be set in the web interface but they are basically just forwarded to wrk2. For the benchmark itself the user can choose the following parameters: requests per second, duration of the benchmark and the desired test to run e.g. the \gls{CPU} factors test. Afterwards the load test will start and benchmark the chosen function on each cloud and runtime it was deployed to. This process has to run sequentially otherwise the host of the benchmark suite could potentially not handle the load. After the test has completed results will be parsed and inserted into the database and can be viewed as a table in Grafana. Figure \ref{fig:benchmark_table} shows an excerpt of a result.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=1\textwidth]{bilder/benchmark_table.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Benchmark results in Grafana]{Benchmark results in Grafana. Source: screenshot Grafana}
+\label{fig:benchmark_table}
+\end{center}
+\end{figure}
+
+A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
+
+\section{Pricing}
+With this component of the application one can calculate hypothetical prices by entering number of invocations, execution time per call, size of the return body and allocated memory. The prices for all clouds will be calculated and displayed in a table. The functionality is basically the same as the pricing calculators provided by the cloud providers, except here all is in one place and directly comparable.\\
+Furthermore, the calculator takes the performed tests into account. One can select a previously run test, select a runtime and then one only needs to provide the estimated number of invocations per month. The calculation will happen by taking the execution time from the test results which of course can vary quite a lot between cloud providers and runtimes. This method allows a much better approach of estimated cost. In section \ref{sec:pricing} the same example will be explained and calculated for both hypothetical and with actual test results as input.
+
+
+\chapter{Results}
+In this chapter results of performed tests will be presented and explained, an example for a pricing calculation will be given, the services among the cloud providers will be compared and some general advantages and disadvantages about serverless computing will be specified derived from these results.
+\section{Tests}
+In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
+\subsection{Latency Test}
+The objective of the latency test was to measure the latency for all clouds and regions. This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. Every 5 seconds, a requests was sent to each cloud and region until a sample size of 100 was obtained. This test was carried out from Bern, Switzerland.
+\begin{remarks}
+\text{ }
+\begin{itemize}
+    \item For Azure, this test was only done with Linux as underlying OS. The OS should not matter in regards to latency.
+    \item The \textit{westus} region of Azure had problems deploying it in Node.js and therefore .NET was used. Following error was produced: \texttt{The scale operation is not allowed for this subscription in this region. Try selecting different region or scale option.}\\
+    Also trying to create the function in the Azure portal failed and an error was indicated but the error message could not be viewed.
+    \item On Azure region \textit{australiaeast} the function could not be deployed, although no error was risen. Therefore it was deployed on Windows instead of Linux.
+\end{itemize}
+\end{remarks}
+The graphic \ref{fig:latency_plot} shows a scatter plot with the results of the test.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.335]{bilder/scatterplot_latency.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Latency test scatter plot]{Latency test scatter plot, \\ Source: illustration by author}
+\label{fig:latency_plot}
+\end{center}
+\end{figure}
+
+For more detailed results see table \ref{tab:latency}. The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
+
+\subsection{Cold Start Test}
+\label{sec:coldstart}
+This test measured the cold start latency. A cold start happens when the function takes longer to start up and run than usual. This occurs mostly after the deployment, after the function has not been used in a while or when a new instance needs to be provisioned for scaling purposes. In order for the cloud provider to get up the instance and deploy the specific code on it, some time can pass. Figure \ref{fig:azure_coldstart} shows what happens on Azure when a cold start is required and when the app is already warm.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.51]{bilder/azure-coldstart.jpeg}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Cold and warm start on Azure]{Cold and warm start on Azure. Source: Azure \cite{AzureColdStart}}
+\label{fig:azure_coldstart}
+\end{center}
+\end{figure}
+As indicated in the figure, several steps are required initially before the function can execute. A server has to be allocated, the worker is set up with the relevant code, packages and extensions are loaded (if needed), the function gets loaded into memory and then finally it can run. If the function is warm and no cold start happens, it is ready and can just be invoked. This process is similar in other clouds.\\
+The cold start latency has been tested ten times for each runtime on each cloud. Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. The test was realized in the following regions: \gls{AWS} on \texttt{eu-central-1}, Azure on \texttt{westeurope}, Google on \texttt{europe-west1} and \gls{IBM} on \texttt{eu-de}. However, the region should not have any implications on the cold start latency. The cold start latency was calculated the following way:
+$$\text{Total Request Time} - \text{Normal Average Latency} = \text{Cold Start Latency}$$
+Figure \ref{fig:coldstart_plot} shows the result of this test. 
+A box plot shows the cold start latency for every cloud service provider and runtime. \gls{AWS} is overall the fastest, with an average cold start latency of only 335 ms for Node.js, Python and Go. For .NET it is much higher with an average of 1739 ms, possibly due to the nature and compilation of .NET respectively C\#. On Azure, cold start latency is always more than 2 seconds and ascends up to 5 seconds, except for .NET on Windows which has an average cold start latency of 1917 ms. Google has compared to \gls{AWS} and \gls{IBM} relatively high cold start latency around 2 to 3 seconds. \gls{IBM} shows a similar pattern as \gls{AWS} although the cold start latency is around 600 ms higher for Node.js, Python and Go but similar for .NET.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{bilder/boxplot_coldstart_all_new.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Cold start latency box plot]{Cold start latency box plot. Source: illustration by author}
+\label{fig:coldstart_plot}
+\end{center}
+\end{figure}
+
+\newpage
+On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for the instance to be recycled by the provider, on Azure around 10-20 minutes and on Google it varied from 10 minutes up to 10 hours.
+
+\subsection{General Test}
+\label{sec:general_test}
+This test was performed to analyze the functions under normal circumstances, meaning that there is not much load respectively that the load can be handled well by the cloud provider. The objective is to compare the achieved performance of the clouds regarding execution speed and the thereby implicated costs. For this evaluation the \gls{CPU} factors test (see section \ref{sec:factors_test}) was executed. The function was invoked every five seconds until a sample size of $n=100$ was reached. This for each \gls{MB} configuration, each runtime and each cloud. As input parameter $26'888'346'474'443$ was selected since with this number the function finished ahead of the timeout for low configurations and simultaneously was not too quickly finished for high configurations. Figure \ref{fig:general_python_plot} illustrates the result of this test in Python in a scatter plot.
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.4]{bilder/scatterplot_general_python.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Scatter plot of execution times of the \gls{CPU} factors test in Python]{Scatter plot of execution times of the \gls{CPU} factors test in Python\\ Source: illustration by author}
+\label{fig:general_python_plot}
+\end{center}
+\end{figure}
+
+A few interesting characteristics can be observed. On \gls{AWS} Lambda everything seems as it should be and is hence a good showcase. Firstly, the standard deviation is very low and therefore the execution time extremely consistent. With every doubling of the allocated memory the execution time is halved, as it should be since \gls{CPU} performance scales linearly to allocated memory, according to Amazon \cite{AWSLambdaConfig}. Conforming to Azure's memory configuration of 1536 \gls{MB} its performance should be between 1024 and 2048 \gls{MB} of the competitors performance. However, it is even slower than 1024 \gls{MB} instances of the other clouds. The results on the Google Cloud Platform follow a similar pattern as on \gls{AWS}, but they are more scattered especially for 128 \gls{MB} of memory. Moreover Google is faster than \gls{AWS} for 128, 256, 512 and 1024 \gls{MB} but not for 2048 \gls{MB}. For the first three times doubling the memory leads to halved execution time. But not entirely for the next two steps since Google does not scale \gls{CPU} completely linear to allocated memory \cite{GoogleFunctionsPricing}. At last, \gls{IBM} shows a very strange pattern. It seems that memory allocation does not correlate with \gls{CPU} allocation in any way. All five different sizes perform practically the same. This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Seconds used. This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.\\
+The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}.
+
+\newpage
+\subsection{Load Test}
+\label{sec:loadtest}
+The load test is designed to benchmark the serverless functions up to 1000 requests per second. This is carried out with the \gls{HTTP} benchmark tool \textit{wrk2} (see \cite{wrk2}). A function is first called with 10 requests per second for the duration of 1 minute. Subsequently with 25, 50, 100, 200, 400, 800 and finally 1000 requests per second each time for one minute. In between is a short break of 10 seconds to allow the function to process requests that are still queued. As test, the matrix function with a parameter of 100 is used. With this setup the matrix function should have an average execution time of about 100ms for Node.js, Go and .NET and around 250ms for Python. The graphic \ref{fig:load_test_latency_all} displays the average latency results grouped by runtime.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.83\textwidth]{bilder/plot_average_latency_all.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Load test average latency]{Load test average latency. Source: illustration by author}
+\label{fig:load_test_latency_all}
+\end{center}
+\end{figure}
+
+The results are now discussed step by step. \gls{AWS} has for all four runtimes an extremely steady response latency throughout the increasing load. This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
+On Azure it looks quite different. Azure can handle the load on Windows as operating system. But in the first increasing steps from 10 to 100 or 200 RPS latency rises although it flattens out afterwards. On Linux, Azure performs very bad and can not scale out quickly enough to serve the requests in an acceptable time frame. The response time climbs more or less linearly to the amount of request per second sent. That is a strong indication that none or too few new instances are allocated to handle the load. At the time of 1000 requests per second one could see in the Azure portal Live Metrics Stream that e.g. for .NET only 12 instances have been deployed (see figure \ref{fig:live_metrics_stream}). Additionally the screenshot shows that only 500 requests per second get handled by the function, the rest is probably waiting in a queue.
+\begin{remark}
+In the screenshot the request duration differs from the wrk2 results since that is most likely only considering execution time without queuing time.
+\end{remark}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{bilder/azure_dotnet_1000.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
+\label{fig:live_metrics_stream}
+\end{center}
+\end{figure}
+
+For Node.js and .NET the latencies went up to 24s respectively 18s and are not plotted in the graph for illustration purposes. On Python, Azure returned from 200 \gls{RPS} and above almost only \gls{HTTP} errors and the result of wrk2 is not representative and hence not plotted.\\
+Google can manage the load generally well, although latency increases a little bit for Node.js and Go. With Python, Google has the biggest problems and seems overwhelmed when requests increase. It can not scale quickly enough and the average request duration increased from 1356ms to 18448ms with 10 \gls{RPS} respectively 25 \gls{RPS}. After that, this phenomena happens again but less drastically. This can possibly be explained by the fact that the function has a longer execution time in Python and Google can scale longer running functions less good. Overall the performance is good. Figure \ref{fig:google_graph_go} shows the number of instances allocated during the Go load test on Google.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.4\textwidth]{bilder/Google_Go_Instances.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Google Go active instances during load test]{Google Go active instances during load test\\Source: screenshot Google cloud portal}
+\label{fig:google_graph_go}
+\end{center}
+\end{figure}
+
+Lastly, the result of \gls{IBM} will be discussed. Those outcomes differ from the others relatively much. On Node.js and .NET it can roughly keep up to the competition but operates a little slower and on Node.js it has a striking outlier. The Python function on IBM nearly performs as well as on \gls{AWS}, but the same cannot be said about Go. The Go runtime performed much slower in the load test as with the competitors, although as seen in the cold start test in section \ref{sec:coldstart} it has a similar cold start latency as Node.js and Python and as shown in the appendix table \ref{tab:general} it performs generally well on Go. Thus this bad performance cannot be derived from this or other tests and it is possible that IBMs auto scaling mechanism does not work well for Go. Of the amount of instances deployed, IBM delivers no statistics.\\
+So far, the latency has been examined and now the actual throughput will be explained. Most of the cloud providers and runtimes could handle the load and only had an irrelevant smaller throughput than tested against. Therefore only significant impacts in throughput will be presented, meaning that the throughput was less than 90\% of the tested one. The subsequent table \ref{table:rps} shows where throughput was below 90\%.
+In addition, there are detailed result plots (figure \ref{fig:loadtest_percentile_node} - \ref{fig:loadtest_percentile_dotnet}) and tables (table \ref{table:aws_load_test} - \ref{table:ibm_load_test}) in the appendix.
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\scalebox{0.93}{\begin{tabular}{l|l|r|r|r} 
+\textbf{Cloud} & \textbf{Runtime} & \textbf{RPS (goal)} & \textbf{RPS (actual)} & \textbf{RPS in \%} \\ \hline
+Azure & Node.js & 200 & 179 & 89.50\% \\ \hline
+Azure & Node.js & 400 & 227 & 56.75\% \\ \hline
+Azure & Node.js & 800 & 278 & 34.75\% \\ \hline
+Azure & Node.js & 1000 & 327 & 32.70\% \\ \hline
+Azure & Python & 10 & 6 & 60.00\% \\ \hline
+Azure & Python & 25 & 12 & 48.00\% \\ \hline
+Azure & Python & 50 & 18 & 36.00\% \\ \hline
+Azure & Python & 100 & 25 & 25.00\% \\ \hline
+Azure & Python & 200 & 30 & 15.00\% \\ \hline
+Azure & Python & 400 & 15 & 3.75\% \\ \hline
+Azure & Python & 800 & 14 & 1.75\% \\ \hline
+Azure & Python & 1000 & 15 & 1.50\% \\ \hline
+Azure & .NET & 400 & 324  & 81.00\% \\ \hline
+Azure & .NET & 800 & 407 & 50.88\% \\ \hline
+Azure & .NET & 1000 & 512 & 51.20\% \\ \hline
+Google & Python & 25 & 12 & 48.00\% \\ \hline
+Google & Python & 200 & 168 & 84.00\% \\ \hline
+Google & Python & 400 & 297 & 74.25\% \\ \hline
+Google & Python & 800 & 575 & 71.88\% \\ \hline
+IBM & Go & 25 &  21 & 84.00\% \\ \hline
+\end{tabular}}
+\caption[Load tests that achieved less than 90\% of RPS]{Load tests that achieved less than 90\% of RPS}
+\label{table:rps}
+\end{table}
+
+\section{Pricing}
+\label{sec:pricing}
+In this section two pricing examples will be calculated and explained. The first one will be theoretical and the second one will be based on the general test in section \ref{sec:general_test}. Table \ref{table:pricing} shows the prices per unit for each cloud. Prices on \gls{AWS} and Azure can vary depending on the location. The table and the examples use the prices of the region \texttt{eu-central1} for \gls{AWS} and \texttt{westeurope} for Azure. All clouds round up GB-Seconds and GHz-Seconds up to the next 100ms per invocation, except for Azure which rounds it up to the next 1ms.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{l|l|l|l|l} 
+         & \textbf{per invocation} & \textbf{per GB-Second} & \textbf{per GHz-Second} & \textbf{per GB network egress} \\ \hline
+\textbf{AWS}      &  0.0000002  &  0.000016667 &  -       & 0.09 \\ \hline
+\textbf{Azure}    &  0.0000002  &  0.000016    &  -       & 0.087 \\ \hline
+\textbf{Google}   &  0.0000004  &  0.0000025   &  0.00001 & 0.12 \\ \hline
+\textbf{IBM}      &  -          &  0.000017    &  -       & - \\
+\end{tabular}
+\caption[Serverless functions pricing]{Serverless functions pricing, all prices in USD as of 22.01.2020\\ Data source: \cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
+\label{table:pricing}
+\end{table}
+
+As one can see Google seems to be to have the most sophisticated pricing model of all. Charging exactly for not only the GB-Seconds used but also the GHz-Seconds. The pricing model of \gls{AWS} and Azure are very similar and the one of \gls{IBM} only takes into account GB-Seconds and they are not significantly more expensive.\\
+All of the cloud have a certain free tier quantity which is included per month. Table \ref{table:free_tier} lists the free quantities. Network egress free tier is shared with all network egress of the cloud. Free tier is not considered in the following two examples.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{l|l|l|l|l} 
+         & \textbf{Invocations} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{GB network egress} \\ \hline
+\textbf{AWS}      &  1'000'000  &  400'000     &  -       & 1 \\ \hline
+\textbf{Azure}    &  1'000'000  &  400'000     &  -       & 5 \\ \hline
+\textbf{Google}   &  2'000'000  &  400'000     &  200'000 & 5 \\ \hline
+\textbf{IBM}      &  -          &  400'000     &  -       & - \\
+\end{tabular}
+\caption[Serverless functions free tier]{Serverless functions free tier as of 22.01.2020\\Data source: \cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
+\label{table:free_tier}
+\end{table}
+
+\subsection*{Example 1}
+Let's assume a company has a custom application for image processing written in Python. It does some modifications to the image and then saves the result in a storage solution of the correspondent cloud. Each month around 10 million images are processed. This task is not time critical but should be cost efficient. On a developers desktop computer the task takes around 5 seconds to complete and uses up to 450 \gls{MB} of memory. On a cloud platform a similar result is expected. In this example there is no network egress.
+\subsubsection*{Calculation}
+\begin{align*}
+\text{\textbf{Cloud}}&: \text{\textbf{Invocations}} &+\quad& \text{\textbf{GB-Seconds}} &+\quad& \text{\textbf{GHz-Seconds}} &=\quad& \text{\textbf{Cost}} \\
+\text{AWS}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016667 \$ & & &=\quad& 418.675 \$ \\ 
+\text{Azure}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016 \$ & & &=\quad& 402.000 \$ \\
+\text{Google}&: 10\text{M} \cdot 0.0000004 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.0000025 \$ &+\quad&  10\text{M} \cdot 0.8 \cdot 5 \cdot 0.00001 \$ &=\quad& 466.500 \$ \\
+\text{IBM}&:  &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000017 \$ & & &=\quad& 425.000 \$ \\ 
+\end{align*}
+
+As one can see the cheapest in this case would be Azure, followed by \gls{AWS}, \gls{IBM} and finally Google as the most expensive. With that amount of invocations and execution time all clouds are comparable.\\
+Now the problem with this calculation is that it only assumes the execution times on the clouds which is the most essential part of the pricing calculation. Some clouds may perform much better than others. Example 2 will take actual execution time into consideration.
+\subsection*{Example 2}
+This example takes the result of the \gls{CPU} factors test of section \ref{sec:general_test} as a basis. This test is also in the runtime Python. Let's also assume 10 million function calls are invoked per month. With the fixed parameter of $26'888'346'474'443$ the function should not consume more than 100 \gls{MB} of memory. Its return size is around 4 KB per call. As execution times we take the average (rounded up to 100ms if applicable) of the result.
+\begin{remark}
+Azure claims that it only charges the GB-Seconds the function actually used, rounded up to the next 128 \gls{MB} step \cite{AzurePricing}. It seems therefore that the pricing model of Azure is similar to the one of \gls{IBM}, delivering the same performance independent of memory size.
+\end{remark}
+Doing the equivalent calculations as in example 1, the following results are obtained as shown in table \ref{table:example2}.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|r|r|r|r|r|r|} \hline
+     &   \textbf{Rounded time}  & \textbf{Invocation} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{Network} & \textbf{Total} \\ \hline
+AWS  128MB      & 8000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS  256MB      & 4000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS  512MB      & 2000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS 1024MB      & 1000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS 2048MB      &  600ms&  2.00\$  &  200.00\$     &  -        & 3.43\$ & 205.43\$ \\ \hline
+Azure 128MB     & 1267ms&  2.00\$  &   25.34\$     &  -        & 3.32\$ &  30.66\$ \\ \hline
+Google  128MB   & 7700ms&  4.00\$  &   24.06\$     &  154.00\$ & 4.58\$ & 186.64\$ \\ \hline
+Google  256MB   & 3200ms&  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
+Google  512MB   & 1600ms&  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
+Google 1024MB   &  900ms&  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\ \hline
+Google 2048MB   &  800ms&  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\ \hline
+IBM  128MB      &  700ms&  -       &   14.88\$     &  -        & -      &  14.88\$ \\ \hline
+IBM  256MB      &  600ms&  -       &   25.50\$     &  -        & -      &  25.50\$ \\ \hline
+IBM  512MB      &  600ms&  -       &   51.00\$     &  -        & -      &  51.00\$ \\ \hline
+IBM 1024MB      &  600ms&  -       &  102.00\$     &  -        & -      &  102.00\$ \\ \hline
+IBM 2048MB      &  700ms&  -       &  238.00\$     &  -        & -      &  238.00\$ \\ \hline
+\end{tabular}
+\caption[Pricing example regarding test results]{Pricing example regarding test results}
+\label{table:example2}
+\end{table}
+\gls{AWS} is an exemplar in showing how the pricing works. Since with each doubling of memory execution time halves the price is exactly the same because also the GB-Seconds remain the same. But with 170\$ to 200\$ it is not the cheapest in the list.\\
+Azure strikes out to be very cheap. Since this example function application only uses 100 \gls{MB} Azure also only charges for 128 \gls{MB}. However the actual metrics of how much memory was used does not exist for Linux and is only depicted in a graph for Windows. But in the case this test is correct the cost-performance ratio is very good for low memory applications.\\
+Google generally conforms with the pricing results of \gls{AWS}. It positions itself in the same price region although it climbs in costs at 128 \gls{MB} and 2048 \gls{MB}. This can be traced back to the fact that it performed inconsistent and relatively seen slower for 128 MB, and for 2048 MB not much performance was gained. Therefore these two options are more expensive.\\
+IBM leans on Azure's method of calculating prices. It only charges for the defined and allocated GB-Seconds, but performs basically always the same. Hence, it gets approximately linearly more expensive with more memory allocation.
+
+\section{Evaluation of all services}
+In this section. the four serverless services will be compared. Two aspects were crucial for the evaluation: First, the previously discussed test and benchmark results and secondly, my personal opinion which was developed during this research and its implementation.
+\subsection*{Amazon Web Services Lambda}
+Overall, \gls{AWS} was astonishing with its performance. It has by far the lowest cold start latency and is very consistent regarding execution time. Furthermore it could handle the increasing load test without any issues. The request time did not increase significantly and the desired amount of requests per second was nearly achieved.\\
+Also the management of function deployments with the \gls{CLI} or in the portal worked flawlessly. At first, it is a little tricky to set up a function with a trigger (especially with the \gls{CLI}, see figure \ref{fig:aws_deploy}) but the documentation is good and there are many examples on the internet.\\
+Following is a list of some small problems or aspects that could be improved:
+\begin{itemize}
+    \item No official Docker image for the \gls{AWS} \gls{CLI}. There are other prebuilt ones that can be used or it is easy to make your own.
+    \item To delete functions, one needs to invoke the command \texttt{aws lambda list-functions} in the \gls{CLI}. Sadly, this command only takes into account one region and does not allow to retrieve multiple regions at once.
+    \item For security reasons one can only delete every 30 seconds an \gls{API} gateway. There is no possibility to remove or configure this restriction.
+\end{itemize}
+\subsection*{Microsoft Azure Functions}
+Azure cannot compete to Amazon in terms of performance and usability. The cold start latency is around two to four seconds and possibly therefore it does not scale that well (at least on Linux). As a result, load tests were good on Windows but very bad on Linux. Normal or low use performance is nonetheless okay.\\
+Using the portal can be frustrating since navigating through it or deploying something can be slow. In general, the \gls{CLI} works good but there are some actions that can only be done on the portal and sometimes a specific deployment command failed (see this issue on Github  \href{https://github.com/Azure/azure-cli/issues/10574}{https://github.com/Azure/azure-cli/issues/10574}). Additionally to the \gls{CLI}, Azure Functions Core Tools is a required Node.js program to run and test the functions locally and ideally they are also deployed with this program. This tool however is not included in the \gls{CLI} and there is also no Docker image available nor was I able to create one that worked. There is an alternate way to deploy the function (which was used in this thesis) with a zipped package that was built before.\\ From time to time various documentations of Microsoft were contradicting each other or not up to date.\\
+Azure has on the portal a nice \textit{Live Metrics Stream} where one can monitor the functions. It shows real time data (only about 1-2 seconds behind) such as requests per second, execution time per request, \gls{CPU} utilization and the number of servers which are allocated (see figure \ref{fig:live_metrics_stream}).\\
+Considering that Azure has three different function generations and three different execution plans it makes the impression that the service architecture has grown over time and is thus a little chaotic.\\
+Some more prospects that can be improved are:
+\begin{itemize}
+    \item The name given to the function app has to be unique since it forms part of the invocation link. This can lead to unnecessary deployment errors if the process is automated.
+    \item Azure functions generation 3 did not work at all. I tried upgrading from generation 2 to 3 when it became generally available but the parameter for generation 3 in the configuration file was simply not considered by Azure. This setting also can not be changed afterwards with the \gls{CLI}, only in portal. Not at all for Linux environments since they are read only when deployed with the \gls{CLI}.
+\end{itemize}
+Approximately 80\% of debugging and fixing the application can be traced back to Azure behaving badly or being vastly different than the other three cloud service providers.
+\subsection*{Google Cloud Functions}
+The Google Cloud was very satisfactory to use. The portal is simple and clearly structured and the \gls{CLI} handled well. Where the other clouds need multiple commands to get a function deployed and running it is just one simple command with Google (see figure \ref{fig:google_deploy}). The documentation is complete and clear.\\
+In regards to performance Google functions is good. The cold start latency is relatively high compared to \gls{AWS} and \gls{IBM}. Execution times are similar as on \gls{AWS} and scaling during the load test was okay. It seems to work well for fast executing functions but not so good for slower functions (higher than 0.5 seconds) which could be a deal breaker. On paper Google is the most expensive of them all.\\
+In the Google portal there are some nice graphs to monitor number of allocated instances, execution time, number of invocations and memory used per call. It is not properly real time as the one of Azure since it lags behind a few minutes.
+\subsection*{IBM Cloud Functions}
+Working with the \gls{IBM} Cloud was a little bit tougher than the others. The \gls{CLI} documentation is not that straightforward and structured as the ones of the competition and the \gls{CLI} itself can only be used if there is cloud foundry support for the corresponding region, which luckily is the case for all public regions except Tokyo, Japan.\\
+\gls{IBM} comes in second place in respect to cold start latency. It has very good performance even with low memory configurations. However it could not keep up to \gls{AWS} in the load tests and was pretty bad for the Go runtime. A few other remarks:
+\begin{itemize}
+    \item \gls{IBM} cloud functions has a 3000 requests per minute limit, however it is not mentioned in the documentation \cite{IBMLimits}. In order to increase this limit a request with a business case has to be submitted to \gls{IBM} and if reasonable they will increase the limit. I have discovered this limit only during the benchmark test.
+    \item The \gls{CLI} won't be able to load resources (i.e. \texttt{ibmcloud fn api list}) after it hasn't been used for some time. I was not able to figure out the problem. The second try however will work.
+    \item IBM only charges per memory used per time unit (GB-Seconds) but delivers as seen in figure \ref{fig:general_python_plot} always the same performance. This was discussed in section \ref{sec:general_test} and in my own opinion this pricing model can be exploited and is not well balanced (counterexample Google \cite{IBMPricing, GoogleFunctionsPricing}). However further testing would be necessary to confirm this behaviour.
+\end{itemize}
+\subsection*{Discussion and Comparison}
+In the following, some of the most important aspects to be considered when using serverless platforms will be summarized.
+
+\begin{itemize}
+    \item It is very important to test the function carefully before going into production. Measuring the execution time, optimizing the code as much as possible and deciding which instance size fits best for the function.
+    \item Test the scaling mechanism well and according to the request pattern of the application. Otherwise a big surprise could be right around the corner.
+    \item Calculating prices in theory is okay but it is much more accurate to actually measure execution times of the functions and calculate the prices regarding these times.
+\end{itemize}
+
+Table \ref{tab:summary} shows a summary and comparison of the key features and general advantages and disadvantages each cloud provider has to offer.
+
+\begin{table}[h]
+\begin{tabularx}{\textwidth}{ |l| *4{>{\Centering}X|}}
+\cline{1-5}
+	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\ \hline
+\textbf{Performance} & very good and \newline consistent & good & good, not consistent for 128MB & good \\ \hline
+\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ \hline
+\textbf{Scaling} & very good, \newline response time does almost not increase & good on Windows, \newline very bad on Linux & generally good, \newline not for Python or longer running functions & not that good, \newline high spikes are possible \\ \hline
+\textbf{CLI} & good and stable, \newline some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ \hline
+\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ \hline
+\textbf{General cons} & Not great monitoring on the portal, the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ \hline
+\end{tabularx}
+\caption[Summary and comparison of services]{Summary and comparison of services}
+    \label{tab:summary}
+\end{table}
+
+\section{Advantages and disadvantages of serverless computing}
+This thesis has shown that serverless computing in the form of \gls{FaaS} can deliver good performance at a reasonable price. For the end user it is fairly simple to start with, to use and maintain compared to \gls{VM}s or even physical servers. With serverless, companies can focus on building their business logic instead of maintaining operating systems and servers which requires expertise and is especially for smaller companies not always affordable. The probably most important point is auto scaling. If the serverless platform can handle that well it takes away one big crucial factor the user does not longer have to care about. Today there are other solutions for automatically scaling applications (i.e. Kubernetes cluster) but using a serverless platform is definitely simpler and more comfortable.\\
+Nevertheless, there are also downsides of using serverless platforms. A first aspect are the limitations given by the cloud provider. Technical limitations such as available runtimes and programming languages, supported triggers, the possibility of third party services integration, quotas, maximum memory etc. can normally not be changed or influenced by the user. In most cases and particularly for simpler applications this should be no obstacle. Considering the full development stack is managed by the provider users can potentially be forced to upgrade their application runtime (e.g. Node.js 6 to Node.js 8) when it reaches end of life. If this is announced early enough it doesn't put the users under pressure. But still the action eventually needs to be done and this costs resources. That can be annoying and the user has no control over it.\\
+Another risk of using these services can be a vendor lock-in. If the service is easily capable of being integrated along with other services of the cloud, the user can be entrapped to use them and get unintentionally bonded to the provider. When a change in the application design is on its way or even a change of the cloud provider is considered, these integrations could block a modification in the architecture or a migration.\\
+Furthermore there is no de facto standard on how to implement and deploy the functions. Each cloud uses its custom methods and properties (e.g. request and response object) inside the function which varies across the clouds. There is obviously no common interest of the providers to develop a standardized framework due to their competition.\\
+A last aspect I'd like to mention is efficiency. Since the customer is billed by the execution time of the function it is extremely important to only run highly optimized and efficient code, when executed in high quantities. Otherwise billing for unnecessary or idle \gls{CPU} time (e.g. run remote operations synchronously) can happen. This concern should be obvious to developers and entrepreneurs but the fact that one is billed exactly by the usage emphasizes it even more (compared of having an over provisioned server).
+\chapter{Conclusion}
+\section{Summary}
+This thesis and benchmark suite have provided a valuable open source application that users and companies can use to test and evaluate their specific demands regarding serverless computing. Since all is packaged with Docker it is easy to setup and use and no big time commitment needs to be made to conduct some tests.\\
+With the gathered results this thesis has established that serverless computing can definitely be useful and even powerful depending on the scenario, cloud and runtime.\\
+Unfortunately, there is no common framework or standard used by the cloud providers at the expense of the user or customer. This application tries to smooth the way for the user in testing and analyzing the results in order that later deciding on the most suitable serverless platform is more easy to do.
+\section{Future Work}
+Although this benchmark suite covers the most important aspects it can be developed and be improved further. Apart from general improvements and optimizations more runtimes respectively languages and cloud providers could be supported, more different tests could be implemented and provided. In addition, a plotting integration (e.g. with R) would be useful as Grafana does not provide much exporting and plotting capabilities and is rather focused on live monitoring.\\
+There could be a test regarding continuous deployment and inspect the behaviour of the platform. Besides, a special focus could lay on deploying and testing Docker images because that might be an important aspect and trend in the future, considering there are no runtime restrictions of the provider. Several providers already offer to deploy just a Docker image (AWS, Azure, IBM) and Google has its service Cloud Run which has become generally available on November 14, 2019 \cite{cloudrun} and is a fully managed, serverless container platform.\\ Moreover, the load test should probably be carried out with different function execution times to get a better understanding of the possible connection between scaling and execution time, if there is any at all. Also, a real world application test would be beneficial and demonstrate the usability of serverless computing.

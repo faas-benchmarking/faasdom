@@ -1,0 +1,243 @@
+% Hier werden Schriftgr�sse und Style festgelegt, alternativ article anstatt book
+\documentclass[11pt,a4paper,oneside]{book}
+\usepackage{a4wide}
+\author{Pascal Maissen}
+\usepackage[T1]{fontenc} 
+\usepackage[left=2cm, right=2cm, top=1.5cm, bottom=3cm,includeheadfoot]{geometry}
+\usepackage[usenames]{color} 
+\usepackage{amsmath} 
+\usepackage{amsthm} 
+\usepackage{amsfonts} 
+\usepackage{amssymb} 
+\usepackage{graphicx} 
+\usepackage{epic} 
+\usepackage{eepic}
+\usepackage{eso-pic}
+\usepackage{verbatim} 
+\usepackage{float} 
+\usepackage{fancyhdr} 
+\usepackage{bbding} 
+%\usepackage{bibgerm}
+\usepackage[english]{babel}
+\usepackage[fixlanguage]{babelbib}
+\usepackage{eso-pic}
+\usepackage{pdfpages}
+\usepackage{xurl}
+\usepackage[table]{xcolor}
+\usepackage[hidelinks, bookmarks=false]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage[justification=centering]{caption}
+\usepackage[titletoc]{appendix}
+\usepackage{listings}
+\usepackage[automake,nogroupskip]{glossaries}
+\usepackage{fancyvrb}
+\usepackage{graphicx,txfonts}
+\usepackage{tabularx,booktabs}
+\input{Makros}
+
+\lstset{
+  basicstyle=\small\ttfamily,
+  columns=fullflexible,
+  keepspaces=true,
+}
+
+\renewcommand\labelitemi{$\bullet$}
+\renewcommand\labelitemii{$\diamond$}
+\renewcommand\labelitemiii{-}
+\renewcommand\labelitemiv{$\centerdot$}
+\setlength{\parindent}{0cm}
+
+\newcommand{\heart}{\ensuremath\varheartsuit}
+
+%*************************************************
+% �berschrift des Abbildungsverzeichnisses �ndern:
+%*************************************************
+% Tabelleneintr�ge sollen das Abbildungsverzeichnis verwenden:
+\makeatletter
+%\renewcommand\ext@table{lof}
+\makeatother
+
+% Formatierung von Tabellen- und Abbildungsverzeichnis
+\usepackage{tocloft}
+\renewcommand{\cftfigpresnum}{Fig. }
+\renewcommand{\cfttabpresnum}{Tab. }
+\renewcommand{\cftfigaftersnum}{:}
+\renewcommand{\cfttabaftersnum}{:}
+\setlength{\cftfignumwidth}{2cm}
+\setlength{\cfttabnumwidth}{2cm}
+\setlength{\cftfigindent}{0cm}
+\setlength{\cfttabindent}{0cm}
+
+%***********
+%Kopfzeile *
+%***********
+\def\Xint#1{\mathchoice
+   {\XXint\displaystyle\textstyle{#1}}%
+   {\XXint\textstyle\scriptstyle{#1}}%
+   {\XXint\scriptstyle\scriptscriptstyle{#1}}%
+   {\XXint\scriptscriptstyle\scriptscriptstyle{#1}}%
+   \!\int}
+\def\XXint#1#2#3{{\setbox0=\hbox{$#1{#2#3}{\int}$}
+     \vcenter{\hbox{$#2#3$}}\kern-.5\wd0}}
+\def\ddashint{\Xint=}
+\def\dashint{\Xint-}
+\newcommand{\im}{\mathrm{im}}
+\makeindex
+\makeglossaries
+
+
+\newglossaryentry{vCPU}{name=vCPU, description={virtual Central Processing Unit}}
+\newglossaryentry{CPU}{name=CPU, description={Central Processing Unit}}
+\newglossaryentry{VM}{name=VM, description={Virtual Machine}}
+\newglossaryentry{OS}{name=OS, description={Operating System}}
+\newglossaryentry{AWS}{name=AWS, description={Amazon Web Services}}
+\newglossaryentry{IBM}{name=IBM, description={International Business Machines Corporation}}
+\newglossaryentry{CEO}{name=CEO, description={Chief Executive Officer}}
+\newglossaryentry{MB}{name=MB, description={Megabyte}}
+\newglossaryentry{GB}{name=GB, description={Gigabyte}}
+\newglossaryentry{MHz}{name=MHz, description={Megahertz}}
+\newglossaryentry{GHz}{name=GHz, description={Gigahertz}}
+\newglossaryentry{HTTP}{name=HTTP, description={Hypertext Transfer Protocol}}
+\newglossaryentry{HTML}{name=HTML, description={Hypertext Markup Language}}
+\newglossaryentry{CSS}{name=CSS, description={Cascading Style Sheets}}
+\newglossaryentry{JSON}{name=JSON, description={JavaScript Object Notation}}
+\newglossaryentry{API}{name={API}, description={Application Programming Interface}}
+\newglossaryentry{RPS}{name={RPS}, description={Requests per second}}
+\newglossaryentry{GUI}{name={GUI}, description={Graphical User Interface}}
+
+\newacronym{IaaS}{IaaS}{Infrastructure as a Service}
+\newacronym{PaaS}{PaaS}{Platform as a Service}
+\newacronym{SaaS}{SaaS}{Software as a Service}
+\newacronym{FaaS}{FaaS}{Function as a Service}
+\newacronym{ACU}{ACU}{Azure Compute Unit}
+\newacronym{NIST}{NIST}{National Institute of Standards and Technology}
+\newacronym{NPM}{NPM}{Node Package Manager}
+\newacronym{CLI}{CLI}{Command Line Interface}
+\newacronym{EC2}{EC2}{Elastic Compute Cloud}
+
+\definecolor{javascriptblue}{rgb}{0.10,0.10,0.66} %for variable
+\definecolor{javascriptroyalblue}{rgb}{0.10,0,0.82} %for numbers
+\definecolor{javascriptgreen}{rgb}{0,0.46,0} %for comments
+\definecolor{javascriptbrown}{rgb}{0.6,0.27,0} %for symbols
+\definecolor{javascriptpurple}{rgb}{0.67,0.05,0.56} %for keywords
+\definecolor{javascriptred}{rgb}{0.77,0.09,0.08} %for strings
+
+
+
+
+
+
+% Hiermit beginnt das Dokument
+\begin{document}
+\addtolength{\baselineskip}{+.3\baselineskip}
+
+%************
+%Titelseite *
+%************
+\begin{titlepage}
+\include{titlepage}
+\end{titlepage}
+
+\fancyhf{}%                         Kopf-/Fu�zeilenfelder leeren
+\setlength{\headheight}{13.6pt} 
+\fancyhead[L]{\leftmark}
+% Zweiseitig - dann onesite ganz oben l�schne
+%\fancyhead[EL]{\leftmark}
+%\fancyhead[OR]{\rightmark}        %\rightmark f�rs doppelseitige
+\fancyhead[R]{\thepage}%    Im Kopf rechts die Seitenzahl setzen
+%\fancyhead[ER]{\thepage}
+%\fancyhead[OL]{\thepage}
+\renewcommand{\headrulewidth}{1pt}%    Trennlinie unter dem Kopf
+\pagestyle{fancy}%                   Seitenstil auf fancy setzen
+\fancypagestyle{plain}{}
+
+
+
+%\thispagestyle{empty}
+
+\frontmatter
+\setcounter{page}{1}
+
+% Acknowledgements
+\fancyhead[L]{ACKNOWLEDGEMENTS}
+\include{preamble}
+
+% Abstract
+\fancyhead[L]{ABSTRACT}
+\include{abstract}
+
+\fancyhead[L]{\leftmark}
+%********************
+%Inhaltsverzeichnis *
+%********************
+% Generiert ein Inhaltsverzeichnis
+\renewcommand{\contentsname}{Table of Contents}
+\tableofcontents
+
+
+
+%********
+%Inhalt *
+%********
+\mainmatter
+\renewcommand{\chaptername}{Chapter}
+
+\include{contents}
+
+%********
+%Anhang *
+%********
+%thm-Counter muss genullt werden
+\begin{appendices}
+  \include{anhang}
+\end{appendices}
+
+%\appendix
+%\include{anhang}
+
+
+%***********************
+%Abbildungsverzeichnis *
+%***********************
+\renewcommand{\listfigurename}{List of Figures}
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures \label{listoffigures}
+\clearpage 
+
+% list of tables
+\renewcommand{\listtablename}{List of Tables}
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables \label{listoftables}
+\clearpage 
+
+% glossary
+%\renewcommand{\listacronymsname}{List of Acronyms}
+\phantomsection
+\addcontentsline{toc}{chapter}{Glossary}
+\renewcommand*{\glsgroupskip}{}
+\printglossary[style=index] \label{glossary}
+\clearpage 
+
+
+%***************
+%Bibliographie *
+%***************
+\renewcommand{\bibname}{References}
+\selectbiblanguage{english}
+\bibliographystyle{alphadin}%alphadin babalpha; alphadin is german!!!
+\pagebreak
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\bibliography{bib}
+
+%Dieser Befehl schlisst das Dokument ab
+\end{document}
+
+
+
+
