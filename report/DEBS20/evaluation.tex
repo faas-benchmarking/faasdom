@@ -274,18 +274,18 @@ In the following, some of the most important aspects to be considered when using
 \end{itemize}
 
 Table \ref{tab:summary} shows a summary and comparison of the key features and general advantages and disadvantages each cloud provider has to offer.
-
-\begin{table}[h]
-\begin{tabularx}{\textwidth}{ |l| *4{>{\Centering}X|}}
-\cline{1-5}
-	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\ \hline
-\textbf{Performance} & very good and \newline consistent & good & good, not consistent for 128MB & good \\ \hline
-\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ \hline
-\textbf{Scaling} & very good, \newline response time does almost not increase & good on Windows, \newline very bad on Linux & generally good, \newline not for Python or longer running functions & not that good, \newline high spikes are possible \\ \hline
-\textbf{CLI} & good and stable, \newline some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ \hline
-\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ \hline
-\textbf{General cons} & Not great monitoring on the portal, the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ \hline
-\end{tabularx}
-\caption[Summary and comparison of services]{Summary and comparison of services}
-    \label{tab:summary}
-\end{table}
+\vs{CHECK COMMENTED TABLE, something wrong with alingmnets}
+%\begin{table}[h]
+%\begin{tabularx}{\textwidth}{ |l| *4{>{\centering}X|}}
+%\cline{1-5}
+%	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\ 
+%\textbf{Performance} & very good and consistent & good & good, not consistent for 128MB & good \\ 
+%\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ 
+%\textbf{Scaling} & very good,  response time does almost not increase & good on Windows, very bad on Linux & generally good, not for Python or longer running functions & not that good,  high spikes are possible \\ 
+%\textbf{CLI} & good and stable,  some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ 
+%\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ 
+%\textbf{General cons} & Not great monitoring on the portal, the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ 
+%\end{tabularx}
+%\caption[Summary and comparison of services]{Summary and comparison of services}
+%    \label{tab:summary}
+%\end{table}
