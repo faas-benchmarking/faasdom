@@ -1,0 +1,291 @@
+%!TEX root = main.tex
+\section{Results}
+In this chapter results of performed tests will be presented and explained, an example for a pricing calculation will be given, the services among the cloud providers will be compared and some general advantages and disadvantages about serverless computing will be specified derived from these results.
+
+In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
+\subsection{Latency Test}
+The objective of the latency test was to measure the latency for all clouds and regions. This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. Every 5 seconds, a requests was sent to each cloud and region until a sample size of 100 was obtained. This test was carried out from Bern, Switzerland.
+\begin{remarks}
+\text{ }
+\begin{itemize}
+    \item For Azure, this test was only done with Linux as underlying OS. The OS should not matter in regards to latency.
+    \item The \textit{westus} region of Azure had problems deploying it in Node.js and therefore .NET was used. Following error was produced: \texttt{The scale operation is not allowed for this subscription in this region. Try selecting different region or scale option.}\\
+    Also trying to create the function in the Azure portal failed and an error was indicated but the error message could not be viewed.
+    \item On Azure region \textit{australiaeast} the function could not be deployed, although no error was risen. Therefore it was deployed on Windows instead of Linux.
+\end{itemize}
+\end{remarks}
+The graphic \ref{fig:latency_plot} shows a scatter plot with the results of the test.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.335]{bilder/scatterplot_latency.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Latency test scatter plot]{Latency test scatter plot, \\ Source: illustration by author}
+\label{fig:latency_plot}
+\end{center}
+\end{figure}
+
+For more detailed results see table \ref{tab:latency}. 
+The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
+
+\subsection{Cold Start Test}
+\label{sec:coldstart}
+This test measured the cold start latency. A cold start happens when the function takes longer to start up and run than usual. This occurs mostly after the deployment, after the function has not been used in a while or when a new instance needs to be provisioned for scaling purposes. In order for the cloud provider to get up the instance and deploy the specific code on it, some time can pass. Figure \ref{fig:azure_coldstart} shows what happens on Azure when a cold start is required and when the app is already warm.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.51]{bilder/azure-coldstart.jpeg}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Cold and warm start on Azure]{Cold and warm start on Azure. Source: Azure \cite{AzureColdStart}}
+\label{fig:azure_coldstart}
+\end{center}
+\end{figure}
+As indicated in the figure, several steps are required initially before the function can execute. A server has to be allocated, the worker is set up with the relevant code, packages and extensions are loaded (if needed), the function gets loaded into memory and then finally it can run. If the function is warm and no cold start happens, it is ready and can just be invoked. This process is similar in other clouds.\\
+The cold start latency has been tested ten times for each runtime on each cloud. Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. The test was realized in the following regions: \gls{AWS} on \texttt{eu-central-1}, Azure on \texttt{westeurope}, Google on \texttt{europe-west1} and \gls{IBM} on \texttt{eu-de}. However, the region should not have any implications on the cold start latency. The cold start latency was calculated the following way:
+$$\text{Total Request Time} - \text{Normal Average Latency} = \text{Cold Start Latency}$$
+Figure \ref{fig:coldstart_plot} shows the result of this test. 
+A box plot shows the cold start latency for every cloud service provider and runtime. \gls{AWS} is overall the fastest, with an average cold start latency of only 335 ms for Node.js, Python and Go. For .NET it is much higher with an average of 1739 ms, possibly due to the nature and compilation of .NET respectively C\#. On Azure, cold start latency is always more than 2 seconds and ascends up to 5 seconds, except for .NET on Windows which has an average cold start latency of 1917 ms. Google has compared to \gls{AWS} and \gls{IBM} relatively high cold start latency around 2 to 3 seconds. \gls{IBM} shows a similar pattern as \gls{AWS} although the cold start latency is around 600 ms higher for Node.js, Python and Go but similar for .NET.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{bilder/boxplot_coldstart_all_new.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Cold start latency box plot]{Cold start latency box plot. Source: illustration by author}
+\label{fig:coldstart_plot}
+\end{center}
+\end{figure}
+
+On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for the instance to be recycled by the provider, on Azure around 10-20 minutes and on Google it varied from 10 minutes up to 10 hours.
+
+\subsection{General Test}
+\label{sec:general_test}
+This test was performed to analyze the functions under normal circumstances, meaning that there is not much load respectively that the load can be handled well by the cloud provider. The objective is to compare the achieved performance of the clouds regarding execution speed and the thereby implicated costs. For this evaluation the \gls{CPU} factors test (see section \ref{sec:factors_test}) was executed. The function was invoked every five seconds until a sample size of $n=100$ was reached. This for each \gls{MB} configuration, each runtime and each cloud. As input parameter $26'888'346'474'443$ was selected since with this number the function finished ahead of the timeout for low configurations and simultaneously was not too quickly finished for high configurations. Figure \ref{fig:general_python_plot} illustrates the result of this test in Python in a scatter plot.
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.4]{bilder/scatterplot_general_python.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Scatter plot of execution times of the \gls{CPU} factors test in Python]{Scatter plot of execution times of the \gls{CPU} factors test in Python\\ Source: illustration by author}
+\label{fig:general_python_plot}
+\end{center}
+\end{figure}
+
+A few interesting characteristics can be observed. On \gls{AWS} Lambda everything seems as it should be and is hence a good showcase. Firstly, the standard deviation is very low and therefore the execution time extremely consistent. With every doubling of the allocated memory the execution time is halved, as it should be since \gls{CPU} performance scales linearly to allocated memory, according to Amazon \cite{AWSLambdaConfig}. Conforming to Azure's memory configuration of 1536 \gls{MB} its performance should be between 1024 and 2048 \gls{MB} of the competitors performance. However, it is even slower than 1024 \gls{MB} instances of the other clouds. The results on the Google Cloud Platform follow a similar pattern as on \gls{AWS}, but they are more scattered especially for 128 \gls{MB} of memory. Moreover Google is faster than \gls{AWS} for 128, 256, 512 and 1024 \gls{MB} but not for 2048 \gls{MB}. For the first three times doubling the memory leads to halved execution time. But not entirely for the next two steps since Google does not scale \gls{CPU} completely linear to allocated memory \cite{GoogleFunctionsPricing}. At last, \gls{IBM} shows a very strange pattern. It seems that memory allocation does not correlate with \gls{CPU} allocation in any way. All five different sizes perform practically the same. This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Seconds used. This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.\\
+The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}.
+
+\subsection{Load Test}
+\label{sec:loadtest}
+The load test is designed to benchmark the serverless functions up to 1000 requests per second. This is carried out with the \gls{HTTP} benchmark tool \textit{wrk2} (see \cite{wrk2}). A function is first called with 10 requests per second for the duration of 1 minute. Subsequently with 25, 50, 100, 200, 400, 800 and finally 1000 requests per second each time for one minute. In between is a short break of 10 seconds to allow the function to process requests that are still queued. As test, the matrix function with a parameter of 100 is used. With this setup the matrix function should have an average execution time of about 100ms for Node.js, Go and .NET and around 250ms for Python. The graphic \ref{fig:load_test_latency_all} displays the average latency results grouped by runtime.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.83\textwidth]{bilder/plot_average_latency_all.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Load test average latency]{Load test average latency. Source: illustration by author}
+\label{fig:load_test_latency_all}
+\end{center}
+\end{figure}
+
+The results are now discussed step by step. \gls{AWS} has for all four runtimes an extremely steady response latency throughout the increasing load. This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
+On Azure it looks quite different. Azure can handle the load on Windows as operating system. But in the first increasing steps from 10 to 100 or 200 RPS latency rises although it flattens out afterwards. On Linux, Azure performs very bad and can not scale out quickly enough to serve the requests in an acceptable time frame. The response time climbs more or less linearly to the amount of request per second sent. That is a strong indication that none or too few new instances are allocated to handle the load. At the time of 1000 requests per second one could see in the Azure portal Live Metrics Stream that e.g. for .NET only 12 instances have been deployed (see figure \ref{fig:live_metrics_stream}). Additionally the screenshot shows that only 500 requests per second get handled by the function, the rest is probably waiting in a queue.
+\begin{remark}
+In the screenshot the request duration differs from the wrk2 results since that is most likely only considering execution time without queuing time.
+\end{remark}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{bilder/azure_dotnet_1000.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
+\label{fig:live_metrics_stream}
+\end{center}
+\end{figure}
+
+For Node.js and .NET the latencies went up to 24s respectively 18s and are not plotted in the graph for illustration purposes. On Python, Azure returned from 200 \gls{RPS} and above almost only \gls{HTTP} errors and the result of wrk2 is not representative and hence not plotted.\\
+Google can manage the load generally well, although latency increases a little bit for Node.js and Go. With Python, Google has the biggest problems and seems overwhelmed when requests increase. It can not scale quickly enough and the average request duration increased from 1356ms to 18448ms with 10 \gls{RPS} respectively 25 \gls{RPS}. After that, this phenomena happens again but less drastically. This can possibly be explained by the fact that the function has a longer execution time in Python and Google can scale longer running functions less good. Overall the performance is good. Figure \ref{fig:google_graph_go} shows the number of instances allocated during the Go load test on Google.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=0.4\textwidth]{bilder/Google_Go_Instances.png}
+\captionsetup{justification=centering, labelfont=bf}
+\caption[Google Go active instances during load test]{Google Go active instances during load test\\Source: screenshot Google cloud portal}
+\label{fig:google_graph_go}
+\end{center}
+\end{figure}
+
+Lastly, the result of \gls{IBM} will be discussed. Those outcomes differ from the others relatively much. On Node.js and .NET it can roughly keep up to the competition but operates a little slower and on Node.js it has a striking outlier. The Python function on IBM nearly performs as well as on \gls{AWS}, but the same cannot be said about Go. The Go runtime performed much slower in the load test as with the competitors, although as seen in the cold start test in section \ref{sec:coldstart} it has a similar cold start latency as Node.js and Python and as shown in the appendix table \ref{tab:general} it performs generally well on Go. Thus this bad performance cannot be derived from this or other tests and it is possible that IBMs auto scaling mechanism does not work well for Go. Of the amount of instances deployed, IBM delivers no statistics.\\
+So far, the latency has been examined and now the actual throughput will be explained. Most of the cloud providers and runtimes could handle the load and only had an irrelevant smaller throughput than tested against. Therefore only significant impacts in throughput will be presented, meaning that the throughput was less than 90\% of the tested one. The subsequent table \ref{table:rps} shows where throughput was below 90\%.
+In addition, there are detailed result plots (figure \ref{fig:loadtest_percentile_node} - \ref{fig:loadtest_percentile_dotnet}) and tables (table \ref{table:aws_load_test} - \ref{table:ibm_load_test}) in the appendix.
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\scalebox{0.93}{\begin{tabular}{l|l|r|r|r} 
+\textbf{Cloud} & \textbf{Runtime} & \textbf{RPS (goal)} & \textbf{RPS (actual)} & \textbf{RPS in \%} \\ \hline
+Azure & Node.js & 200 & 179 & 89.50\% \\ \hline
+Azure & Node.js & 400 & 227 & 56.75\% \\ \hline
+Azure & Node.js & 800 & 278 & 34.75\% \\ \hline
+Azure & Node.js & 1000 & 327 & 32.70\% \\ \hline
+Azure & Python & 10 & 6 & 60.00\% \\ \hline
+Azure & Python & 25 & 12 & 48.00\% \\ \hline
+Azure & Python & 50 & 18 & 36.00\% \\ \hline
+Azure & Python & 100 & 25 & 25.00\% \\ \hline
+Azure & Python & 200 & 30 & 15.00\% \\ \hline
+Azure & Python & 400 & 15 & 3.75\% \\ \hline
+Azure & Python & 800 & 14 & 1.75\% \\ \hline
+Azure & Python & 1000 & 15 & 1.50\% \\ \hline
+Azure & .NET & 400 & 324  & 81.00\% \\ \hline
+Azure & .NET & 800 & 407 & 50.88\% \\ \hline
+Azure & .NET & 1000 & 512 & 51.20\% \\ \hline
+Google & Python & 25 & 12 & 48.00\% \\ \hline
+Google & Python & 200 & 168 & 84.00\% \\ \hline
+Google & Python & 400 & 297 & 74.25\% \\ \hline
+Google & Python & 800 & 575 & 71.88\% \\ \hline
+IBM & Go & 25 &  21 & 84.00\% \\ \hline
+\end{tabular}}
+\caption[Load tests that achieved less than 90\% of RPS]{Load tests that achieved less than 90\% of RPS}
+\label{table:rps}
+\end{table}
+
+\subsection{Pricing}
+\label{sec:pricing}
+In this section two pricing examples will be calculated and explained. The first one will be theoretical and the second one will be based on the general test in section \ref{sec:general_test}. Table \ref{table:pricing} shows the prices per unit for each cloud. Prices on \gls{AWS} and Azure can vary depending on the location. The table and the examples use the prices of the region \texttt{eu-central1} for \gls{AWS} and \texttt{westeurope} for Azure. All clouds round up GB-Seconds and GHz-Seconds up to the next 100ms per invocation, except for Azure which rounds it up to the next 1ms.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{l|l|l|l|l} 
+         & \textbf{per invocation} & \textbf{per GB-Second} & \textbf{per GHz-Second} & \textbf{per GB network egress} \\ \hline
+\textbf{AWS}      &  0.0000002  &  0.000016667 &  -       & 0.09 \\ \hline
+\textbf{Azure}    &  0.0000002  &  0.000016    &  -       & 0.087 \\ \hline
+\textbf{Google}   &  0.0000004  &  0.0000025   &  0.00001 & 0.12 \\ \hline
+\textbf{IBM}      &  -          &  0.000017    &  -       & - \\
+\end{tabular}
+\caption[Serverless functions pricing]{Serverless functions pricing, all prices in USD as of 22.01.2020\\ Data source: \cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
+\label{table:pricing}
+\end{table}
+
+As one can see Google seems to be to have the most sophisticated pricing model of all. Charging exactly for not only the GB-Seconds used but also the GHz-Seconds. The pricing model of \gls{AWS} and Azure are very similar and the one of \gls{IBM} only takes into account GB-Seconds and they are not significantly more expensive.\\
+All of the cloud have a certain free tier quantity which is included per month. Table \ref{table:free_tier} lists the free quantities. Network egress free tier is shared with all network egress of the cloud. Free tier is not considered in the following two examples.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{l|l|l|l|l} 
+         & \textbf{Invocations} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{GB network egress} \\ \hline
+\textbf{AWS}      &  1'000'000  &  400'000     &  -       & 1 \\ \hline
+\textbf{Azure}    &  1'000'000  &  400'000     &  -       & 5 \\ \hline
+\textbf{Google}   &  2'000'000  &  400'000     &  200'000 & 5 \\ \hline
+\textbf{IBM}      &  -          &  400'000     &  -       & - \\
+\end{tabular}
+\caption[Serverless functions free tier]{Serverless functions free tier as of 22.01.2020\\Data source: \cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
+\label{table:free_tier}
+\end{table}
+
+\subsection*{Example 1}
+Let's assume a company has a custom application for image processing written in Python. It does some modifications to the image and then saves the result in a storage solution of the correspondent cloud. Each month around 10 million images are processed. This task is not time critical but should be cost efficient. On a developers desktop computer the task takes around 5 seconds to complete and uses up to 450 \gls{MB} of memory. On a cloud platform a similar result is expected. In this example there is no network egress.
+\subsubsection*{Calculation}
+\begin{align*}
+\text{\textbf{Cloud}}&: \text{\textbf{Invocations}} &+\quad& \text{\textbf{GB-Seconds}} &+\quad& \text{\textbf{GHz-Seconds}} &=\quad& \text{\textbf{Cost}} \\
+\text{AWS}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016667 \$ & & &=\quad& 418.675 \$ \\ 
+\text{Azure}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016 \$ & & &=\quad& 402.000 \$ \\
+\text{Google}&: 10\text{M} \cdot 0.0000004 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.0000025 \$ &+\quad&  10\text{M} \cdot 0.8 \cdot 5 \cdot 0.00001 \$ &=\quad& 466.500 \$ \\
+\text{IBM}&:  &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000017 \$ & & &=\quad& 425.000 \$ \\ 
+\end{align*}
+
+As one can see the cheapest in this case would be Azure, followed by \gls{AWS}, \gls{IBM} and finally Google as the most expensive. With that amount of invocations and execution time all clouds are comparable.\\
+Now the problem with this calculation is that it only assumes the execution times on the clouds which is the most essential part of the pricing calculation. Some clouds may perform much better than others. Example 2 will take actual execution time into consideration.
+\subsection*{Example 2}
+This example takes the result of the \gls{CPU} factors test of section \ref{sec:general_test} as a basis. This test is also in the runtime Python. Let's also assume 10 million function calls are invoked per month. With the fixed parameter of $26'888'346'474'443$ the function should not consume more than 100 \gls{MB} of memory. Its return size is around 4 KB per call. As execution times we take the average (rounded up to 100ms if applicable) of the result.
+\begin{remark}
+Azure claims that it only charges the GB-Seconds the function actually used, rounded up to the next 128 \gls{MB} step \cite{AzurePricing}. It seems therefore that the pricing model of Azure is similar to the one of \gls{IBM}, delivering the same performance independent of memory size.
+\end{remark}
+Doing the equivalent calculations as in example 1, the following results are obtained as shown in table \ref{table:example2}.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|r|r|r|r|r|r|} \hline
+     &   \textbf{Rounded time}  & \textbf{Invocation} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{Network} & \textbf{Total} \\ \hline
+AWS  128MB      & 8000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS  256MB      & 4000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS  512MB      & 2000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS 1024MB      & 1000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+AWS 2048MB      &  600ms&  2.00\$  &  200.00\$     &  -        & 3.43\$ & 205.43\$ \\ \hline
+Azure 128MB     & 1267ms&  2.00\$  &   25.34\$     &  -        & 3.32\$ &  30.66\$ \\ \hline
+Google  128MB   & 7700ms&  4.00\$  &   24.06\$     &  154.00\$ & 4.58\$ & 186.64\$ \\ \hline
+Google  256MB   & 3200ms&  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
+Google  512MB   & 1600ms&  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
+Google 1024MB   &  900ms&  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\ \hline
+Google 2048MB   &  800ms&  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\ \hline
+IBM  128MB      &  700ms&  -       &   14.88\$     &  -        & -      &  14.88\$ \\ \hline
+IBM  256MB      &  600ms&  -       &   25.50\$     &  -        & -      &  25.50\$ \\ \hline
+IBM  512MB      &  600ms&  -       &   51.00\$     &  -        & -      &  51.00\$ \\ \hline
+IBM 1024MB      &  600ms&  -       &  102.00\$     &  -        & -      &  102.00\$ \\ \hline
+IBM 2048MB      &  700ms&  -       &  238.00\$     &  -        & -      &  238.00\$ \\ \hline
+\end{tabular}
+\caption[Pricing example regarding test results]{Pricing example regarding test results}
+\label{table:example2}
+\end{table}
+\gls{AWS} is an exemplar in showing how the pricing works. Since with each doubling of memory execution time halves the price is exactly the same because also the GB-Seconds remain the same. But with 170\$ to 200\$ it is not the cheapest in the list.\\
+Azure strikes out to be very cheap. Since this example function application only uses 100 \gls{MB} Azure also only charges for 128 \gls{MB}. However the actual metrics of how much memory was used does not exist for Linux and is only depicted in a graph for Windows. But in the case this test is correct the cost-performance ratio is very good for low memory applications.\\
+Google generally conforms with the pricing results of \gls{AWS}. It positions itself in the same price region although it climbs in costs at 128 \gls{MB} and 2048 \gls{MB}. This can be traced back to the fact that it performed inconsistent and relatively seen slower for 128 MB, and for 2048 MB not much performance was gained. Therefore these two options are more expensive.\\
+IBM leans on Azure's method of calculating prices. It only charges for the defined and allocated GB-Seconds, but performs basically always the same. Hence, it gets approximately linearly more expensive with more memory allocation.
+
+\subsection{Evaluation of all services}
+In this section. the four serverless services will be compared. Two aspects were crucial for the evaluation: First, the previously discussed test and benchmark results and secondly, my personal opinion which was developed during this research and its implementation.
+\subsection*{Amazon Web Services Lambda}
+Overall, \gls{AWS} was astonishing with its performance. It has by far the lowest cold start latency and is very consistent regarding execution time. Furthermore it could handle the increasing load test without any issues. The request time did not increase significantly and the desired amount of requests per second was nearly achieved.\\
+Also the management of function deployments with the \gls{CLI} or in the portal worked flawlessly. At first, it is a little tricky to set up a function with a trigger (especially with the \gls{CLI}, see figure \ref{fig:aws_deploy}) but the documentation is good and there are many examples on the internet.\\
+Following is a list of some small problems or aspects that could be improved:
+\begin{itemize}
+    \item No official Docker image for the \gls{AWS} \gls{CLI}. There are other prebuilt ones that can be used or it is easy to make your own.
+    \item To delete functions, one needs to invoke the command \texttt{aws lambda list-functions} in the \gls{CLI}. Sadly, this command only takes into account one region and does not allow to retrieve multiple regions at once.
+    \item For security reasons one can only delete every 30 seconds an \gls{API} gateway. There is no possibility to remove or configure this restriction.
+\end{itemize}
+\subsection*{Microsoft Azure Functions}
+Azure cannot compete to Amazon in terms of performance and usability. The cold start latency is around two to four seconds and possibly therefore it does not scale that well (at least on Linux). As a result, load tests were good on Windows but very bad on Linux. Normal or low use performance is nonetheless okay.\\
+Using the portal can be frustrating since navigating through it or deploying something can be slow. In general, the \gls{CLI} works good but there are some actions that can only be done on the portal and sometimes a specific deployment command failed (see this issue on Github  \href{https://github.com/Azure/azure-cli/issues/10574}{https://github.com/Azure/azure-cli/issues/10574}). Additionally to the \gls{CLI}, Azure Functions Core Tools is a required Node.js program to run and test the functions locally and ideally they are also deployed with this program. This tool however is not included in the \gls{CLI} and there is also no Docker image available nor was I able to create one that worked. There is an alternate way to deploy the function (which was used in this thesis) with a zipped package that was built before.\\ From time to time various documentations of Microsoft were contradicting each other or not up to date.\\
+Azure has on the portal a nice \textit{Live Metrics Stream} where one can monitor the functions. It shows real time data (only about 1-2 seconds behind) such as requests per second, execution time per request, \gls{CPU} utilization and the number of servers which are allocated (see figure \ref{fig:live_metrics_stream}).\\
+Considering that Azure has three different function generations and three different execution plans it makes the impression that the service architecture has grown over time and is thus a little chaotic.\\
+Some more prospects that can be improved are:
+\begin{itemize}
+    \item The name given to the function app has to be unique since it forms part of the invocation link. This can lead to unnecessary deployment errors if the process is automated.
+    \item Azure functions generation 3 did not work at all. I tried upgrading from generation 2 to 3 when it became generally available but the parameter for generation 3 in the configuration file was simply not considered by Azure. This setting also can not be changed afterwards with the \gls{CLI}, only in portal. Not at all for Linux environments since they are read only when deployed with the \gls{CLI}.
+\end{itemize}
+Approximately 80\% of debugging and fixing the application can be traced back to Azure behaving badly or being vastly different than the other three cloud service providers.
+\subsection*{Google Cloud Functions}
+The Google Cloud was very satisfactory to use. The portal is simple and clearly structured and the \gls{CLI} handled well. Where the other clouds need multiple commands to get a function deployed and running it is just one simple command with Google (see figure \ref{fig:google_deploy}). The documentation is complete and clear.\\
+In regards to performance Google functions is good. The cold start latency is relatively high compared to \gls{AWS} and \gls{IBM}. Execution times are similar as on \gls{AWS} and scaling during the load test was okay. It seems to work well for fast executing functions but not so good for slower functions (higher than 0.5 seconds) which could be a deal breaker. On paper Google is the most expensive of them all.\\
+In the Google portal there are some nice graphs to monitor number of allocated instances, execution time, number of invocations and memory used per call. It is not properly real time as the one of Azure since it lags behind a few minutes.
+\subsection*{IBM Cloud Functions}
+Working with the \gls{IBM} Cloud was a little bit tougher than the others. The \gls{CLI} documentation is not that straightforward and structured as the ones of the competition and the \gls{CLI} itself can only be used if there is cloud foundry support for the corresponding region, which luckily is the case for all public regions except Tokyo, Japan.\\
+\gls{IBM} comes in second place in respect to cold start latency. It has very good performance even with low memory configurations. However it could not keep up to \gls{AWS} in the load tests and was pretty bad for the Go runtime. A few other remarks:
+\begin{itemize}
+    \item \gls{IBM} cloud functions has a 3000 requests per minute limit, however it is not mentioned in the documentation \cite{IBMLimits}. In order to increase this limit a request with a business case has to be submitted to \gls{IBM} and if reasonable they will increase the limit. I have discovered this limit only during the benchmark test.
+    \item The \gls{CLI} won't be able to load resources (i.e. \texttt{ibmcloud fn api list}) after it hasn't been used for some time. I was not able to figure out the problem. The second try however will work.
+    \item IBM only charges per memory used per time unit (GB-Seconds) but delivers as seen in figure \ref{fig:general_python_plot} always the same performance. This was discussed in section \ref{sec:general_test} and in my own opinion this pricing model can be exploited and is not well balanced (counterexample Google \cite{IBMPricing, GoogleFunctionsPricing}). However further testing would be necessary to confirm this behaviour.
+\end{itemize}
+\subsection*{Discussion and Comparison}
+In the following, some of the most important aspects to be considered when using serverless platforms will be summarized.
+
+\begin{itemize}
+    \item It is very important to test the function carefully before going into production. Measuring the execution time, optimizing the code as much as possible and deciding which instance size fits best for the function.
+    \item Test the scaling mechanism well and according to the request pattern of the application. Otherwise a big surprise could be right around the corner.
+    \item Calculating prices in theory is okay but it is much more accurate to actually measure execution times of the functions and calculate the prices regarding these times.
+\end{itemize}
+
+Table \ref{tab:summary} shows a summary and comparison of the key features and general advantages and disadvantages each cloud provider has to offer.
+
+\begin{table}[h]
+\begin{tabularx}{\textwidth}{ |l| *4{>{\Centering}X|}}
+\cline{1-5}
+	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\ \hline
+\textbf{Performance} & very good and \newline consistent & good & good, not consistent for 128MB & good \\ \hline
+\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ \hline
+\textbf{Scaling} & very good, \newline response time does almost not increase & good on Windows, \newline very bad on Linux & generally good, \newline not for Python or longer running functions & not that good, \newline high spikes are possible \\ \hline
+\textbf{CLI} & good and stable, \newline some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ \hline
+\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ \hline
+\textbf{General cons} & Not great monitoring on the portal, the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ \hline
+\end{tabularx}
+\caption[Summary and comparison of services]{Summary and comparison of services}
+    \label{tab:summary}
+\end{table}
