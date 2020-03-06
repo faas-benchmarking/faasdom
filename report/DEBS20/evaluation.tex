@@ -18,7 +18,7 @@ The graphic \ref{fig:latency_plot} shows a scatter plot with the results of the 
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.335]{bilder/scatterplot_latency.png}
+\includegraphics[width=0.5\textwidth]{bilder/latency/scatterplot_latency.pdf}
 \captionsetup{justification=centering, labelfont=bf}
 \caption[Latency test scatter plot]{Latency test scatter plot, \\ Source: illustration by author}
 \label{fig:latency_plot}
@@ -34,7 +34,7 @@ This test measured the cold start latency. A cold start happens when the functio
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.51]{bilder/azure-coldstart.jpeg}
+\includegraphics[width=0.5\textwidth]{bilder/azure-coldstart.jpeg}
 \captionsetup{justification=centering, labelfont=bf}
 \caption[Cold and warm start on Azure]{Cold and warm start on Azure. Source: Azure \cite{AzureColdStart}}
 \label{fig:azure_coldstart}
@@ -48,7 +48,7 @@ A box plot shows the cold start latency for every cloud service provider and run
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[width=0.95\textwidth]{bilder/boxplot_coldstart_all_new.png}
+\includegraphics[width=0.5\textwidth]{bilder/cold_start/boxplot_coldstart_all.pdf}
 \captionsetup{justification=centering, labelfont=bf}
 \caption[Cold start latency box plot]{Cold start latency box plot. Source: illustration by author}
 \label{fig:coldstart_plot}
@@ -62,7 +62,7 @@ On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for 
 This test was performed to analyze the functions under normal circumstances, meaning that there is not much load respectively that the load can be handled well by the cloud provider. The objective is to compare the achieved performance of the clouds regarding execution speed and the thereby implicated costs. For this evaluation the \gls{CPU} factors test (see section \ref{sec:factors_test}) was executed. The function was invoked every five seconds until a sample size of $n=100$ was reached. This for each \gls{MB} configuration, each runtime and each cloud. As input parameter $26'888'346'474'443$ was selected since with this number the function finished ahead of the timeout for low configurations and simultaneously was not too quickly finished for high configurations. Figure \ref{fig:general_python_plot} illustrates the result of this test in Python in a scatter plot.
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.4]{bilder/scatterplot_general_python.png}
+\includegraphics[width=0.5\textwidth]{bilder/general_python/scatterplot_general_python.pdf}
 \captionsetup{justification=centering, labelfont=bf}
 \caption[Scatter plot of execution times of the \gls{CPU} factors test in Python]{Scatter plot of execution times of the \gls{CPU} factors test in Python\\ Source: illustration by author}
 \label{fig:general_python_plot}
@@ -78,7 +78,11 @@ The load test is designed to benchmark the serverless functions up to 1000 reque
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[width=0.83\textwidth]{bilder/plot_average_latency_all.png}
+%\includegraphics[width=0.83\textwidth]{bilder/plot_average_latency_all.png}
+\begin{tabular}{c c}
+\includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_node.pdf} & \includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_python.pdf} \\
+\includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_go.pdf} & \includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_dotnet.pdf} \\
+\end{tabular}
 \captionsetup{justification=centering, labelfont=bf}
 \caption[Load test average latency]{Load test average latency. Source: illustration by author}
 \label{fig:load_test_latency_all}
@@ -93,7 +97,7 @@ In the screenshot the request duration differs from the wrk2 results since that 
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[width=0.7\textwidth]{bilder/azure_dotnet_1000.png}
+\includegraphics[width=0.5\textwidth]{bilder/Azure_Dotnet_1000.png}
 \captionsetup{justification=centering, labelfont=bf}
 \caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
 \label{fig:live_metrics_stream}
@@ -105,7 +109,7 @@ Google can manage the load generally well, although latency increases a little b
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[width=0.4\textwidth]{bilder/Google_Go_Instances.png}
+\includegraphics[width=0.5\textwidth]{bilder/Google_Go_Instances.png}
 \captionsetup{justification=centering, labelfont=bf}
 \caption[Google Go active instances during load test]{Google Go active instances during load test\\Source: screenshot Google cloud portal}
 \label{fig:google_graph_go}

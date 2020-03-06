@@ -9,7 +9,7 @@ There are a lot of cloud providers available and many of them are trying to grow
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.6]{bilder/synergy.jpg}
+\includegraphics[width=0.5\textwidth]{bilder/synergy.jpg}
 \captionsetup[table]{justification=centering, labelfont=bf}
 \caption[Cloud Infrastructure Services Market Share]{Cloud Infrastructure Services Market Share\\Source: Synergy Research Group \cite{Synergy}}
 \label{fig:market_share}
@@ -61,12 +61,14 @@ On the Google Cloud Platform, the serverless service is simply called \textit{Fu
 \begin{table}[htp]
 \centering
 %\captionsetup[table]{justification=centering, labelfont=bf}
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{|l|r|r|r|r|r|} 
  \hline
 	\textbf{Memory} & 128\gls{MB} & 256\gls{MB} & 512\gls{MB} & 1024\gls{MB} & 2048\gls{MB} \\ \hline
 	\textbf{CPU} & 200\gls{MHz} & 400\gls{MHz} & 800\gls{MHz} & 1.4 \gls{GHz} & 2.4 \gls{GHz} \\
 	\hline
 \end{tabular}
+}
 \caption[Google Cloud Functions - Possible memory allocation and corresponding CPU frequency]{Google Cloud Functions - Possible memory allocation and corresponding CPU frequency\\Source: Google Cloud documentation \cite{GoogleFunctionsPricing}}
 \label{table:google_functions_cpu_ram}
 \end{table}
@@ -84,6 +86,7 @@ Table \ref{table:programming_languages} shows an overview of all supported runti
 \begin{table}[htp]
 \centering
 \captionsetup[table]{justification=centering, labelfont=bf}
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{|l|c|c|c|c|c||l|} 
  \hline
  & \multirow{2}{*}{AWS} & \multicolumn{2}{c|}{Azure} & \multirow{2}{*}{Google} & \multirow{2}{*}{IBM} & \multirow{2}{*}{Sum} \\ \cline{3-4}
@@ -100,6 +103,7 @@ Table \ref{table:programming_languages} shows an overview of all supported runti
   Docker & \cellcolor{yellow!25}ECS & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{yellow!25}Cloud Run & \cellcolor{green!25}yes & 1.5 \\
  \hline
 \end{tabular}
+}
 \caption[Supported runtimes in serverless computing]{Supported runtimes in serverless computing.  Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\ \textbf{Remark:} Since Azure has Linux and Windows as underlying \gls{OS}, only half a point is counted per \gls{OS}.}
 \label{table:programming_languages}
 \end{table}
