@@ -16,7 +16,7 @@ Among the other benefits, providers can apply finer-grain billing models (\emph{
 %Although those technologies might come with certain limitations or performance bottlenecks that won't fit to the user's needs.\\
 %The most important key features of serverless computing are the following: 
 %No server or infrastructure management of the user is required, the workload is scaled dynamically and automatically and it is usually paid per usage, e.g. only charged for the occupied storage in a service \cite{serverlessaws, serverlessazure}.\\
-We distinguish between: \emph{(1)} FaaS (Function as a Service, \emph{e.g.}, \gls{AWS} Lambda~\cite{AWSLambda}, \emph{(2)} DBaaS (Database as a Service, \emph{e.g.} Microsoft Azure Database for PostgreSQL\vs{REF?}) and \emph{(3)} STaaS (Storage as a service, \emph{e.g.}, Google Cloud Storage~\cite{serverlessgoogle}). 
+We distinguish between: \emph{(1)} FaaS (Function as a Service, \emph{e.g.}, \gls{AWS} Lambda~\cite{AWSLambda}, \emph{(2)} DBaaS (Database as a Service, \emph{e.g.} Microsoft Azure Database for PostgreSQL~\cite{AzureDBaaS}) and \emph{(3)} STaaS (Storage as a service, \emph{e.g.}, Google Cloud Storage~\cite{serverlessgoogle}). 
 \gls{FaaS}, the focus of this work, is an hybrid between \gls{PaaS} and the \gls{SaaS} service model:  data is managed by the provider, while the application is handled by the user.
 Figure \ref{fig:faas_arch} illustrates a typical \gls{FaaS} infrastructure.
 Using \gls{FaaS}, developers bypass the setup, mainentance and management of a compute node or executing environment (be it bare metal hosts, virtual machines, or even containers). % don't need to setup or manage its operating system.
