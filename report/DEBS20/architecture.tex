@@ -1,33 +1,35 @@
 %!TEX root = main.tex
-\section{Benchmarking Serverless Computing}
-In this chapter, the choice of serverless computing providers and the choice of runtimes respectively programming languages is derived. Furthermore, the implemented tests will be explained in detail and it is shown what their effect and importance is.
+\section{The Serverless Ecosystem}
+This section provides insigghts on the current four main serverless providers, namely Amazon Web Services, Microsoft Azure, Google Cloud and IBM Cloud. 
 
-\subsection{Choosing Serverless Computing Providers}
-\label{sec:CSP}
+%In this chapter, the choice of serverless computing providers and the choice of runtimes respectively programming languages is derived. Furthermore, the implemented tests will be explained in detail and it is shown what their effect and importance is.
 
-There are a lot of cloud providers available and many of them are trying to grow and therefore investing more and more in their infrastructure. So this benchmark suite could have taken into account as many cloud providers as possible, assumed they provide serverless computing, but that would have exceeded the scope of this thesis. Figure \ref{fig:market_share} illustrates on the left hand side the global revenue of the cloud infrastructure services market which has reached nearly \$23 billion in the second quarter of 2019. What's more interesting for choosing cloud providers for this benchmark suite is the market share. As one can see in figure \ref{fig:market_share} on the right hand side the market share of cloud computing is mainly dominated by a few big players: Amazon, Microsoft, Google, \gls{IBM} and Alibaba. Amazon still is the unprecedented leader in this field of business. Nevertheless, other competitors are heavily investing in the cloud business. Google will invest 3 billion euros in its European data centers as Sundar Pichai, the \gls{CEO} of Google, stated in the Google blog \cite{GoogleBlog}. And also Microsoft has recently been given a \$10 billion contract by the US Department of Defense to transform the military's cloud computing systems \cite{NYJEDI, JEDI}.
+%\subsection{Choosing Serverless Computing Providers}
+%\label{sec:CSP}
+%
+%There are a lot of cloud providers available and many of them are trying to grow and therefore investing more and more in their infrastructure. So this benchmark suite could have taken into account as many cloud providers as possible, assumed they provide serverless computing, but that would have exceeded the scope of this thesis. Figure \ref{fig:market_share} illustrates on the left hand side the global revenue of the cloud infrastructure services market which has reached nearly \$23 billion in the second quarter of 2019. What's more interesting for choosing cloud providers for this benchmark suite is the market share. As one can see in figure \ref{fig:market_share} on the right hand side the market share of cloud computing is mainly dominated by a few big players: Amazon, Microsoft, Google, \gls{IBM} and Alibaba. Amazon still is the unprecedented leader in this field of business. Nevertheless, other competitors are heavily investing in the cloud business. Google will invest 3 billion euros in its European data centers as Sundar Pichai, the \gls{CEO} of Google, stated in the Google blog \cite{GoogleBlog}. And also Microsoft has recently been given a \$10 billion contract by the US Department of Defense to transform the military's cloud computing systems \cite{NYJEDI, JEDI}.
+%
+%\begin{figure}[htp]
+%\begin{center}
+%\includegraphics[width=0.5\textwidth]{bilder/synergy.jpg}
+%\captionsetup[table]{justification=centering, labelfont=bf}
+%\caption[Cloud Infrastructure Services Market Share]{Cloud Infrastructure Services Market Share\\Source: Synergy Research Group \cite{Synergy}}
+%\label{fig:market_share}
+%\end{center}
+%\end{figure}
+%
+%For the above mentioned reasons, the following top four providers were taken into consideration.
+%\begin{itemize}
+%  \item Amazon Web Services
+%  \item Microsoft Azure
+%  \item Google Cloud
+%  \item IBM Cloud
+%\end{itemize}
+%All of them offer a serverless platform which will be described for each cloud provider in the following sections.
 
-\begin{figure}[htp]
-\begin{center}
-\includegraphics[width=0.5\textwidth]{bilder/synergy.jpg}
-\captionsetup[table]{justification=centering, labelfont=bf}
-\caption[Cloud Infrastructure Services Market Share]{Cloud Infrastructure Services Market Share\\Source: Synergy Research Group \cite{Synergy}}
-\label{fig:market_share}
-\end{center}
-\end{figure}
-
-For the above mentioned reasons, the following top four providers were taken into consideration.
-\begin{itemize}
-  \item Amazon Web Services
-  \item Microsoft Azure
-  \item Google Cloud
-  \item IBM Cloud
-\end{itemize}
-All of them offer a serverless platform which will be described for each cloud provider in the following sections.
-
-\begin{remark}
-At the beginning of this thesis, a deployment on Apache OpenWhisk was considered on the private cluster of the university of Neuchâtel. After several time wasting and failed attempts to set up OpenWhisk and contradicting documentation on the OpenWhisk website respectively the GitHub page of OpenWhisk the idea was dropped. Since \gls{IBM} uses an implementation based on OpenWhisk, the performance is expected to be similar. Nevertheless, it would have been interesting to compare those two very similar or even identical systems on a private and on a public cloud.
-\end{remark}
+%\begin{remark}
+%At the beginning of this thesis, a deployment on Apache OpenWhisk was considered on the private cluster of the university of Neuchâtel. After several time wasting and failed attempts to set up OpenWhisk and contradicting documentation on the OpenWhisk website respectively the GitHub page of OpenWhisk the idea was dropped. Since \gls{IBM} uses an implementation based on OpenWhisk, the performance is expected to be similar. Nevertheless, it would have been interesting to compare those two very similar or even identical systems on a private and on a public cloud.
+%\end{remark}
 
 \subsection{Amazon Web Services Lambda}
 
