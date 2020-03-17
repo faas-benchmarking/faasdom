@@ -22,6 +22,7 @@
 \usepackage{tabularx,booktabs}
 \usepackage{listings}
 \usepackage{csquotes}
+\usepackage{xcolor}
 \usepackage{glossaries}
 \makeglossaries
 
@@ -88,6 +89,8 @@
 %\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue,bookmarks=false]{hyperref}% always load last
 \usepackage{cleveref}
 
+\newcommand\graybox[1]{\colorbox{lightgray}{\ttfamily #1}}
+
 \copyrightyear{2020}
 \acmYear{2020}
 \acmConference[DEBS '20]{DEBS '20: 14th ACM International Conference on Distributed and Event-Based Systems}{July 13--17, 2020}{Montreal, Quebec, Canada}
@@ -96,7 +99,7 @@
 %\acmDOI{10.1145/3361525.3361547}
 %\acmISBN{978-1-4503-7009-7/19/12}
 
-\title{\sys: A Benchmark Suite\\for Serverless Computing}
+\title[\sys: A Benchmark Suite for Serverless Computing]{\sys: A Benchmark Suite\\for Serverless Computing}
 \author{Double-blind}
 
 \begin{document}

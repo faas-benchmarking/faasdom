@@ -7,22 +7,10 @@
 %Furthermore most businesses want to focus on their core business which many times means using computing resources and tools instead of managing them.\\
 %This thesis is going to investigate a specific region of cloud computing; generally known as 
 The serverless computing paradigm is an emerging approach to develop cloud-based applications~\cite{Baldini2017, riseofserverless, vanEyk:2017:SCG:3154847.3154848}.
-As defined by \gls{IBM} in \cite{serverlessibm}, "serverless is an approach to computing that offloads responsibility for common infrastructure management tasks (\emph{e.g.}, scaling, scheduling, patching, provisioning, etc.) to cloud providers and tools, allowing engineers to focus their time and effort on the business logic specific to their applications or process".
+\gls{IBM}~\cite{serverlessibm} defines it as \emph{"an approach to computing that offloads responsibility for common infrastructure management tasks (scaling, scheduling, patching, provisioning, etc.) to cloud providers and tools, allowing engineers to focus their time and effort on the business logic specific to their applications or process"}.\vs{nicer way to report quote?}
 Serverless requires less expertise than other self-managed approaches.
 Users don't manage directly the infrastructure and runtime of the system, delegating its operations to the cloud provider.
-Among the other benefits, providers can apply finer-grain billing models (\emph{.e.g.}, on a per service-call basis) for any of the offered services~\cite{serverlessaws, serverlessazure}.
-
-%Using serverless technologies requires much less expertise than non serverless self managed implementations. 
-%Although those technologies might come with certain limitations or performance bottlenecks that won't fit to the user's needs.\\
-%The most important key features of serverless computing are the following: 
-%No server or infrastructure management of the user is required, the workload is scaled dynamically and automatically and it is usually paid per usage, e.g. only charged for the occupied storage in a service \cite{serverlessaws, serverlessazure}.\\
-We distinguish between: \emph{(1)} FaaS (Function as a Service, \emph{e.g.}, \gls{AWS} Lambda~\cite{AWSLambda}, \emph{(2)} DBaaS (Database as a Service, \emph{e.g.} Microsoft Azure Database for PostgreSQL~\cite{AzureDBaaS}) and \emph{(3)} STaaS (Storage as a service, \emph{e.g.}, Google Cloud Storage~\cite{serverlessgoogle}). 
-\gls{FaaS}, the focus of this work, is an hybrid between \gls{PaaS} and the \gls{SaaS} service model:  data is managed by the provider, while the application is handled by the user.
-Figure \ref{fig:faas_arch} illustrates a typical \gls{FaaS} infrastructure.
-Using \gls{FaaS}, developers bypass the setup, mainentance and management of a compute node or executing environment (be it bare metal hosts, virtual machines, or even containers). % don't need to setup or manage its operating system.
-Instead, users provide the application code for specific \emph{functions} to be deployed to the cloud.
-Specific events  (\emph{e.g.}, \gls{HTTP} requests, storage or database conditions, etc.) trigger the execution of the functions, typically implementing data processing~\cite{AWSLambda, GoogleFunctions}.
-The provider then handles the load, as well as availability and scaling requirements. % the application generates and other important elements like availability and scaling. Hence, the name function is often used.\\
+Additionally, providers can apply finer-grain billing models (\emph{e.g.}, on a per service-call basis) for any of the offered services~\cite{serverlessaws, serverlessazure}, leading to reduced costs for developers.
 
 \begin{figure}[!t]
 \begin{center}
@@ -31,6 +19,19 @@ The provider then handles the load, as well as availability and scaling requirem
 \caption{\vs{TO REDO: identify which components are being benchmarked. Serverless FaaS platform architecture}\cite{riseofserverless}\label{fig:faas_arch}}
 \end{center}
 \end{figure}
+%Using serverless technologies requires much less expertise than non serverless self managed implementations. 
+%Although those technologies might come with certain limitations or performance bottlenecks that won't fit to the user's needs.\\
+%The most important key features of serverless computing are the following: 
+%No server or infrastructure management of the user is required, the workload is scaled dynamically and automatically and it is usually paid per usage, e.g. only charged for the occupied storage in a service \cite{serverlessaws, serverlessazure}.\\
+We distinguish between different types of serverless options: \emph{(1)} FaaS (Function as a Service, \emph{e.g.}, \gls{AWS} Lambda~\cite{AWSLambda}, \emph{(2)} DBaaS (Database as a Service, \emph{e.g.} Microsoft Azure Database for PostgreSQL~\cite{AzureDBaaS}) and \emph{(3)} STaaS (Storage as a service, \emph{e.g.}, Google Cloud Storage~\cite{serverlessgoogle}). 
+\gls{FaaS}, the focus of this work, is an hybrid between \gls{PaaS} and the \gls{SaaS} service model:  data is managed by the provider, while the application is handled by the user.
+Figure \ref{fig:faas_arch} illustrates a typical \gls{FaaS} infrastructure.
+Using \gls{FaaS}, developers bypass the setup, mainentance and management of a compute node or executing environment (be it bare metal hosts, virtual machines, or even containers). % don't need to setup or manage its operating system.
+Instead, users provide the application code for specific \emph{functions} to be deployed to the cloud.
+Specific events (\emph{e.g.}, \gls{HTTP} requests, storage or database conditions) trigger their execution, typically implementing data processing~\cite{AWSLambda, GoogleFunctions}.
+The provider then handles the load, as well as availability and scaling requirements. % the application generates and other important elements like availability and scaling. Hence, the name function is often used.\\
+
+
 %(see figure \ref{fig:iaas}). 
 %With most cloud service providers, the user can upload an application (this can be in the form of source code, binaries or even a Docker image) and define a trigger (\gls{HTTP}, Storage, Database, etc.) which invokes the function. 
 %This can be useful for application backends and data processing \cite{AWSLambda, GoogleFunctions}. 
@@ -38,12 +39,13 @@ The provider then handles the load, as well as availability and scaling requirem
 %They can for example create a backend service without thinking about hardware and server management. 
 
 
-Despite the convenience of the appraoch, we observe how several open questions remain unsolved. %some issues remain unresolved and some questions stay open. 
-Namely, it is currently hard to decide on a specific cloud provider based on criterias such as performance, workload adaptability or costs.
+Despite the convenience of the approach, we observe how several open questions remain unsolved. %some issues remain unresolved and some questions stay open. 
+Namely, it is currently hard to decide on a specific \gls{FaaS} provider based on criteria such as performance, workload adaptability or costs.
 %Which cloud provider to choose to run an application on? Can the cloud provider handle the load? How much is it going to cost? 
 This paper introduces \sys, a testing suite that tackles these questions by providing a benchmark and testing suite for serverless computing. 
 %With this suite 
-A cloud user can use the suite to deploy several tests and observe how different cloud providers perform. % and the suite helps to make the decision easier.
+In a nutshell, application developers can use the suite to automatically deploy several tests, to observe the performance of different cloud providers according to the chosen runtime. 
+% and the suite helps to make the decision easier.
 
 While few efforts exist to benchmark serverless computing~\cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34}, they ...\vs{fill in with 1 sentence saying why those efforts are not sufficient/clear/poor/}. 
 Similarly, studies on benchmarking cloud platforms lack an in-depth evaluation of serverless computing platforms~\cite{Gan:2019:OBS:3297858.3304013}. 
