@@ -1,6 +1,7 @@
 %!TEX root = main.tex
-\section{The Serverless Ecosystem}
-This section provides insigghts on the current four main serverless providers, namely Amazon Web Services, Microsoft Azure, Google Cloud and IBM Cloud. 
+\section{Background}
+This section describes in some details the four main serverless providers, namely Amazon Web Services, Microsoft Azure, Google Cloud and IBM Cloud. 
+We compare the performance of all of them in our evaluation (see Section~\ref{sec:evaluation}).\vs{CHECK that this is true}
 
 %In this chapter, the choice of serverless computing providers and the choice of runtimes respectively programming languages is derived. Furthermore, the implemented tests will be explained in detail and it is shown what their effect and importance is.
 
@@ -33,31 +34,50 @@ This section provides insigghts on the current four main serverless providers, n
 
 \subsection{Amazon Web Services Lambda}
 
-The service of Amazon is named \textit{\gls{AWS} Lambda} \cite{AWSLambda}. It was released on the 13th of November in 2014 \cite{AWSLambdaRelease} and today it supports six different runtimes including seven different programming languages \cite{AWSLambdaLanguages}. Amazon claims, depending on the region where the function is deployed, a concurrency of 500 to 3000 instances will be provisioned at most \cite{AWSLambdaScaling}. The memory allocated to a function instance can vary from 128 \gls{MB} up to 3008 \gls{MB} in steps of 64 \gls{MB} \cite{AWSLambdaConfig}. \gls{AWS} Lambda is available in 18 out of 18 publicly accessible regions (not counting two chinese regions) \cite{AWSRegions}. Amazon also mentions that the \gls{CPU} power will increase linearly with memory allocation and at 1792 \gls{MB} the function will get 1 \gls{vCPU} \cite{AWSLambdaConfig}. As the paper by Wang et al. \cite{216063} suggests, AWS Lambda uses mostly two different \gls{CPU}s, the Intel Xeon E5-2666 and the Intel Xeon E5-2680, which have a clock rate of 2.90 \gls{GHz} and 2.80 \gls{GHz} respectively. This information was extracted by Wang et al. from the file \texttt{/proc/cpuinfo} in the Linux operating system.
-\begin{remark} From my own experience I can tell that cloud providers generally don't like to tell their customers every detail of hardware they use or how exactly services are implemented. The first point might be true because they don't want to tell a customer what exact \gls{CPU}s he gets, because then he will certainly complain if it differs from the specification and the provider has to take responsibility. The second point should be obvious for economic and competition related reasons.
-\end{remark}
-Knowing that, one can more or less estimate the theoretical computing power that the virtual \gls{CPU} will provide. 
-\begin{remark}
-The pricing of \gls{AWS} Lambda and all the other services will be discussed in section \ref{sec:pricing} Pricing.
-\end{remark}
+\gls{AWS} Lambda~\cite{AWSLambda} was released in November in 2014 \cite{AWSLambdaRelease}. 
+\gls{AWS} Lambda spans 18 geographically dispersed regions, plus China\cite{AWSRegions}. 
+At the time of writing, it supports six different runtimes and seven different programming languages \cite{AWSLambdaLanguages}. 
+Depending on the region where the function is deployed, Lambda supports up to 3000 instances to serve the user' functions~\cite{AWSLambdaScaling}. 
+The memory allocated to a function instance can vary from 128 \gls{MB} up to 3008 \gls{MB} in steps of 64 \gls{MB}~\cite{AWSLambdaConfig}. 
+The \gls{CPU} power increases linearly with its memory allocation.
+Forinstance, at 1792 \gls{MB} the function will get 1 \gls{vCPU}~\cite{AWSLambdaConfig}.\vs{MAISSEN: why 1792?}
+
+As observed in~\cite{216063}, Lambda executes functions using two different \gls{CPU}s, namely Intel Xeon E5-2666 clocked at 2.90 \gls{GHz}  and the Intel Xeon E5-2680, clocked at 2.80 \gls{GHz} respectively. 
+%This information was extracted by Wang et al. from the file \texttt{/proc/cpuinfo} in the Linux operating system.
+%\begin{remark} From my own experience I can tell that cloud providers generally don't like to tell their customers every detail of hardware they use or how exactly services are implemented. The first point might be true because they don't want to tell a customer what exact \gls{CPU}s he gets, because then he will certainly complain if it differs from the specification and the provider has to take responsibility. The second point should be obvious for economic and competition related reasons.
+%\end{remark}
+%Knowing that, one can more or less estimate the theoretical computing power that the virtual \gls{CPU} will provide. 
+%\begin{remark}
+%The pricing of \gls{AWS} Lambda and all the other services will be discussed in section \ref{sec:pricing} Pricing.
+%\end{remark}
 
 \subsection{Microsoft Azure Functions}
 
-Azure offers the service called \textit{Azure Functions} \cite{AzureFunctions}. It was first released in March 2016 in preview (Microsoft's term for beta) and then later in November 2016 it became generally available \cite{AzureFunctionsAnnouncement}. Currently there are five supported runtimes including seven different programming languages \cite{AzureFunctionsLanguages}.
+Microsoft Azure Functions~\cite{AzureFunctions} was released publicly in Novenber 2016~\cite{AzureFunctionsAnnouncement}. %in preview (Microsoft's term for beta) and then later in November 2016 it became generally available \cite{AzureFunctionsAnnouncement}. 
+it supports five runtimes and seven different programming languages~\cite{AzureFunctionsLanguages}.
 Compared to the other three cloud providers, Azure offers three different hosting plans \cite{AzureFunctionsPlans}:
 %Something a little different with Azure compared to the other three cloud providers is that one can select between three different hosting plans \cite{AzureFunctionsPlans}:
-\begin{itemize}
-\item[] \textbf{Consumption plan:} It adds and removes instances dynamically depending on the load on the function and cost only arise when functions are running. This is the most 'serverless' option among those three.
-\item[] \textbf{Premium plan:} The premium plan is similar to the consumption plan but offers more integration and control over the functions. Instance sizes can be chosen and instances can be pre-warmed. The cost is calculated with \gls{CPU} and \gls{GB} memory used per second.
-\item[] \textbf{App Service plan:} How many and on which \gls{VM}s the functions run can be decided in the App Service plan. Scaling happens manually, time based or based on metrics such as \gls{CPU} usage.
-\end{itemize}
-This thesis will only consider the consumption plan, as it is the default plan and fully managed, and therefore \textit{more} serverless than the others. Additionally, it is similar to the services of the other providers.\\
-There are currently three different generations of the service available \cite{AzureFunctionsGenerations}, this project uses generation 2.
+Azure Functions offers billing plans that adapt to the load and popularity of the deployed function (\emph{e.g.}, the consumption plan), plans with finer-grain control over the computing instance size and pre-warming support (\emph{e.g.}, a premium plan), and an billing plan customized on a given application needs (\emph{e.g.}, the app service plan). 
+This work only considers the consumption plan (generation 2.0~\cite{AzureFunctionsGenerations}), being the only one to be fully managed by the cloud provider and the most similar in the features to the ones offered by the alternative provders. 
+%\begin{itemize}
+%\item[] \textbf{Consumption plan:} It adds and removes instances dynamically depending on the load on the function and cost only arise when functions are running. This is the most 'serverless' option among those three.
+%\item[] \textbf{Premium plan:} The premium plan is similar to the consumption plan but offers more integration and control over the functions. Instance sizes can be chosen and instances can be pre-warmed. The cost is calculated with \gls{CPU} and \gls{GB} memory used per second.
+%\item[] \textbf{App Service plan:} How many and on which \gls{VM}s the functions run can be decided in the App Service plan. Scaling happens manually, time based or based on metrics such as \gls{CPU} usage.
+%\end{itemize}
+%This thesis will only consider the consumption plan, as it is the default plan and fully managed, and therefore \textit{more} serverless than the others. Additionally, it is similar to the services of the other providers.\\
+%There are currently three different generations of the service available \cite{AzureFunctionsGenerations}, this project uses generation 2.
 
-Azure Functions can deploy up to 200 instances and provide up to a maximum amount of 1.5GB memory \cite{AzureFunctionsPlans}. The service can run either on Windows or Linux and is offered in 28 out of 46 publicly accessible regions \cite{AzureRegions}, but the consumption plan is only available in 11 regions for both Linux and Windows. For computing power, Azure has its own term named \gls{ACU}. The instances in the Azure functions consumption plan have an \gls{ACU} of 100 which is about the equivalent of 1 \gls{vCPU}. Azure functions is likely to use the \gls{VM} type \textit{Av2} which is the only one who corresponds to the declared \gls{ACU} \cite{AzureFunctionsVMs}. These \gls{VM}s use three different \gls{CPU}s: the Intel Xeon 8171M at 2.1 \gls{GHz}, the Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and the Intel Xeon E5-2673 v3 at 2.4 \gls{GHz} \cite{AzureFunctionsVMs}.
+Azure Functions can deploy up to 200 instances with up to 1.5GB memory \cite{AzureFunctionsPlans}. 
+The service can run either on Windows or Linux hosts, and is offered in 28 out of 46 publicly accessible regions \cite{AzureRegions}.
+Note that the consumption plan is only available in 11 regions for both Linux and Windows, hence we restrict to those.
+Computing nodes can be characterized by their \gls{ACU}.
+For computing power, Azure has its own term named \gls{ACU} index, where 100  ACU roughly map to 1 \gls{vCPU}.
+%The instances in the Azure functions consumption plan have an \gls{ACU} of 100 which is about the equivalent of 1 \gls{vCPU}. 
+According to our investigations, we believe Azure functions to be executed by \gls{VM} type \textit{Av2}\vs{REF?}, as it most closely resembles its declared \gls{ACU}~\cite{AzureFunctionsVMs}. 
+These \gls{VM}s use three different \gls{CPU}s: the Intel Xeon 8171M at 2.1 \gls{GHz}, the Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and the Intel Xeon E5-2673 v3 at 2.4 \gls{GHz}~\cite{AzureFunctionsVMs}.
 
 \subsection{Google Cloud Functions}
-
+\vs{STOPPED HERE}
 On the Google Cloud Platform, the serverless service is simply called \textit{Functions} \cite{GoogleFunctions}. The service was first released on the 9th of March in 2017 in beta and then on the 24th of July in 2018 as stable and usable in production \cite{GoogleFunctionsReleases}. Compared to AWS and Azure that is two and a half years respectively one year later for the first release. Google Cloud Functions currently only supports three programming languages \cite{GoogleFunctionsLanguages}. The documentation does not mention a limit of maximum allocated instances per function. However, it states that at maximum 1000 functions can be concurrently in execution \cite{GoogleFunctionsQuotas}. Possible options for CPU and memory allocation per instance are shown in table \ref{table:google_functions_cpu_ram} \cite{GoogleFunctionsPricing}. The service is available in seven out of twenty regions \cite{GoogleFunctionsLocations}.
 
 \begin{table}[htp]
