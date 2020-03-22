@@ -67,14 +67,14 @@ This work only considers the consumption plan (generation 2.0~\cite{AzureFunctio
 %This thesis will only consider the consumption plan, as it is the default plan and fully managed, and therefore \textit{more} serverless than the others. Additionally, it is similar to the services of the other providers.\\
 %There are currently three different generations of the service available \cite{AzureFunctionsGenerations}, this project uses generation 2.
 
-Azure Functions can deploy up to 200 instances with up to 1.5GB memory \cite{AzureFunctionsPlans}. 
-The service can run either on Windows or Linux hosts, and is offered in 28 out of 46 publicly accessible regions \cite{AzureRegions}.
-Note that the consumption plan is only available in 11 regions for both Linux and Windows, hence we restrict to those.
-Computing nodes can be characterized by their \gls{ACU}.
-For computing power, Azure has its own term named \gls{ACU} index, where 100  ACU roughly map to 1 \gls{vCPU}.
+Azure Functions can use as many as 200 instances and up to 1.5GB memory~\cite{AzureFunctionsPlans}. 
+The service can run either on Windows or Linux hosts, and is offered in 28 out of 46 publicly accessible regions~\cite{AzureRegions}.
+Note that the consumption plan is only available in 11 regions for both Linux and Windows, hence we restrict to those in our experiments.
+Computing nodes can be characterized by their \gls{ACU}, with 100 ACU roughly map to 1 \gls{vCPU}.
+%For computing power, Azure has its own term named \gls{ACU} index, where 100 ACU roughly map to 1 \gls{vCPU}.
 %The instances in the Azure functions consumption plan have an \gls{ACU} of 100 which is about the equivalent of 1 \gls{vCPU}. 
-According to our investigations, we believe Azure functions to be executed by \gls{VM} type \textit{Av2}\vs{REF?}, as it most closely resembles its declared \gls{ACU}~\cite{AzureFunctionsVMs}. 
-These \gls{VM}s use three different \gls{CPU}s: the Intel Xeon 8171M at 2.1 \gls{GHz}, the Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and the Intel Xeon E5-2673 v3 at 2.4 \gls{GHz}~\cite{AzureFunctionsVMs}.
+According to our investigations, we believe Azure Functions to be executed by virtual machiens of type \textit{Av2}\vs{which ones from \url{https://aws.amazon.com/ec2/instance-types/}? Clarify.}, as it most closely resembles its declared \gls{ACU}~\cite{AzureFunctionsVMs}. 
+These \gls{VM}s use three different \gls{CPU}s: Intel Xeon 8171M at 2.1 \gls{GHz}, Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and Intel Xeon E5-2673 v3 at 2.4 \gls{GHz}~\cite{AzureFunctionsVMs}.
 
 \subsection{Google Cloud Functions}
 \vs{STOPPED HERE}
