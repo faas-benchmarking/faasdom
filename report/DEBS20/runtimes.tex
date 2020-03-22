@@ -1,0 +1,115 @@
+\section{Choosing Runtimes}
+After the technical description and specification of each provider, the following section will deduct which runtimes respectively programming languages were chosen and why.\\
+Table \ref{table:programming_languages} shows an overview of all supported runtimes for each cloud service provider mentioned in section \ref{sec:CSP}. On the right hand side there is the sum for each runtime, which indicates the number of cloud service providers supporting that runtime.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{|l|c|c|c|c|c||l|} 
+ \hline
+ & \multirow{2}{*}{AWS} & \multicolumn{2}{c|}{Azure} & \multirow{2}{*}{Google} & \multirow{2}{*}{IBM} & \multirow{2}{*}{Sum} \\ \cline{3-4}
+  & & Linux & Windows & & & \\ \hline
+  Node.js &  \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 4.0 \\ \hline
+  Python & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.5 \\ \hline
+  .NET Core & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 3.0 \\ \hline
+  Go & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.0 \\ \hline
+  Java & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.5 \\ \hline
+  Ruby & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.0 \\ \hline
+%  PowerShell & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & 1.5 \\ \hline
+  Swift & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
+  PHP & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
+  Docker & \cellcolor{yellow!25}ECS & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{yellow!25}Cloud Run & \cellcolor{green!25}yes & 1.5 \\
+ \hline
+\end{tabular}
+}
+\caption[Supported runtimes in serverless computing]{Supported runtimes in serverless computing.  Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\ \textbf{Remark:} Since Azure has Linux and Windows as underlying \gls{OS}, only half a point is counted per \gls{OS}.}
+\label{table:programming_languages}
+\end{table}
+
+It is obviously more interesting to compare runtimes and programming languages that are supported in multiple clouds and are therefore directly comparable. As the table \ref{table:programming_languages} shows Node.js is supported in each cloud, Python in all except Azure with Windows as \gls{OS}, .NET Core in all but Google and so forth. For this thesis, the top four runtimes where chosen to limit the scope. A brief summary of each runtime will be given in the following subsections.
+\begin{remark}
+Azure has currently 3 generations of its function service available. generation 1 is currently in maintenance mode and generation 2 and 3 are generally available. The available runtimes in the next section will only consider generation 2 (which is also used in this project):
+\end{remark}
+
+\subsection{Node.js}
+
+Node.js is a JavaScript runtime and is built on Chrome's V8 JavaScript engine \cite{Nodejs}. As the name indicates, JavaScript is a scripting language and was first released on the 4th December 1995 by Netscape \cite{JavaScript}. It was mostly used in addition to \gls{HTML} and \gls{CSS} in web browsers \cite{JavaScript}. Because of the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications. Table \ref{table:nodejs} shows supported Node.js versions of each cloud provider. 
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ Node.js & AWS & Azure & Google & IBM \\ \hline
+6.x  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{yellow!25}yes  & \cellcolor{red!25}no\\ \hline
+8.x  & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes   & \cellcolor{green!25}yes \\ \hline
+10.x & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{yellow!25}yes  & \cellcolor{green!25}yes \\ \hline
+12.x & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no \\ \hline
+\end{tabular}
+\caption[Supported Node.js runtimes]{Supported Node.js runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\ \textbf{Remark:} The yellow color means \textit{deprecated} and \textit{beta} for version 6.x respectively 10.x.}
+\label{table:nodejs}
+\end{table}
+
+This benchmark suite will deploy all Node.js applications in version 10 as all providers support this version. In particular, \gls{AWS} uses version 10.x \cite{AWSLambdaLanguages}, Azure does not specify more than version 10 \cite{AzureFunctionsLanguages}, Google uses version 10.15.3 \cite{GoogleFunctionsRuntimes} and \gls{IBM} implements version 10.15.0 \cite{IBMRuntimes}.
+
+\begin{remark}
+Google has Node.js version 10 still in beta while Node.js version 8 End-of-life was on December 31, 2019 \cite{NodejsReleases}.
+\end{remark}
+
+\subsection{Python}
+
+Python is a universal, open-source and very popular programming language. It was released in 1991 and created by Guido van Rossum \cite{PythonIntro} and runs basically anywhere \cite{PythonAbout}. Python was designed to be very easy to learn and to have readable code \cite{PythonIntro}. It only uses indentation and whitespaces to define the scope of loops, functions and classes \cite{PythonIntro}. Because of those characteristics, developers can implement new features very fast. Cuong Do, software architect of YouTube, said: "Python is fast enough for our site and allows us to produce maintainable features in record times, with a minimum of developers." \cite{PythonQuotes}. Table \ref{table:python} shows which of the four cloud provider supports which Python versions.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ Python & AWS & Azure & Google & IBM \\ \hline
+2.7  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
+3.6  & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no   & \cellcolor{green!25}yes \\ \hline
+3.7 & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes  & \cellcolor{green!25}yes \\ \hline
+3.8 & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no  & \cellcolor{red!25}no  \\ \hline
+\end{tabular}
+\caption[Supported Python runtimes]{Supported Python runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
+\label{table:python}
+\end{table}
+
+All clouds support version 3.7, therefore this version will be used in the benchmark functions.
+
+\subsection{Go}
+Go is a procedural open source programming language developed by a team at Google and other contributors \cite{GoDoc, GoProject}. It is a relatively new language and was first released in March 2012 \cite{GoProject}. It is compiled and therefore more efficient than interpreted languages and it has good concurrency mechanisms to benefit from today's multi-core architecture \cite{GoDoc}. Go also has a garbage collector in contrast to C \cite{GoDoc}. On the Go website the following statement can be found: "It's a fast, statically typed, compiled language that feels like a dynamically typed, interpreted language." \cite{GoDoc}. Today, Go is a popular language given that is is easy to learn and write like Python but also very efficient like C. Table \ref{table:go} shows the supported Go versions.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ Go & AWS & Azure & Google & IBM \\ \hline
+1.11  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{green!25}yes  & \cellcolor{green!25}yes\\ \hline
+\end{tabular}
+\caption[Supported Go runtimes]{Supported Go runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\ \textbf{Remark:} AWS supports all versions of Go 1.x, depending on the version the binary was compiled with and deployed to Lambda.}
+\label{table:go}
+\end{table}
+
+This thesis will use Go 1.11 for its benchmark functions.
+\subsection{.NET Core}
+
+.NET Core is a free and open-source software framework developed by Microsoft and its community \cite{.NETCore}. The first version was released in June 2016 \cite{.NETCoreReleases}. It supports as languages C\texttt{\#}, F\texttt{\#} and Visual Basic \cite{.NETAbout} and is currently on version 3.1 which was released in December 2019 \cite{.NETCoreBlog}. Microsoft has declared its love for Linux when Satya Nadella in the end of 2014 at a Microsoft Cloud Briefing in San Francisco presented a slide which stated "Microsoft  Linux". \cite{MicrosoftCloudBlog}. Since then the company has embraced Linux, open-source software and cross-platform support. Table \ref{table:dotnet} shows supported .NET Core versions.
+
+\begin{table}[htp]
+\centering
+\captionsetup[table]{justification=centering, labelfont=bf}
+\begin{tabular}{|l|c|c|c|c|} 
+ \hline
+ .NET Core & AWS & Azure & Google & IBM \\ \hline
+2.1  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
+2.2  & \cellcolor{red!25}no    & \cellcolor{green!25}yes    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
+3.1  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
+\end{tabular}
+\caption[Supported .NET Core runtimes]{Supported .NET Core runtimes. Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
+\label{table:dotnet}
+\end{table}
+
+Because there is no common supported version, this project will use 2.1 on \gls{AWS} and 2.2 on Azure and \gls{IBM}. The language the test functions are implemented is C\texttt{\#}.
