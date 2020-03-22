@@ -1,7 +1,7 @@
 %!TEX root = main.tex
 \section{Background}
-This section describes in some details the four main serverless providers, namely Amazon Web Services, Microsoft Azure, Google Cloud and IBM Cloud. 
-We compare the performance of all of them in our evaluation (see Section~\ref{sec:evaluation}).\vs{CHECK that this is true}
+This section provide technical details about the four main serverless providers, namely Amazon Web Services (\S\ref{sec:ss:aws}), Microsoft Azure (\S\ref{sec:ss:azure}), Google Cloud (\S\ref{sec:ss:google}) and IBM Cloud (\S\ref{sec:ss:ibm}). 
+\vs{CHECK that this is true:} We compare the performance of all of them in our evaluation (see Section~\ref{sec:evaluation}).
 
 %In this chapter, the choice of serverless computing providers and the choice of runtimes respectively programming languages is derived. Furthermore, the implemented tests will be explained in detail and it is shown what their effect and importance is.
 
@@ -32,7 +32,7 @@ We compare the performance of all of them in our evaluation (see Section~\ref{se
 %At the beginning of this thesis, a deployment on Apache OpenWhisk was considered on the private cluster of the university of Neuchâtel. After several time wasting and failed attempts to set up OpenWhisk and contradicting documentation on the OpenWhisk website respectively the GitHub page of OpenWhisk the idea was dropped. Since \gls{IBM} uses an implementation based on OpenWhisk, the performance is expected to be similar. Nevertheless, it would have been interesting to compare those two very similar or even identical systems on a private and on a public cloud.
 %\end{remark}
 
-\subsection{Amazon Web Services Lambda}
+\subsection{Amazon Web Services Lambda}\label{sec:ss:aws}
 
 \gls{AWS} Lambda~\cite{AWSLambda} was released in November in 2014 \cite{AWSLambdaRelease}. 
 \gls{AWS} Lambda spans 18 geographically dispersed regions, plus China\cite{AWSRegions}. 
@@ -51,7 +51,7 @@ As observed in~\cite{216063}, Lambda executes functions using two different \gls
 %The pricing of \gls{AWS} Lambda and all the other services will be discussed in section \ref{sec:pricing} Pricing.
 %\end{remark}
 
-\subsection{Microsoft Azure Functions}
+\subsection{Microsoft Azure Functions}\label{sec:ss:azure}
 
 Microsoft Azure Functions~\cite{AzureFunctions} was released publicly in Novenber 2016~\cite{AzureFunctionsAnnouncement}. %in preview (Microsoft's term for beta) and then later in November 2016 it became generally available \cite{AzureFunctionsAnnouncement}. 
 it supports five runtimes and seven different programming languages~\cite{AzureFunctionsLanguages}.
@@ -76,30 +76,56 @@ Computing nodes can be characterized by their \gls{ACU}, with 100 ACU roughly ma
 According to our investigations, we believe Azure Functions to be executed by virtual machiens of type \textit{Av2}\vs{which ones from \url{https://aws.amazon.com/ec2/instance-types/}? Clarify.}, as it most closely resembles its declared \gls{ACU}~\cite{AzureFunctionsVMs}. 
 These \gls{VM}s use three different \gls{CPU}s: Intel Xeon 8171M at 2.1 \gls{GHz}, Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and Intel Xeon E5-2673 v3 at 2.4 \gls{GHz}~\cite{AzureFunctionsVMs}.
 
-\subsection{Google Cloud Functions}
-\vs{STOPPED HERE}
-On the Google Cloud Platform, the serverless service is simply called \textit{Functions} \cite{GoogleFunctions}. The service was first released on the 9th of March in 2017 in beta and then on the 24th of July in 2018 as stable and usable in production \cite{GoogleFunctionsReleases}. Compared to AWS and Azure that is two and a half years respectively one year later for the first release. Google Cloud Functions currently only supports three programming languages \cite{GoogleFunctionsLanguages}. The documentation does not mention a limit of maximum allocated instances per function. However, it states that at maximum 1000 functions can be concurrently in execution \cite{GoogleFunctionsQuotas}. Possible options for CPU and memory allocation per instance are shown in table \ref{table:google_functions_cpu_ram} \cite{GoogleFunctionsPricing}. The service is available in seven out of twenty regions \cite{GoogleFunctionsLocations}.
+\subsection{Google Cloud Functions}\label{sec:ss:google}
+%\vs{STOPPED HERE}
+%On the Google Cloud Platform, the serverless service is simply called \textit{Functions} \cite{GoogleFunctions}. 
+Google Functions~\cite{GoogleFunctions} was released on July in 2018~\cite{GoogleFunctionsReleases}, and currently available through seven out of twenty regions~\cite{GoogleFunctionsLocations}.
+%Compared to AWS and Azure that is two and a half years respectively one year later for the first release. 
+It currently only supports three programming languages~\cite{GoogleFunctionsLanguages}, namely \vs{FIX}. 
+While there is not a maximum number of allocated instances per single function, it only allows up to 1000 functions to be executed concurrently~\cite{GoogleFunctionsQuotas}.
+%The documentation does not mention a limit of maximum allocated instances per function. 
+%However, it states that at maximum 1000 functions can be concurrently in execution \cite{GoogleFunctionsQuotas}.
+Table~\ref{table:google_functions_cpu_ram} summarizes the options for CPU and memory combinations supported by the platform\cite{GoogleFunctionsPricing}.
+While the official \emph{Functions} documentation lacks details on the exact CPU models, a quick inspection of \texttt{/proc/cpuinfo} unveils certain details, such as \texttt{vendor\_id}, \texttt{cpu\_family} and \texttt{model}.
+We report on the use of Intel-based processors as well as some specific generation details in \vs{FIX? where?}.
+%Possible options for CPU and memory allocation per instance are shown in table \ref{table:google_functions_cpu_ram} \cite{GoogleFunctionsPricing}. 
+%The service is available in seven out of twenty regions~\cite{GoogleFunctionsLocations}.
 
-\begin{table}[htp]
-\centering
+\begin{table}[!t]
+
+\caption[Google Cloud Functions - Possible memory allocation and corresponding CPU frequency]{Google Cloud Functions - Possible memory allocation and corresponding CPU frequency~\cite{GoogleFunctionsPricing}.}
 %\captionsetup[table]{justification=centering, labelfont=bf}
+\centering
 \resizebox{\columnwidth}{!}{
-\begin{tabular}{|l|r|r|r|r|r|} 
+\begin{tabular}{l|r|r|r|r|r} 
  \hline
-	\textbf{Memory} & 128\gls{MB} & 256\gls{MB} & 512\gls{MB} & 1024\gls{MB} & 2048\gls{MB} \\ \hline
+	\textbf{Memory} & 128\gls{MB} & 256\gls{MB} & 512\gls{MB} & 1024\gls{MB} & 2048\gls{MB} \\ 
 	\textbf{CPU} & 200\gls{MHz} & 400\gls{MHz} & 800\gls{MHz} & 1.4 \gls{GHz} & 2.4 \gls{GHz} \\
 	\hline
 \end{tabular}
+\vspace{-10pt}
 }
-\caption[Google Cloud Functions - Possible memory allocation and corresponding CPU frequency]{Google Cloud Functions - Possible memory allocation and corresponding CPU frequency\\Source: Google Cloud documentation \cite{GoogleFunctionsPricing}}
 \label{table:google_functions_cpu_ram}
 \end{table}
 
-Google does not mention what type of CPU they use for functions on the underlying infrastructure. The CPU type could also not be extracted by Wang et al. \cite{216063} and the file \texttt{/proc/cpuinfo} does not show information on the CPU model name. It shows however information for the fields \texttt{vendor\_id}, \texttt{cpu\_family} and \texttt{model}. Those values reveal that Intel processors are used and can give an indication from which generation the CPU is. See the example file content \ref{lst:cpuinfo} in the appendix. 
+%Google does not mention what type of CPU they use for functions on the underlying infrastructure. 
+%The CPU type could also not be extracted by Wang et al. \cite{216063} and the file \texttt{/proc/cpuinfo} does not show information on the CPU model name. 
+%It shows however information for the fields \texttt{vendor\_id}, \texttt{cpu\_family} and \texttt{model}. 
+%Those values reveal that Intel processors are used and can give an indication from which generation the CPU is. 
+%\vs{See the example file content \ref{lst:cpuinfo} in the appendix.} 
 
-\subsection{IBM Cloud Functions}
+\subsection{IBM Cloud Functions}\label{sec:ss:ibm}
 
-The solution of \gls{IBM} is called Cloud Functions \cite{IBMFunctions}. It is based on Apache OpenWhisk which is an open source serverless cloud platform using Docker containers \cite{OpenWhisk}. \gls{IBM} Cloud Functions supports nine different runtimes including a Docker runtime \cite{IBMRuntimes}. The service is restricted to 1000 concurrently active executions (also counting queued for execution) per namespace \cite{IBMLimits}. However this limit can be increased for a specific business case but needs to be applied for via the ticketing system of the \gls{IBM} support \cite{IBMLimits}. Memory allocation can be set from 128 \gls{MB} to 2048 \gls{MB} in steps of 32 \gls{MB}. \gls{IBM} Cloud Functions is available in five out of six regions \cite{IBMLocations}, but one region has no support for cloud foundry \cite{IBMCloudFoundry} and can therefore not be deployed with the \gls{CLI} and is not included in this project. The documentation does not mention anything on \gls{CPU} or machines they are using. The file \texttt{/proc/cpuinfo} reveals that one possible \gls{CPU} processing the functions is the Intel Xeon E5-2683 v3 at 2.00 \gls{GHz}. See the example file content \ref{lst:cpuinfo2} in the appendix.
+\gls{IBM}'s Cloud Functions \cite{IBMFunctions} is built atop Apache OpenWhisk, an open source serverless cloud platform using Docker containers~\cite{OpenWhisk}. 
+As such, in addition to Docker, it supports eight additional runtimes~\cite{IBMRuntimes}, such as \vs{FIX}.
+%\gls{IBM} Cloud Functions supports nine different runtimes including a Docker runtime \cite{IBMRuntimes}. 
+The service is restricted to 1000 concurrently active executions (including those enqueued for execution) per namespace~\cite{IBMLimits}. 
+%However this limit can be increased for a specific business case but needs to be applied for via the ticketing system of the \gls{IBM} support \cite{IBMLimits}. 
+Memory allocation can be set from 128 \gls{MB} to 2048 \gls{MB} in steps of 32 \gls{MB}. 
+\gls{IBM} Cloud Functions is available in five out of six regions \cite{IBMLocations}.\footnote{One region\vs{which one?} lacks support for Cloud Foundry~\cite{IBMCloudFoundry} and as such it not be used to deply via the \gls{CLI}, and hence it is not included in this work.} 
+%The documentation does not mention anything on \gls{CPU} or machines they are using. 
+Our experiments revelaed that some of the  instances supporting the execution of the functions run on top of Intel Xeon E5-2683 v3 at 2.00 \gls{GHz}.
+\vs{See the example file content \ref{lst:cpuinfo2} in the appendix.}
 
 \section{Choosing Runtimes}
 After the technical description and specification of each provider, the following section will deduct which runtimes respectively programming languages were chosen and why.\\
