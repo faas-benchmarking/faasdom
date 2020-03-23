@@ -1,13 +1,16 @@
-\section{Choosing Runtimes}
-After the technical description and specification of each provider, the following section will deduct which runtimes respectively programming languages were chosen and why.\\
-Table \ref{table:programming_languages} shows an overview of all supported runtimes for each cloud service provider mentioned in section \ref{sec:CSP}. On the right hand side there is the sum for each runtime, which indicates the number of cloud service providers supporting that runtime.
+%!TEX root = main.tex
+\section{Choosing Runtimes}\label{sec:runtime}
+This section dscribes the supported runtimes and respective programming languages supported by the serverless providers described in \ref{sec:background}. 
+%After the technical description and specification of each provider, the following section will deduct which runtimes respectively programming languages were chosen and why.\\
+Table~\ref{table:programming_languages} shows our survey. %all supported runtimes for each cloud service provider mentioned in section \ref{sec:background}. 
+\vs{MAISSEN: remove this column, not needed in the large table we discussed via email --- On the right hand side there is the sum for each runtime, which indicates the number of cloud service providers supporting that runtime.}
 
-\begin{table}[htp]
+\begin{table}[!t]
 \centering
 \captionsetup[table]{justification=centering, labelfont=bf}
 \resizebox{\columnwidth}{!}{
-\begin{tabular}{|l|c|c|c|c|c||l|} 
- \hline
+\begin{tabular}{l|c|c|c|c|c||l} 
+% \hline
  & \multirow{2}{*}{AWS} & \multicolumn{2}{c|}{Azure} & \multirow{2}{*}{Google} & \multirow{2}{*}{IBM} & \multirow{2}{*}{Sum} \\ \cline{3-4}
   & & Linux & Windows & & & \\ \hline
   Node.js &  \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 4.0 \\ \hline
@@ -27,7 +30,13 @@ Table \ref{table:programming_languages} shows an overview of all supported runti
 \label{table:programming_languages}
 \end{table}
 
-It is obviously more interesting to compare runtimes and programming languages that are supported in multiple clouds and are therefore directly comparable. As the table \ref{table:programming_languages} shows Node.js is supported in each cloud, Python in all except Azure with Windows as \gls{OS}, .NET Core in all but Google and so forth. For this thesis, the top four runtimes where chosen to limit the scope. A brief summary of each runtime will be given in the following subsections.
+For the sake of comparisons and fairness of benchmarking, we are interested in comparing runtimes and programming languages supported by multiple cloud providers.  
+Table~\ref{table:programming_languages} highlights the following facts.
+First, we observe that Node.js\vs{REF} is supported by all clouds \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?}. 
+Python \vs{MAISSEN: which version exactly?} is similarly well supported, except by Azure with Windows \gls{OS}.
+Microsoft's \texttt{.NET Core} lacks support by Google \vs{MAISSEN: add missing details, we cannot say$\rightarrow$} and so forth. 
+In the reminder of this paper, including our evaluation of \sys, we focus our comparison on the top four best supported runtimes. 
+%A brief summary of each runtime will be given in the following subsections.
 \begin{remark}
 Azure has currently 3 generations of its function service available. generation 1 is currently in maintenance mode and generation 2 and 3 are generally available. The available runtimes in the next section will only consider generation 2 (which is also used in this project):
 \end{remark}
