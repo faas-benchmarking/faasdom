@@ -16,7 +16,7 @@ Additionally, cloud providers can deploy finer-grain billing policies (\emph{e.g
 \begin{center}
 \includegraphics[scale=0.2]{bilder/FaaS_architecture.png}
 \captionsetup[table]{justification=centering, labelfont=bf}
-\caption{\vs{TO REDO: identify which components are being benchmarked} Typical FaaS architecture.\label{fig:faas_arch}}
+\caption{Typical FaaS architecture. \mais{OK?} Mainly two of those components need to be benchmarked: general performance of a worker (i.e. execution speed of a function) and the quality of the auto scaling mechanism for workers (i.e. allocation of new VMs).\label{fig:faas_arch}}
 \end{center}
 \end{figure}
 %Using serverless technologies requires much less expertise than non serverless self managed implementations. 
@@ -26,7 +26,7 @@ Additionally, cloud providers can deploy finer-grain billing policies (\emph{e.g
 One can distinguish between various serverless paradigms: \emph{(1)} FaaS (Function as a Service, and focus of our work) implemented for instance by \gls{AWS} Lambda~\cite{AWSLambda}, \emph{(2)} DBaaS (Database as a Service), as available through Microsoft Azure Database for PostgreSQL~\cite{AzureDBaaS} and \emph{(3)} STaaS (Storage as a service), via Google Cloud Storage~\cite{serverlessgoogle}. 
 FaaS can be considered an hybrid between \gls{PaaS} and the \gls{SaaS} service model: data and infrastructure are fully managed by the provider, while the application is handled by the user.
 Figure \ref{fig:faas_arch} illustrates a typical FaaS infrastructure.
-\vs{Maissen: please expand description of Figure~\ref{fig:faas_arch}, mention which components require benchmarking - typically the ones that we find again in the evaluation}.
+%\vs{Maissen: please expand description of Figure~\ref{fig:faas_arch}, mention which components require benchmarking - typically the ones that we find again in the evaluation}.
 In the typical FaaS approach, developers bypass the setup, maintenance and management of a compute node (\emph{i.e.}, bare metal, virtual machines, or even containers). % don't need to setup or manage its operating system.
 Instead, users provide the application code for specific \emph{functions} to be deployed to the cloud.
 Specific events (\emph{e.g.}, \gls{HTTP} requests, storage or database conditions) trigger their execution, typically implementing data processing~\cite{AWSLambda, GoogleFunctions}.
@@ -39,7 +39,7 @@ In a nutshell, application developers can use the \sys suite to automatically de
 The results can hen be easily compared along several dimensions.
 % and the suite helps to make the decision easier.
 
-While few efforts exist to benchmark serverless computing~\cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34}, they ...\vs{MAISSEN: fill in with 1 sentence saying why those efforts are not sufficient/clear/poor/}. 
+While few efforts exist to benchmark serverless computing~\cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34}, they ...\vs{fill in with 1 sentence saying why those efforts are not sufficient/clear/poor/}. 
 Similarly, studies on benchmarking cloud platforms lack an in-depth evaluation of serverless computing platforms~\cite{Gan:2019:OBS:3297858.3304013}. 
 
 
