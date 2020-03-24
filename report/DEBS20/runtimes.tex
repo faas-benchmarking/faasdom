@@ -3,32 +3,34 @@
 This section dscribes the supported runtimes and respective programming languages supported by the serverless providers described in \ref{sec:background}. 
 %After the technical description and specification of each provider, the following section will deduct which runtimes respectively programming languages were chosen and why.\\
 Table~\ref{table:programming_languages} shows our survey. %all supported runtimes for each cloud service provider mentioned in section \ref{sec:background}. 
-\vs{MAISSEN: remove this column, not needed in the large table we discussed via email --- On the right hand side there is the sum for each runtime, which indicates the number of cloud service providers supporting that runtime.}
+\mais{Table ok? You can change the lines or the symbols for explanation. I tried to make it as good and readable as possible. For Azure 2,3 could also be omitted. Gen 1 is in maintenance mode and seems to be no longer possible to be newly created.}
 
-\begin{table}[!t]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{l|c|c|c|c|c||l} 
+%\begin{table}[!t]
+%\centering
+%\captionsetup[table]{justification=centering, labelfont=bf}
+%\resizebox{\columnwidth}{!}{
+%\begin{tabular}{l|c|c|c|c|c||l} 
 % \hline
- & \multirow{2}{*}{AWS} & \multicolumn{2}{c|}{Azure} & \multirow{2}{*}{Google} & \multirow{2}{*}{IBM} & \multirow{2}{*}{Sum} \\ \cline{3-4}
-  & & Linux & Windows & & & \\ \hline
-  Node.js &  \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 4.0 \\ \hline
-  Python & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.5 \\ \hline
-  .NET Core & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 3.0 \\ \hline
-  Go & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.0 \\ \hline
-  Java & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.5 \\ \hline
-  Ruby & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.0 \\ \hline
+% & \multirow{2}{*}{AWS} & \multicolumn{2}{c|}{Azure} & \multirow{2}{*}{Google} & \multirow{2}{*}{IBM} & \multirow{2}{*}{Sum} \\ \cline{3-4}
+%  & & Linux & Windows & & & \\ \hline
+%  Node.js &  \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 4.0 \\ \hline
+%  Python & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.5 \\ \hline
+%  .NET Core & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 3.0 \\ \hline
+%  Go & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes & 3.0 \\ \hline
+%  Java & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.5 \\ \hline
+%  Ruby & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 2.0 \\ \hline
 %  PowerShell & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & 1.5 \\ \hline
-  Swift & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
-  PHP & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
-  Docker & \cellcolor{yellow!25}ECS & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{yellow!25}Cloud Run & \cellcolor{green!25}yes & 1.5 \\
- \hline
-\end{tabular}
-}
-\caption[Supported runtimes in serverless computing]{Supported runtimes in serverless computing.  Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. \vs{MAISSEN: If the yellow color does not mean the same thing in as in the nodejs table, use  markers/symbols next to the value of the cell to identify specific conditions/exceptions.}}
-\label{table:programming_languages}
-\end{table}
+%  Swift & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
+%  PHP & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{green!25}yes & 1.0 \\ \hline
+%  Docker & \cellcolor{yellow!25}ECS & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{yellow!25}Cloud Run & \cellcolor{green!25}yes & 1.5 \\
+% \hline
+%\end{tabular}
+%}
+%\caption[Supported runtimes in serverless computing]{Supported runtimes in serverless computing.  Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. \vs{MAISSEN: If the yellow color does not mean the same thing in as in the nodejs table, use  markers/symbols next to the value of the cell to identify specific conditions/exceptions.}}
+%\label{table:programming_languages}
+%\end{table}
+
+\input{table}
 
 For the sake of comparisons and fairness of benchmarking, we are interested in runtimes and programming languages supported by multiple cloud providers.  
 Table~\ref{table:programming_languages} highlights the following facts.
@@ -51,20 +53,20 @@ The available runtimes in the next section will only consider generation 2 (whic
 Because of the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications\vs{MAISSEN: it'd be good to add a link, for instance to the tiobe popularity index \url{https://www.tiobe.com/tiobe-index/}}. 
 Table \ref{table:nodejs} shows supported Node.js versions of each cloud provider. 
 
-\begin{table}[!t]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\begin{tabular}{l|c|c|c|c} 
+%\begin{table}[!t]
+%\centering
+%\captionsetup[table]{justification=centering, labelfont=bf}
+%\begin{tabular}{l|c|c|c|c} 
 % \hline
- Node.js & AWS & Azure & Google & IBM \\ \hline
-6.x  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{yellow!25}yes  & \cellcolor{red!25}no\\ \hline
-8.x  & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes   & \cellcolor{green!25}yes \\ \hline
-10.x & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{yellow!25}yes  & \cellcolor{green!25}yes \\ \hline
-12.x & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & \cellcolor{red!25}no \\ \hline
-\end{tabular}
-\caption[Supported Node.js runtimes]{Supported Node.js runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\. Yellow=\textit{deprecated} and \textit{beta} for version 6.x and 10.x.}
-\label{table:nodejs}
-\end{table}
+% Node.js & AWS & Azure & Google & IBM \\ \hline
+%6.x  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{yellow!25}yes  & \cellcolor{red!25}no\\ \hline
+%8.x  & \cellcolor{red!25}no & \cellcolor{green!25}yes & \cellcolor{green!25}yes   & \cellcolor{green!25}yes \\ \hline
+%10.x & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{yellow!25}yes  & \cellcolor{green!25}yes \\ \hline
+%12.x & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no & %\cellcolor{red!25}no \\ \hline
+%\end{tabular}
+%\caption[Supported Node.js runtimes]{Supported Node.js runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\. Yellow=\textit{deprecated} and \textit{beta} for version 6.x and 10.x.}
+%\label{table:nodejs}
+%\end{table}
 
 Due to its vast support from all providers, \sys will deploy all Node.js applications using version 10.x. 
 %In particular, \gls{AWS} uses version 10.x \cite{AWSLambdaLanguages}, Azure does not specify more than version 10 \cite{AzureFunctionsLanguages}, Google uses version 10.15.3 \cite{GoogleFunctionsRuntimes} and \gls{IBM} implements version 10.15.0 \cite{IBMRuntimes}.
@@ -79,20 +81,20 @@ Due to its vast support from all providers, \sys will deploy all Node.js applica
 Table~\ref{table:python} shows the support offered by the various cloud providers to the Python runtime. % which of the four cloud provider supports which Python versions.
 At the time of this writing, all cloud providers support version 3.7, hence we rely on this version for our benchmarking results.
 
-\begin{table}[!t]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\begin{tabular}{l|c|c|c|c} 
+%\begin{table}[!t]
+%\centering
+%\captionsetup[table]{justification=centering, labelfont=bf}
+%\begin{tabular}{l|c|c|c|c} 
 % \hline
- Python & AWS & Azure & Google & IBM \\ \hline
-2.7  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
-3.6  & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no   & \cellcolor{green!25}yes \\ \hline
-3.7 & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes  & \cellcolor{green!25}yes \\ \hline
-3.8 & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no  & \cellcolor{red!25}no  \\ \hline
-\end{tabular}
-\caption[Supported Python runtimes]{Supported Python runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
-\label{table:python}
-\end{table}
+% Python & AWS & Azure & Google & IBM \\ \hline
+%2.7  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
+%3.6  & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{red!25}no   & \cellcolor{green!25}yes \\ \hline
+%3.7 & \cellcolor{green!25}yes & \cellcolor{green!25}yes & \cellcolor{green!25}yes  & \cellcolor{green!25}yes \\ \hline
+%3.8 & \cellcolor{green!25}yes & \cellcolor{red!25}no & \cellcolor{red!25}no  & \cellcolor{red!25}no  \\ \hline
+%\end{tabular}
+%\caption[Supported Python runtimes]{Supported Python runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
+%\label{table:python}
+%\end{table}
 
 
 \textbf{Go.}
@@ -104,17 +106,17 @@ Go\cite{GoProject} is a procedural open source programming language developed by
 %Today, Go is a popular language given that is is easy to learn and write like Python but also very efficient like C. 
 Table~\ref{table:go} shows the supported Go versions.
 
-\begin{table}[!t]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\begin{tabular}{l|c|c|c|c} 
+%\begin{table}[!t]
+%\centering
+%\captionsetup[table]{justification=centering, labelfont=bf}
+%\begin{tabular}{l|c|c|c|c} 
 % \hline
- Go & AWS & Azure & Google & IBM \\ \hline
-1.11  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{green!25}yes  & \cellcolor{green!25}yes\\ \hline
-\end{tabular}
-\caption[Supported Go runtimes]{Supported Go runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. AWS supports all versions of Go 1.x, depending on the version the binary was compiled with and deployed to Lambda.}
-\label{table:go}
-\end{table}
+% Go & AWS & Azure & Google & IBM \\ \hline
+%1.11  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{green!25}yes  & \cellcolor{green!25}yes\\ \hline
+%\end{tabular}
+%\caption[Supported Go runtimes]{Supported Go runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. AWS supports all versions of Go 1.x, depending on the version the binary was compiled with and deployed to Lambda.}
+%\label{table:go}
+%\end{table}
 
 \vs{MAISSEN: move into the evaluation setup section:} This thesis will use Go 1.11 for its benchmark functions.
 \textbf{.NET Core}
@@ -125,17 +127,17 @@ Table~\ref{table:go} shows the supported Go versions.
 Table~\ref{table:dotnet} shows the supported .NET Core versions.
 Because there is no common supported version, this project will use 2.1 on \gls{AWS} and 2.2 on Azure and \gls{IBM}, but the test functions are implemented is C\texttt{\#}.
 
-\begin{table}[!t]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\begin{tabular}{l|c|c|c|c} 
+%\begin{table}[!t]
+%\centering
+%\captionsetup[table]{justification=centering, labelfont=bf}
+%\begin{tabular}{l|c|c|c|c} 
 % \hline
- .NET Core & AWS & Azure & Google & IBM \\ \hline
-2.1  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
-2.2  & \cellcolor{red!25}no    & \cellcolor{green!25}yes    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
-3.1  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
-\end{tabular}
-\caption[Supported .NET Core runtimes]{Supported .NET Core runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
-\label{table:dotnet}
-\end{table}
+% .NET Core & AWS & Azure & Google & IBM \\ \hline
+%2.1  & \cellcolor{green!25}yes    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
+%2.2  & \cellcolor{red!25}no    & \cellcolor{green!25}yes    & \cellcolor{red!25}no  & \cellcolor{green!25}yes\\ \hline
+%3.1  & \cellcolor{red!25}no    & \cellcolor{red!25}no    & \cellcolor{red!25}no  & \cellcolor{red!25}no\\ \hline
+%\end{tabular}
+%\caption[Supported .NET Core runtimes]{Supported .NET Core runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}}
+%\label{table:dotnet}
+%\end{table}
 
