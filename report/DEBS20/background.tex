@@ -1,7 +1,8 @@
 %!TEX root = main.tex
 \section{Background}\label{sec:background}
 This section provides technical details about the four main serverless providers, namely Amazon Web Services (\S\ref{sec:ss:aws}), Microsoft Azure (\S\ref{sec:ss:azure}), Google Cloud (\S\ref{sec:ss:google}) and IBM Cloud (\S\ref{sec:ss:ibm}). 
-\vs{MAISSEN that the next sentence is true:} \mais{I don't understand what you want me to say is true?} We compare the performance of all of them in our evaluation (see Section~\ref{sec:evaluation}).
+%\vs{MAISSEN that the next sentence is true:} \mais{I don't understand what you want me to say is true?} 
+We compare the performance of all of them in our evaluation (see Section~\ref{sec:evaluation}).
 
 %In this chapter, the choice of serverless computing providers and the choice of runtimes respectively programming languages is derived. Furthermore, the implemented tests will be explained in detail and it is shown what their effect and importance is.
 
@@ -40,7 +41,7 @@ At the time of writing, it supports six different runtimes and seven different p
 Depending on the region where the function is deployed, Lambda supports up to 3000 instances to serve the user' functions~\cite{AWSLambdaScaling}. 
 The memory allocated to a function instance can vary from 128 \gls{MB} up to 3008 \gls{MB} in steps of 64 \gls{MB}~\cite{AWSLambdaConfig}. 
 The \gls{CPU} power increases linearly with its memory allocation.
-Forinstance, at 1792 \gls{MB} the function will get 1 \gls{vCPU}~\cite{AWSLambdaConfig}.\vs{MAISSEN: why 1792?} \mais{That is just how they mention it in the docs and define 1 vCPU}
+For instance, at 1792 \gls{MB} the function will get 1 \gls{vCPU}~\cite{AWSLambdaConfig}. %\vs{MAISSEN: why 1792?} \mais{That is just how they mention it in the docs and define 1 vCPU}
 
 As observed in~\cite{216063}, Lambda executes functions using two different \gls{CPU}s, namely Intel Xeon E5-2666 clocked at 2.90 \gls{GHz}  and the Intel Xeon E5-2680, clocked at 2.80 \gls{GHz} respectively. 
 %This information was extracted by Wang et al. from the file \texttt{/proc/cpuinfo} in the Linux operating system.
@@ -53,12 +54,12 @@ As observed in~\cite{216063}, Lambda executes functions using two different \gls
 
 \subsection{Microsoft Azure Functions}\label{sec:ss:azure}
 
-Microsoft Azure Functions~\cite{AzureFunctions} was released publicly in Novenber 2016~\cite{AzureFunctionsAnnouncement}. %in preview (Microsoft's term for beta) and then later in November 2016 it became generally available \cite{AzureFunctionsAnnouncement}. 
+Microsoft Azure Functions~\cite{AzureFunctions} was released publicly in November 2016~\cite{AzureFunctionsAnnouncement}. %in preview (Microsoft's term for beta) and then later in November 2016 it became generally available \cite{AzureFunctionsAnnouncement}. 
 it supports five runtimes and seven different programming languages~\cite{AzureFunctionsLanguages}.
 Compared to the other three cloud providers, Azure offers three different hosting plans \cite{AzureFunctionsPlans}:
 %Something a little different with Azure compared to the other three cloud providers is that one can select between three different hosting plans \cite{AzureFunctionsPlans}:
 Azure Functions offers billing plans that adapt to the load and popularity of the deployed function (\emph{e.g.}, the consumption plan), plans with finer-grain control over the computing instance size and pre-warming support (\emph{e.g.}, a premium plan), and an billing plan customized on a given application needs (\emph{e.g.}, the app service plan). 
-This work only considers the consumption plan (generation 2.0~\cite{AzureFunctionsGenerations}), being the only one to be fully managed by the cloud provider and the most similar in the features to the ones offered by the alternative provders. 
+This work only considers the consumption plan (generation 2.0~\cite{AzureFunctionsGenerations}), being the only one to be fully managed by the cloud provider and the most similar in the features to the ones offered by the alternative providers. 
 %\begin{itemize}
 %\item[] \textbf{Consumption plan:} It adds and removes instances dynamically depending on the load on the function and cost only arise when functions are running. This is the most 'serverless' option among those three.
 %\item[] \textbf{Premium plan:} The premium plan is similar to the consumption plan but offers more integration and control over the functions. Instance sizes can be chosen and instances can be pre-warmed. The cost is calculated with \gls{CPU} and \gls{GB} memory used per second.
@@ -70,10 +71,11 @@ This work only considers the consumption plan (generation 2.0~\cite{AzureFunctio
 Azure Functions can use as many as 200 instances and up to 1.5GB memory~\cite{AzureFunctionsPlans}. 
 The service can run either on Windows or Linux hosts, and is offered in 28 out of 46 publicly accessible regions~\cite{AzureRegions}.
 Note that the consumption plan is only available in 11 regions for both Linux and Windows, hence we restrict to those in our experiments.
-Computing nodes can be characterized by their \gls{ACU}, with 100 ACU roughly map to 1 \gls{vCPU}.
+Computing nodes can be characterized by their \gls{ACU}, with 100 ACU roughly mapped to 1 \gls{vCPU}.
 %For computing power, Azure has its own term named \gls{ACU} index, where 100 ACU roughly map to 1 \gls{vCPU}.
 %The instances in the Azure functions consumption plan have an \gls{ACU} of 100 which is about the equivalent of 1 \gls{vCPU}. 
-According to our investigations, we believe Azure Functions to be executed by virtual machiens of type \textit{Av2}\vs{MAISSEN: which ones from \url{https://aws.amazon.com/ec2/instance-types/}? Clarify.} \mais{correct links: \url{https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale} and \url{https://docs.microsoft.com/de-ch/azure/virtual-machines/av2-series}, Here they mention the ACU of 100. At the time of my writing on the overview table \url{https://docs.microsoft.com/de-ch/azure/virtual-machines/acu} I'm pretty sure Av2 were the only one that matched 100 ACU. I would probably omit that now.}, as it most closely resembles its declared \gls{ACU}~\cite{AzureFunctionsVMs}. 
+According to our investigations, we believe Azure Functions to be executed by virtual machines of type \textit{Av2}\footnote{\url{https://docs.microsoft.com/de-ch/azure/virtual-machines/av2-series}}. 
+%\vs{MAISSEN: which ones from \url{https://aws.amazon.com/ec2/instance-types/}? Clarify.} \mais{correct links: \url{https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale} and \url{https://docs.microsoft.com/de-ch/azure/virtual-machines/av2-series}, Here they mention the ACU of 100. At the time of my writing on the overview table \url{https://docs.microsoft.com/de-ch/azure/virtual-machines/acu} I'm pretty sure Av2 were the only one that matched 100 ACU. I would probably omit that now.}, as it most closely resembles its declared \gls{ACU}~\cite{AzureFunctionsVMs}. 
 These \gls{VM}s use three different \gls{CPU}s: Intel Xeon 8171M at 2.1 \gls{GHz}, Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and Intel Xeon E5-2673 v3 at 2.4 \gls{GHz}~\cite{AzureFunctionsVMs}.
 
 \subsection{Google Cloud Functions}\label{sec:ss:google}
@@ -122,10 +124,10 @@ As such, in addition to Docker, it supports eight additional runtimes~\cite{IBMR
 The service is restricted to 1000 concurrently active executions (including those enqueued for execution) per namespace~\cite{IBMLimits}. 
 %However this limit can be increased for a specific business case but needs to be applied for via the ticketing system of the \gls{IBM} support \cite{IBMLimits}. 
 Memory allocation can be set from 128 \gls{MB} to 2048 \gls{MB} in steps of 32 \gls{MB}. 
-\gls{IBM} Cloud Functions is available in five out of six regions \cite{IBMLocations}.\footnote{One region (Tokyo) lacks support for Cloud Foundry~\cite{IBMCloudFoundry} and as such it not be used to deply via the \gls{CLI}, and hence it is not included in this work.} 
+\gls{IBM} Cloud Functions is available in five out of six regions \cite{IBMLocations}.\footnote{One region (Tokyo) lacks support for Cloud Foundry~\cite{IBMCloudFoundry} and as such it not be used to deploy via the \gls{CLI}, and hence it is not included in this work.} 
 %The documentation does not mention anything on \gls{CPU} or machines they are using. 
-Our experiments revelaed that some of the  instances supporting the execution of the functions run on top of Intel Xeon E5-2683 v3 at 2.00 \gls{GHz}.
-\vs{See the example file content \ref{lst:cpuinfo2} in the appendix.}
+Our experiments revealed that some of the  instances supporting the execution of the functions run on top of Intel Xeon E5-2683 v3 at 2.00 \gls{GHz}.
+%\vs{See the example file content \ref{lst:cpuinfo2} in the appendix.}
 
 
 
