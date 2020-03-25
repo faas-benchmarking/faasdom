@@ -95,8 +95,8 @@ Therefore there is no need to have zip installed on the machine the benchmark su
 \end{center}
 \end{figure}
 
-\subsection{Deployment and Cleanup}
-This section will describe the deployment and the cleanup process of the tests.
+\subsection{Deployment}
+This section will describe the deployment process of the tests.
 Once the application has started, the client can deploy the desired tests (as shown in Figure~\ref{fig:ui}).
 Our prototype supports parameters such as memory allocated per single executed function, timeouts, which serverless providers to use for the benchmarks, which runtime version to use, and into which geographical regions (as supported by the cloud provider) to deploy the tests. 
 %\begin{itemize}
@@ -109,34 +109,47 @@ Our prototype supports parameters such as memory allocated per single executed f
 %\end{itemize}
 Once deployed, the web interface continuously reports on the progress. 
 %Next the \textit{Deploy} button can be pressed and the application will initiate the deployment. On the right hand side of the web interface there will be information about the progress. 
-The deployment process is highly parallelized (if possible) to make it as fast as possible. In the appendix \ref{chapter:flow_charts}, flow charts are illustrating the deployment and cleanup process for each cloud. For a cleanup the user can invoke the \textit{Delete All} button. Considering the cleanup is implemented very minimalist it will delete all deployed Lambda functions and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. It should therefore be used very carefully and ideally with separate accounts only for this purpose.
+The deployment process is parallelized, \vs{MAISSEN: can you detail a bit more what exactly is parallelized?}.
+\vs{MAISSEN: I've looked a the flowcharts in the appendix of the report. Apart from the google one which seems very simplistic, I wonder if we could have a figure combining those ones into a figure that we could report here in the deployment section. wdyt?}
+\vs{In the appendix \ref{chapter:flow_charts}, flow charts are illustrating the deployment and cleanup process for each cloud.}
+
+\subsection{Cleanup}
+Upon cleanup, all deployed Lambda functions are permanently deleted, as well as all the configurations and resource groups created at deployment time. % and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
+%It should therefore be used very carefully and ideally with separate accounts only for this purpose.
 
 \subsection{Testing}
-In this section it is briefly explained how to execute a test and see its results. The test will send every five seconds a request to the functions previously deployed to see how they perform under a low, constant load. As options, a name for the test and the functions parameter can be set. The emerging result will serve as a starting point for comparison to the benchmark and optimally the function should deliver the same performance under heavy load. Figure \ref{fig:grafana} illustrates a screenshot of Grafana containing test results of a latency test in Node.js. At the top, there are three drop down menus to choose the test type, the test name (given at the start of the test) and the data points interval.
+%In this section it is briefly explained how to execute a test and see its results. 
+The test will send every five seconds a request to the functions previously deployed, with the purpose to gather baseline results under low, constant load. %As options, a name for the test and the functions parameter can be set. 
+Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test results of a latency test in Node.js. 
+%At the top, there are three drop down menus to choose the test type, the test name (given at the start of the test) and the data points interval.
 
-\begin{figure}[htp]
+\begin{figure}[!t]
 \begin{center}
-\includegraphics[width=0.7\textwidth]{bilder/grafana.png}
+\includegraphics[width=0.45\textwidth]{bilder/grafana.png}
 \captionsetup{justification=centering, labelfont=bf}
-\caption[Test results in Grafana]{Test results in Grafana. Source: screenshot Grafana}
+\caption{Visualization of performance results in Grafana}
 \label{fig:grafana}
 \end{center}
 \end{figure}
 
-The plots can be grouped by cloud provider or by runtime. There is a predefined Grafana dashboard for both options, the user can switch depending on his interests. An example result of a general test can be seen in section \ref{sec:general_test}.
+%The plots can be grouped by cloud provider or by runtime. 
+%There is a predefined Grafana dashboard for both options, the user can switch depending on his interests. 
+
+%An example result of a general test can be seen in section \ref{sec:general_test}.
 
 
 \subsection{Benchmarking}
+\vs{STOPPED HERE}
 The benchmarking part mainly relies on the wrk2 image. The parameters can be set in the web interface but they are basically just forwarded to wrk2. For the benchmark itself the user can choose the following parameters: requests per second, duration of the benchmark and the desired test to run e.g. the \gls{CPU} factors test. Afterwards the load test will start and benchmark the chosen function on each cloud and runtime it was deployed to. This process has to run sequentially otherwise the host of the benchmark suite could potentially not handle the load. After the test has completed results will be parsed and inserted into the database and can be viewed as a table in Grafana. Figure \ref{fig:benchmark_table} shows an excerpt of a result.
 
-\begin{figure}[htp]
+\begin{figure*}[htp]
 \begin{center}
 \includegraphics[width=1\textwidth]{bilder/benchmark_table.png}
 \captionsetup{justification=centering, labelfont=bf}
-\caption[Benchmark results in Grafana]{Benchmark results in Grafana. Source: screenshot Grafana}
+\caption[Benchmark results in Grafana]{Benchmark results in Grafana.}
 \label{fig:benchmark_table}
 \end{center}
-\end{figure}
+\end{figure*}
 
 A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
 
