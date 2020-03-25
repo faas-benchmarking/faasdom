@@ -1,10 +1,9 @@
 %!TEX root = main.tex
-\section{Choosing Runtimes}\label{sec:runtime}
-This section dscribes the supported runtimes and respective programming languages supported by the serverless providers described in \ref{sec:background}. 
-%After the technical description and specification of each provider, the following section will deduct which runtimes respectively programming languages were chosen and why.\\
-Table~\ref{table:programming_languages} shows our survey. %all supported runtimes for each cloud service provider mentioned in section \ref{sec:background}. 
-\mais{Table ok? You can change the lines or the symbols for explanation. I tried to make it as good and readable as possible. For Azure 2,3 could also be omitted. Gen 1 is in maintenance mode and seems to be no longer possible to be newly created.}
 
+\section{Supported Runtimes}\label{sec:runtime}
+This section dscribes the supported runtimes and respective programming languages supported by the serverless providers described in \ref{sec:background}. 
+Table~\ref{table:programming_languages} shows our survey. %all supported runtimes for each cloud service provider mentioned in section \ref{sec:background}. 
+%\mais{Table ok? You can change the lines or the symbols for explanation. I tried to make it as good and readable as possible. For Azure 2,3 could also be omitted. Gen 1 is in maintenance mode and seems to be no longer possible to be newly created.}
 %\begin{table}[!t]
 %\centering
 %\captionsetup[table]{justification=centering, labelfont=bf}
@@ -29,13 +28,10 @@ Table~\ref{table:programming_languages} shows our survey. %all supported runtime
 %\caption[Supported runtimes in serverless computing]{Supported runtimes in serverless computing.  Data source: \cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. \vs{MAISSEN: If the yellow color does not mean the same thing in as in the nodejs table, use  markers/symbols next to the value of the cell to identify specific conditions/exceptions.}}
 %\label{table:programming_languages}
 %\end{table}
-
-\input{table}
-
 For the sake of comparisons and fairness of benchmarking, we are interested in runtimes and programming languages supported by multiple cloud providers.  
 Table~\ref{table:programming_languages} highlights the following facts.
 First, we observe that Node.js\vs{REF} is supported by all clouds \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?}. 
-Python is similarly well supported, except by Azure with Windows \gls{OS}\vs{MAISSEN: from \ref{table:python}, this seems not to be totally true}.
+Python is similarly well supported, except by Azure with Windows \gls{OS}\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true}.
 Microsoft's \texttt{.NET Core} lacks support from Google \vs{MAISSEN: add missing details, we cannot say$\rightarrow$ and so forth}. 
 In the reminder of this paper, including our evaluation of \sys, we focus our comparison on the top best supported runtimes, namely \vs{MAISSEN: say which ones}. 
 %A brief summary of each runtime will be given in the following subsections.
@@ -47,11 +43,11 @@ The first generation is currently in maintenance, while the two other ones remai
 The available runtimes in the next section will only consider generation 2 (which is also used in this project):
 \end{remark}
 
-\textbf{Node.js.} Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine~\cite{Nodejs}. 
+\textbf{Node.js.} is a JavaScript runtime built on Chrome's V8 JavaScript engine~\cite{Nodejs}. 
 %As the name indicates, JavaScript is a scripting language and was first released on the 4th December 1995 by Netscape \cite{JavaScript}. 
 %It was mostly used in addition to \gls{HTML} and \gls{CSS} in web browsers \cite{JavaScript}. 
 Because of the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications\vs{MAISSEN: it'd be good to add a link, for instance to the tiobe popularity index \url{https://www.tiobe.com/tiobe-index/}}. 
-Table \ref{table:nodejs} shows supported Node.js versions of each cloud provider. 
+Table \ref{table:programming_languages} shows supported Node.js versions of each cloud provider. 
 
 %\begin{table}[!t]
 %\centering
@@ -67,18 +63,14 @@ Table \ref{table:nodejs} shows supported Node.js versions of each cloud provider
 %\caption[Supported Node.js runtimes]{Supported Node.js runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}\\. Yellow=\textit{deprecated} and \textit{beta} for version 6.x and 10.x.}
 %\label{table:nodejs}
 %\end{table}
-
 Due to its vast support from all providers, \sys will deploy all Node.js applications using version 10.x. 
 %In particular, \gls{AWS} uses version 10.x \cite{AWSLambdaLanguages}, Azure does not specify more than version 10 \cite{AzureFunctionsLanguages}, Google uses version 10.15.3 \cite{GoogleFunctionsRuntimes} and \gls{IBM} implements version 10.15.0 \cite{IBMRuntimes}.
-
 %\begin{remark}
 %Google has Node.js version 10 still in beta while Node.js version 8 End-of-life was on December 31, 2019 \cite{NodejsReleases}.
 %\end{remark}
-
-\textbf{Python.}
 %Python is a universal, open-source and very popular programming language. It was released in 1991 and created by Guido van Rossum \cite{PythonIntro} and runs basically anywhere \cite{PythonAbout}. Python was designed to be very easy to learn and to have readable code \cite{PythonIntro}. It only uses indentation and whitespaces to define the scope of loops, functions and classes \cite{PythonIntro}. Because of those characteristics, developers can implement new features very fast. Cuong Do, software architect of YouTube, said: "Python is fast enough for our site and allows us to produce maintainable features in record times, with a minimum of developers." \cite{PythonQuotes}. 
 
-Table~\ref{table:python} shows the support offered by the various cloud providers to the Python runtime. % which of the four cloud provider supports which Python versions.
+\textbf{Python} is supported in several versions, as can be seen in Table~\ref{table:programming_languages}. % shows the support offered by the various cloud providers to the Python runtime. % which of the four cloud provider supports which Python versions.
 At the time of this writing, all cloud providers support version 3.7, hence we rely on this version for our benchmarking results.
 
 %\begin{table}[!t]
@@ -104,8 +96,7 @@ Go\cite{GoProject} is a procedural open source programming language developed by
 %Go also has a garbage collector in contrast to C \cite{GoDoc}. 
 %On the Go website the following statement can be found: "It's a fast, statically typed, compiled language that feels like a dynamically typed, interpreted language." \cite{GoDoc}. 
 %Today, Go is a popular language given that is is easy to learn and write like Python but also very efficient like C. 
-Table~\ref{table:go} shows the supported Go versions.
-
+Table~\ref{table:programming_languages} shows the supported Go versions.
 %\begin{table}[!t]
 %\centering
 %\captionsetup[table]{justification=centering, labelfont=bf}
@@ -117,15 +108,16 @@ Table~\ref{table:go} shows the supported Go versions.
 %\caption[Supported Go runtimes]{Supported Go runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. AWS supports all versions of Go 1.x, depending on the version the binary was compiled with and deployed to Lambda.}
 %\label{table:go}
 %\end{table}
-
 \vs{MAISSEN: move into the evaluation setup section:} This thesis will use Go 1.11 for its benchmark functions.
-\textbf{.NET Core}
+
+\textbf{.NET Core} is not uniformely supported by all the cloud providers. 
 %.NET Core is a free and open-source software framework developed by Microsoft and its community \cite{.NETCore}. The first version was released in June 2016 \cite{.NETCoreReleases}. It supports as languages C\texttt{\#}, F\texttt{\#} and Visual Basic \cite{.NETAbout} and is currently on version 3.1 which was released in December 2019 \cite{.NETCoreBlog}. 
 %Microsoft has declared its love for Linux when Satya Nadella in the end of 2014 at a Microsoft Cloud Briefing in San Francisco presented a slide which stated "Microsoft  Linux". 
 %\cite{MicrosoftCloudBlog}. 
 %Since then the company has embraced Linux, open-source software and cross-platform support. 
-Table~\ref{table:dotnet} shows the supported .NET Core versions.
-Because there is no common supported version, this project will use 2.1 on \gls{AWS} and 2.2 on Azure and \gls{IBM}, but the test functions are implemented is C\texttt{\#}.
+%Table~\ref{table:dotnet} shows the supported .NET Core versions.
+Hence, \sys uses 2.1 on \gls{AWS} and 2.2 on Azure and \gls{IBM}.
+All .NET Core functions are implemented is C\texttt{\#}.
 
 %\begin{table}[!t]
 %\centering
