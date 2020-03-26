@@ -4,13 +4,12 @@ This section describes the architecture of the \sys prototype, depicted in Figur
 %In this chapter, the implementation of the main application, whose main role is to  orchestrate the execution of the various benchmarks across the cloud providers. 
 %We provdie an overview of the varius compoentns and functionalities the components and their functions will be briefly explained and later every main task the user can do will be explained in detail.
 %\subsection{Overview}
-The architecute includes the supported clouds and the corresponding serverless services (left), the involved Docker images (middle), and their interface with the system (right).
+The architecture includes the supported clouds and the corresponding serverless services (left), the involved Docker images (middle), and their interface with the system (right).
 We detail each component next. 
 
-\begin{figure}[htp]
+\begin{figure}[!t]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{bilder/main_app.png}
-\captionsetup{justification=centering, labelfont=bf}
+\includegraphics[width=0.45\textwidth]{bilder/main_app.png}
 \caption{\sys: architecture.}
 \label{fig:architecture}
 \end{center}
@@ -28,27 +27,23 @@ Users access it through a web \gls{GUI} or via a REST \gls{API}.
 Once started, the set of configured tests are deployed (some examples given in Section~\ref{sec:tests}) to be executed.
 %After the tests are deployed, they can be tested and benchmarked. 
 
-The core component embeds a pricing calculator.
-Its goal is to calculate the cost \mais{OK: of executing a certain amount of functions on} the supported cloud providers, either by setting the corresponding parameters manually or by exploiting results from previous executions.
+\textbf{Time Series DB:} a time-series database, where all the results from tests are be stored and later on used by graphical interfaces and pricing calculation. Our prototype uses InfluxDB~\cite{influx}.
 
-
-\textbf{InfluxDB:} a time-series database, where all the results from tests are be stored , to be later used by graphical interfaces and pricing calculation.
-
-\textbf{Grafana:} an open source tool to display, plot and monitor data stored in a database. 
+\textbf{UI:} the architecture provides an API to easily integrate visualization tools. Our prototype integrates with Grafana~\cite{grafana}, an open source tool to display, plot and monitor data stored in a database. 
 The results gathered by the tests and stored in InfluxDB will be displayed in Grafana.
 
-\textbf{CLIs:} With the exeception of AWS, all cloud providers offer a Docker image for their \gls{CLI}. 
+\textbf{CLIs:} With the exception of AWS, all cloud providers offer a Docker image for their \gls{CLI}. 
 Resources can be deployed, deleted and managed completely by the \gls{CLI}.
 
-\textbf{Runtimes (Node.js, Go, .NET):} In addition to the source code\vs{MAISSEN: you mean the source code of the function(s) to execute?} \mais{Yes}, a built and packaged zip file is needed for the deployment on all cloud except for Google. 
-The \sys architecture allows developers to ship runtime images, fo rinstance used to install packages and build or run the corresponding sources.
+\textbf{Runtimes (Node.js, Go, .NET):} In addition to the source code of the function(s) to execute, a built and packaged zip file is commonly required to successfully complete the deployment. 
+The \sys architecture allows developers to ship runtime images, fo instance used to install packages and build or run the corresponding sources.
 
-\vs{to remove:
-\textbf{zip:} this image zips the files that need to be deployed to the clouds. 
-Therefore there is no need to have zip installed on the machine the benchmark suite runs.
-}
+%\vs{to remove:
+%\textbf{zip:} this image zips the files that need to be deployed to the clouds. 
+%Therefore there is no need to have zip installed on the machine the benchmark suite runs.
+%}
 
-\textbf{wrk2:} a stress tool for REST services. \sys uses it to issues requests toward services and measure throughput/latency results.
+\textbf{Workload Injectors}. The architecture provides hook points to plugin workload injectors. The evaluation results shown in Section~\ref{sec:evaluation} uses \texttt{wrk2}~\cite{wrk2}, a stress tool for REST services. \sys uses it to issue requests toward services and gather throughput/latency results.
 
 %%%MOVE TO GITHUB/README
 %%%\subsection{Requirements}
@@ -89,7 +84,6 @@ Therefore there is no need to have zip installed on the machine the benchmark su
 \begin{figure}[!t]
 \begin{center}
 \includegraphics[width=0.45\textwidth]{bilder/ui.png}
-\captionsetup{justification=centering, labelfont=bf}
 \caption{\sys: web GUI}
 \label{fig:ui}
 \end{center}
@@ -109,9 +103,8 @@ Our prototype supports parameters such as memory allocated per single executed f
 %\end{itemize}
 Once deployed, the web interface continuously reports on the progress. 
 %Next the \textit{Deploy} button can be pressed and the application will initiate the deployment. On the right hand side of the web interface there will be information about the progress. 
-The deployment process is parallelized, \vs{MAISSEN: can you detail a bit more what exactly is parallelized?} \mais{OK?: meaning creating the required resources on the cloud, building and packaging the functions, deploying/uploading them}.
-\vs{MAISSEN: I've looked a the flowcharts in the appendix of the report. Apart from the google one which seems very simplistic, I wonder if we could have a figure combining those ones into a figure that we could report here in the deployment section. wdyt?}
-\vs{In the appendix \ref{chapter:flow_charts}, flow charts are illustrating the deployment and cleanup process for each cloud.} \mais{Yes I can try to combine and minify them. Maybe I forget about the runtime differences (build, zip) and only illustrate the essentail 'cloud' part?}
+The deployment process is parallelized: the creation of therequired cloud resources, building and packaging the functions, as well as their deploying over the cloud.
+\vs{MAISSEN: I've looked a the flowcharts in the appendix of the report. Apart from the google one which seems very simplistic, I wonder if we could have a figure combining those ones into a figure that we could report here in the deployment section. ... flow charts are illustrating the deployment and cleanup process for each cloud.} \mais{Yes I can try to combine and minify them. Maybe I forget about the runtime differences (build, zip) and only illustrate the essentail 'cloud' part?}
 
 \subsection{Cleanup}
 Upon cleanup, all deployed Lambda functions are permanently deleted, as well as all the configurations and resource groups created at deployment time. % and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
@@ -126,7 +119,6 @@ Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test result
 \begin{figure}[!t]
 \begin{center}
 \includegraphics[width=0.45\textwidth]{bilder/grafana.png}
-\captionsetup{justification=centering, labelfont=bf}
 \caption{Visualization of performance results in Grafana}
 \label{fig:grafana}
 \end{center}
@@ -140,7 +132,6 @@ Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test result
 \begin{figure*}[!t]
 \begin{center}
 \includegraphics[width=1\textwidth]{bilder/benchmark_table.png}
-\captionsetup{justification=centering, labelfont=bf}
 \caption[Benchmark results in Grafana]{Benchmark results in Grafana.}
 \label{fig:benchmark_table}
 \end{center}
@@ -161,7 +152,11 @@ Successively, results can be easily analyzed via Grafana, as shown in Figure~\re
 %A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
 
 \subsection{Billing Costs Prospection}
-\vs{MAISSEN: this component is not in the architecture drawing? if so, where does it fit?} \mais{It belongs to the main app node app.}
+
+The core component embeds a pricing calculator.
+Its goal is to calculate the cost of executing a certain amount of functions on the supported cloud providers. 
+It does so either by setting the corresponding parameters manually or by exploiting results from previous executions.
+
 This component can be used to predict the cost of executing a given benchmark on a specific cloud provider.
 One can provide the executed workload that is going to be injected (\emph{e.g.}, number of invocations, execution time per call, size of the return body and allocated memory).
 The \sys prototype produces an overview of the billing costs across the various serverless providers.
