@@ -1,8 +1,8 @@
 %!TEX root = main.tex
 
 \section{Supported Runtimes}\label{sec:runtime}
-This section dscribes the supported runtimes and respective programming languages supported by the serverless providers described in \ref{sec:background}. 
-Table~\ref{table:programming_languages} shows our survey. %all supported runtimes for each cloud service provider mentioned in section \ref{sec:background}. 
+This section dscribes the supported runtimes and respective programming languages supported by the serverless providers described in Section~\ref{sec:background}. 
+%Table~\ref{table:programming_languages} shows our survey. %all supported runtimes for each cloud service provider mentioned in section \ref{sec:background}. 
 %\mais{Table ok? You can change the lines or the symbols for explanation. I tried to make it as good and readable as possible. For Azure 2,3 could also be omitted. Gen 1 is in maintenance mode and seems to be no longer possible to be newly created.}
 %\begin{table}[!t]
 %\centering
@@ -30,25 +30,19 @@ Table~\ref{table:programming_languages} shows our survey. %all supported runtime
 %\end{table}
 For the sake of comparisons and fairness of benchmarking, we are interested in runtimes and programming languages supported by multiple cloud providers.  
 Table~\ref{table:programming_languages} highlights the following facts.
-First, we observe that Node.js\vs{REF} is supported by all clouds \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?} \mais{I can't tell you why. Probably because it is not compiled, package management is relatively simple and it is popular in general for webservers and APIs}. 
-Python is similarly well supported, except by Azure with Windows \gls{OS}\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true} \mais{Why not? Every cloud supports at least 1 version so you can generally run your python code on each one. Also 3.6 and 3.7 is mostly supported}.
+First, we observe that Node.js\vs{REF} is supported by all cloud providers.
+We explain this by the fact the peculiar features of the language make it particulary fit for serverless offerings, as well as its popularity among developers and its productivity advantages.
+% \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?} \mais{I can't tell you why. Probably because it is not compiled, package management is relatively simple and it is popular in general for webservers and APIs}. 
+Python is similarly well supported, except by Azure with Windows \gls{OS}. %\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true} \mais{Why not? Every cloud supports at least 1 version so you can generally run your python code on each one. Also 3.6 and 3.7 is mostly supported}.
 Microsoft's \texttt{.NET Core} lacks support from Google \vs{MAISSEN: add missing details, we cannot say$\rightarrow$ and so forth}. 
 In the reminder of this paper, including our evaluation of \sys, we focus our comparison on the top best supported runtimes, namely Node.js, Python, Go and .NET Core. 
 %A brief summary of each runtime will be given in the following subsections.
 
-\begin{remark}	
-\vs{Maybe we can move this remark in the previous section where we describe the providers ?}
-Azure has currently three different generations of its service \vs{MAISSEN: add url} \cite{AzureFunctionsGenerations} \mais{cite ok like this?}. 
-The first generation is currently in maintenance, while the two other ones remain available. 
-The available runtimes in the next section will only consider generation 2 (which is also used in this project):
-\end{remark}
-
-\textbf{Node.js.} is a JavaScript runtime built on Chrome's V8 JavaScript engine~\cite{Nodejs}. 
+\textbf{Node.js.}~\cite{tilkov2010node} is a JavaScript runtime built on Chrome's V8 JavaScript engine~\cite{Nodejs}. 
 %As the name indicates, JavaScript is a scripting language and was first released on the 4th December 1995 by Netscape \cite{JavaScript}. 
 %It was mostly used in addition to \gls{HTML} and \gls{CSS} in web browsers \cite{JavaScript}. 
-Because of the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications\vs{MAISSEN: it'd be good to add a link, for instance to the tiobe popularity index \url{https://www.tiobe.com/tiobe-index/}} \mais{I'm not familiar with such things. But also maybe the stackoverflow survey? \url{https://insights.stackoverflow.com/survey/2019\#most-popular-technologies} see graph \emph{Programming, Scripting, and Markup Languages} and \emph{Other Frameworks, Libraries, and Tools}}. 
-Table \ref{table:programming_languages} shows supported Node.js versions of each cloud provider. 
-
+Thanks to the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications.\footnote{https://insights.stackoverflow.com/survey/2019\#most-popular-technologies} %\vs{MAISSEN: it'd be good to add a link, for instance to the tiobe popularity index \url{https://www.tiobe.com/tiobe-index/}} \mais{I'm not familiar with such things. But also maybe the stackoverflow survey? \url{https://insights.stackoverflow.com/survey/2019\#most-popular-technologies} see graph \emph{Programming, Scripting, and Markup Languages} and \emph{Other Frameworks, Libraries, and Tools}}. 
+Table~\ref{table:programming_languages} shows the supported Node.js versions of each cloud provider. 
 %\begin{table}[!t]
 %\centering
 %\captionsetup[table]{justification=centering, labelfont=bf}
@@ -70,7 +64,7 @@ Due to its vast support from all providers, \sys will deploy all Node.js applica
 %\end{remark}
 %Python is a universal, open-source and very popular programming language. It was released in 1991 and created by Guido van Rossum \cite{PythonIntro} and runs basically anywhere \cite{PythonAbout}. Python was designed to be very easy to learn and to have readable code \cite{PythonIntro}. It only uses indentation and whitespaces to define the scope of loops, functions and classes \cite{PythonIntro}. Because of those characteristics, developers can implement new features very fast. Cuong Do, software architect of YouTube, said: "Python is fast enough for our site and allows us to produce maintainable features in record times, with a minimum of developers." \cite{PythonQuotes}. 
 
-\textbf{Python} is supported in several versions, as can be seen in Table~\ref{table:programming_languages}. % shows the support offered by the various cloud providers to the Python runtime. % which of the four cloud provider supports which Python versions.
+\textbf{Python} is supported in multiple versions. % shows the support offered by the various cloud providers to the Python runtime. % which of the four cloud provider supports which Python versions.
 At the time of this writing, all cloud providers support version 3.7, hence we rely on this version for our benchmarking results.
 
 %\begin{table}[!t]
@@ -89,14 +83,14 @@ At the time of this writing, all cloud providers support version 3.7, hence we r
 %\end{table}
 
 
-\textbf{Go.}
-Go\cite{GoProject} is a procedural open source programming language developed by a team at Google and other contributors \cite{GoDoc, GoProject}. 
+\textbf{Go}~\cite{GoProject} is a procedural open source programming language developed by a team at Google and other contributors \cite{GoDoc, GoProject}. 
+There is support for two main releases of the language.
 %It is a relatively new language and was first released in March 2012 \cite{GoProject}. 
 %It is compiled and therefore more efficient than interpreted languages and it has good concurrency mechanisms to benefit from today's multi-core architecture \cite{GoDoc}. 
 %Go also has a garbage collector in contrast to C \cite{GoDoc}. 
 %On the Go website the following statement can be found: "It's a fast, statically typed, compiled language that feels like a dynamically typed, interpreted language." \cite{GoDoc}. 
 %Today, Go is a popular language given that is is easy to learn and write like Python but also very efficient like C. 
-Table~\ref{table:programming_languages} shows the supported Go versions.
+%Table~\ref{table:programming_languages} shows the supported Go versions.
 %\begin{table}[!t]
 %\centering
 %\captionsetup[table]{justification=centering, labelfont=bf}
@@ -108,7 +102,7 @@ Table~\ref{table:programming_languages} shows the supported Go versions.
 %\caption[Supported Go runtimes]{Supported Go runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. AWS supports all versions of Go 1.x, depending on the version the binary was compiled with and deployed to Lambda.}
 %\label{table:go}
 %\end{table}
-\vs{MAISSEN: move into the evaluation setup section:} \mais{Sorry I don't know what you want me to move} This thesis will use Go 1.11 for its benchmark functions.
+%\vs{MAISSEN: move into the evaluation setup section:} \mais{Sorry I don't know what you want me to move} This thesis will use Go 1.11 for its benchmark functions.
 
 \textbf{.NET Core} is not uniformely supported by all the cloud providers. 
 %.NET Core is a free and open-source software framework developed by Microsoft and its community \cite{.NETCore}. The first version was released in June 2016 \cite{.NETCoreReleases}. It supports as languages C\texttt{\#}, F\texttt{\#} and Visual Basic \cite{.NETAbout} and is currently on version 3.1 which was released in December 2019 \cite{.NETCoreBlog}. 
@@ -117,7 +111,7 @@ Table~\ref{table:programming_languages} shows the supported Go versions.
 %Since then the company has embraced Linux, open-source software and cross-platform support. 
 %Table~\ref{table:dotnet} shows the supported .NET Core versions.
 Hence, \sys uses 2.1 on \gls{AWS} and 2.2 on Azure and \gls{IBM}.
-All .NET Core functions are implemented is C\texttt{\#}.
+All \texttt{.NET} Core functions are implemented is the C\texttt{\#} dialect of the \texttt{.NET} framework.
 
 %\begin{table}[!t]
 %\centering

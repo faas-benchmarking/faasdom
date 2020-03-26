@@ -79,6 +79,13 @@ According to our investigations, we believe Azure Functions to be executed by vi
 %\vs{MAISSEN: which ones from \url{https://aws.amazon.com/ec2/instance-types/}? Clarify.} \mais{correct links: \url{https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale} and \url{https://docs.microsoft.com/de-ch/azure/virtual-machines/av2-series}, Here they mention the ACU of 100. At the time of my writing on the overview table \url{https://docs.microsoft.com/de-ch/azure/virtual-machines/acu} I'm pretty sure Av2 were the only one that matched 100 ACU. I would probably omit that now.}, as it most closely resembles its declared \gls{ACU}~\cite{AzureFunctionsVMs}. 
 These \gls{VM}s use three different \gls{CPU}s: Intel Xeon 8171M at 2.1 \gls{GHz}, Intel Xeon E5-2673 v4 at 2.3 \gls{GHz} and Intel Xeon E5-2673 v3 at 2.4 \gls{GHz}~\cite{AzureFunctionsVMs}.
 
+%\begin{remark}	
+%\vs{Maybe we can move this remark in the previous section where we describe the providers ?}
+%Azure has currently three different generations of its service \vs{MAISSEN: add url} \cite{AzureFunctionsGenerations} \mais{cite ok like this?}. 
+%The first generation is currently in maintenance, while the two other ones remain available. 
+%The available runtimes in the next section will only consider generation 2 (which is also used in this project):
+%\end{remark}
+
 \subsection{Google Cloud Functions}\label{sec:ss:google}
 %\vs{STOPPED HERE}
 %On the Google Cloud Platform, the serverless service is simply called \textit{Functions} \cite{GoogleFunctions}. 
