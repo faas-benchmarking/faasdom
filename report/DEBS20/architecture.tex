@@ -148,7 +148,7 @@ Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test result
 
 \subsection{Benchmarking}
 The benchmarking component injects specific workloads toward a function exposed by a given serverless provider.
-Our design is modular and currently supports \sloppy{\texttt{wrk2}~\ref{wrk2}}, a constant throuput/fixed latency benchmarking tool. 
+Our design is modular and currently supports \sloppy{\texttt{wrk2}~\cite{wrk2}}, a constant throuput/fixed latency benchmarking tool. 
 Additional tools are easy to integrate by providing a Docker container and a simple REST interface to exchange parameters and results. 
 Successively, results can be easily analyzed via Grafana, as shown in Figure~\ref{fig:benchmark_table}.
 %mainly relies on the wrk2 image. The parameters can be set in the web interface but they are basically just forwarded to wrk2. For the benchmark itself the user can choose the following parameters: requests per second, duration of the benchmark and the desired test to run e.g. the \gls{CPU} factors test. 
