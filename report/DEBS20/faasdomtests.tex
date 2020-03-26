@@ -6,12 +6,12 @@ All functions are implemented using an \gls{HTTP} trigger, a common mean support
 Currently, \sys includes:
 \begin{itemize}
 \item \texttt{faas-fact} and \texttt{faas-matrix-mult}: two CPU-bound benchmarks, respectively to factorize an integer and to multiply large integer matrices;
-\item \texttt{faas-netlatency}: it immediately returns upon invocation, with a small \gls{JSON} \vs{MAISSEN: how small exactly? how many Bytes?}. This test is network-bound and useful to verify the roundtrip times for geographically distibuted deployments;
+\item \texttt{faas-netlatency}: it immediately returns upon invocation, with a small \gls{JSON} (HTTP body ~ 79 bytes, HTTP complete response including headers around 500 bytes). This test is network-bound and useful to verify the roundtrip times for geographically distibuted deployments;
 \item \texttt{faas-diskio}: an IO-bound benchmark to evalute the performance of a disk. Perhaps surprisingly, each serverless cloud provides a temporary file system that functions can use to read/write intermediate results. 
 %The function can for example write a file with some intermediate results which it will later read again for further use. 
 Other function calls which run in the same instance share this file system and can access the same file. %Given that serverless tends to be or should be stateless, the feature of a temporary storage is not of great importance. 
 %Nevertheless, specific applications might benefit from such a feature and therefore it is included in this thesis. 
-I/O operations are typically expensive \vs{MAISSEN: any link to online catalogue of prices to show this?} %and in a synchronous function that can lead to \gls{CPU} wait.
+I/O operations are typically expensive \vs{MAISSEN: any link to online catalogue of prices to show this?} \mais{In this case I didn't mean expensive money wise but regarding performance/execution (I/O operations are most times slower than CPU operations)} %and in a synchronous function that can lead to \gls{CPU} wait.
 \item \texttt{faas-custom}: our design allows developers to easily implement custom functions. 
 The suite provides templates for the currently supported cloud providers and the supported implementation languages. 
 In the long term, we expect the number of custom functions to greatly outnumber the ones provided by the suite itself.

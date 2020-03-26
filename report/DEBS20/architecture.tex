@@ -29,7 +29,7 @@ Once started, the set of configured tests are deployed (some examples given in S
 %After the tests are deployed, they can be tested and benchmarked. 
 
 The core component embeds a pricing calculator.
-Its goal is to calculates the cost \vs{MAISSEN: the cost of what?} for the supported cloud providers, either by setting the corresponding parameters manually or by exploiting results from previous executions.
+Its goal is to calculate the cost \mais{OK: of executing a certain amount of functions on} the supported cloud providers, either by setting the corresponding parameters manually or by exploiting results from previous executions.
 
 
 \textbf{InfluxDB:} a time-series database, where all the results from tests are be stored , to be later used by graphical interfaces and pricing calculation.
@@ -40,7 +40,7 @@ The results gathered by the tests and stored in InfluxDB will be displayed in Gr
 \textbf{CLIs:} With the exeception of AWS, all cloud providers offer a Docker image for their \gls{CLI}. 
 Resources can be deployed, deleted and managed completely by the \gls{CLI}.
 
-\textbf{Runtimes (Node.js, Go, .NET):} In addition to the source code\vs{MAISSEN: you mean the source code of the function(s) to execute?}, a built and packaged zip file is needed for the deployment on all cloud except for Google. 
+\textbf{Runtimes (Node.js, Go, .NET):} In addition to the source code\vs{MAISSEN: you mean the source code of the function(s) to execute?} \mais{Yes}, a built and packaged zip file is needed for the deployment on all cloud except for Google. 
 The \sys architecture allows developers to ship runtime images, fo rinstance used to install packages and build or run the corresponding sources.
 
 \vs{to remove:
@@ -109,9 +109,9 @@ Our prototype supports parameters such as memory allocated per single executed f
 %\end{itemize}
 Once deployed, the web interface continuously reports on the progress. 
 %Next the \textit{Deploy} button can be pressed and the application will initiate the deployment. On the right hand side of the web interface there will be information about the progress. 
-The deployment process is parallelized, \vs{MAISSEN: can you detail a bit more what exactly is parallelized?}.
+The deployment process is parallelized, \vs{MAISSEN: can you detail a bit more what exactly is parallelized?} \mais{OK?: meaning creating the required resources on the cloud, building and packaging the functions, deploying/uploading them}.
 \vs{MAISSEN: I've looked a the flowcharts in the appendix of the report. Apart from the google one which seems very simplistic, I wonder if we could have a figure combining those ones into a figure that we could report here in the deployment section. wdyt?}
-\vs{In the appendix \ref{chapter:flow_charts}, flow charts are illustrating the deployment and cleanup process for each cloud.}
+\vs{In the appendix \ref{chapter:flow_charts}, flow charts are illustrating the deployment and cleanup process for each cloud.} \mais{Yes I can try to combine and minify them. Maybe I forget about the runtime differences (build, zip) and only illustrate the essentail 'cloud' part?}
 
 \subsection{Cleanup}
 Upon cleanup, all deployed Lambda functions are permanently deleted, as well as all the configurations and resource groups created at deployment time. % and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
@@ -161,7 +161,7 @@ Successively, results can be easily analyzed via Grafana, as shown in Figure~\re
 %A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
 
 \subsection{Billing Costs Prospection}
-\vs{MAISSEN: this component is not in the architecture drawing? if so, where does it fit?}
+\vs{MAISSEN: this component is not in the architecture drawing? if so, where does it fit?} \mais{It belongs to the main app node app.}
 This component can be used to predict the cost of executing a given benchmark on a specific cloud provider.
 One can provide the executed workload that is going to be injected (\emph{e.g.}, number of invocations, execution time per call, size of the return body and allocated memory).
 The \sys prototype produces an overview of the billing costs across the various serverless providers.
@@ -180,4 +180,4 @@ Specifically, the main container must invoke other containers, using a technique
 We do so by granting access to the main container to \texttt{/var/run/docker.sock}, \emph{i.e.} mounting it as volume.
 During our evaluation, we did not observe specific performance degradations using this approach.
 
-The implementation of \sys is freely available to the open-source community at \url{https://github.com/faasdom/benchmark-suite-serverless-computing}, and it consists of \vs{MAISSEN: FIX} lines of Node.js code.
+The implementation of \sys is freely available to the open-source community at \url{https://github.com/faasdom/benchmark-suite-serverless-computing}, and it consists of about 2000 lines of Node.js code.

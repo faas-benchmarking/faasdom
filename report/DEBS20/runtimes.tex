@@ -30,15 +30,15 @@ Table~\ref{table:programming_languages} shows our survey. %all supported runtime
 %\end{table}
 For the sake of comparisons and fairness of benchmarking, we are interested in runtimes and programming languages supported by multiple cloud providers.  
 Table~\ref{table:programming_languages} highlights the following facts.
-First, we observe that Node.js\vs{REF} is supported by all clouds \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?}. 
-Python is similarly well supported, except by Azure with Windows \gls{OS}\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true}.
+First, we observe that Node.js\vs{REF} is supported by all clouds \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?} \mais{I can't tell you why. Probably because it is not compiled, package management is relatively simple and it is popular in general for webservers and APIs}. 
+Python is similarly well supported, except by Azure with Windows \gls{OS}\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true} \mais{Why not? Every cloud supports at least 1 version so you can generally run your python code on each one. Also 3.6 and 3.7 is mostly supported}.
 Microsoft's \texttt{.NET Core} lacks support from Google \vs{MAISSEN: add missing details, we cannot say$\rightarrow$ and so forth}. 
-In the reminder of this paper, including our evaluation of \sys, we focus our comparison on the top best supported runtimes, namely \vs{MAISSEN: say which ones}. 
+In the reminder of this paper, including our evaluation of \sys, we focus our comparison on the top best supported runtimes, namely Node.js, Python, Go and .NET Core. 
 %A brief summary of each runtime will be given in the following subsections.
 
 \begin{remark}	
 \vs{Maybe we can move this remark in the previous section where we describe the providers ?}
-Azure has currently three different generations of its service\vs{MAISSEN: add url}. 
+Azure has currently three different generations of its service \vs{MAISSEN: add url} \cite{AzureFunctionsGenerations} \mais{cite ok like this?}. 
 The first generation is currently in maintenance, while the two other ones remain available. 
 The available runtimes in the next section will only consider generation 2 (which is also used in this project):
 \end{remark}
@@ -46,7 +46,7 @@ The available runtimes in the next section will only consider generation 2 (whic
 \textbf{Node.js.} is a JavaScript runtime built on Chrome's V8 JavaScript engine~\cite{Nodejs}. 
 %As the name indicates, JavaScript is a scripting language and was first released on the 4th December 1995 by Netscape \cite{JavaScript}. 
 %It was mostly used in addition to \gls{HTML} and \gls{CSS} in web browsers \cite{JavaScript}. 
-Because of the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications\vs{MAISSEN: it'd be good to add a link, for instance to the tiobe popularity index \url{https://www.tiobe.com/tiobe-index/}}. 
+Because of the Node.js framework and the \gls{NPM}, JavaScript is nowadays a popular language to implement all kinds of applications\vs{MAISSEN: it'd be good to add a link, for instance to the tiobe popularity index \url{https://www.tiobe.com/tiobe-index/}} \mais{I'm not familiar with such things. But also maybe the stackoverflow survey? \url{https://insights.stackoverflow.com/survey/2019\#most-popular-technologies} see graph \emph{Programming, Scripting, and Markup Languages} and \emph{Other Frameworks, Libraries, and Tools}}. 
 Table \ref{table:programming_languages} shows supported Node.js versions of each cloud provider. 
 
 %\begin{table}[!t]
@@ -108,7 +108,7 @@ Table~\ref{table:programming_languages} shows the supported Go versions.
 %\caption[Supported Go runtimes]{Supported Go runtimes~\cite{AWSLambdaLanguages, AzureFunctionsLanguages, GoogleFunctionsLanguages, IBMRuntimes}. AWS supports all versions of Go 1.x, depending on the version the binary was compiled with and deployed to Lambda.}
 %\label{table:go}
 %\end{table}
-\vs{MAISSEN: move into the evaluation setup section:} This thesis will use Go 1.11 for its benchmark functions.
+\vs{MAISSEN: move into the evaluation setup section:} \mais{Sorry I don't know what you want me to move} This thesis will use Go 1.11 for its benchmark functions.
 
 \textbf{.NET Core} is not uniformely supported by all the cloud providers. 
 %.NET Core is a free and open-source software framework developed by Microsoft and its community \cite{.NETCore}. The first version was released in June 2016 \cite{.NETCoreReleases}. It supports as languages C\texttt{\#}, F\texttt{\#} and Visual Basic \cite{.NETAbout} and is currently on version 3.1 which was released in December 2019 \cite{.NETCoreBlog}. 

@@ -16,9 +16,12 @@ Additionally, cloud providers can deploy finer-grain billing policies (\emph{e.g
 \begin{center}
 \includegraphics[scale=0.2]{bilder/FaaS_architecture.png}
 \captionsetup[table]{justification=centering, labelfont=bf}
-\caption{Typical FaaS architecture. The main aspects to benchmark are: general performance of a worker (\emph{i.e.} execution speed of a function) and quality of the auto-scaling mechanism for workers (\emph{i.e.} allocation of new VMs)\vs{MAISSEN: you mean time to allocate/deallocate a new VM?}.\label{fig:faas_arch}}
+\caption{Typical FaaS architecture. The main aspects to benchmark are: general performance of a worker (\emph{i.e.} execution speed of a function) and quality of the auto-scaling mechanism for workers (\emph{i.e.} allocation of new VMs)\vs{MAISSEN: you mean time to allocate/deallocate a new VM?}\label{fig:faas_arch}}
 \end{center}
 \end{figure}
+
+\mais{BELONGS TO FIG 1! (Sorry I think it didn't fit into the caption) Yes mostly but not only. The main part is the time to allocate a new VM but also the question of how many regarding to the load (which e.g. requests increase drastically from 1 per second to 500 per second).} \mais{Do you know what I mean? It is more than just the time it takes, also the mechanism or decision of the cloud how many}
+
 %Using serverless technologies requires much less expertise than non serverless self managed implementations. 
 %Although those technologies might come with certain limitations or performance bottlenecks that won't fit to the user's needs.\\
 %The most important key features of serverless computing are the following: 
