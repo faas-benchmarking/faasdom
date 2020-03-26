@@ -1,7 +1,7 @@
 %!TEX root = main.tex
 
 \section{Supported Runtimes}\label{sec:runtime}
-This section dscribes the supported runtimes and respective programming languages supported by the serverless providers described in Section~\ref{sec:background}. 
+This section describes the supported runtimes and respective programming languages supported by the serverless providers described in Section~\ref{sec:background}. 
 %Table~\ref{table:programming_languages} shows our survey. %all supported runtimes for each cloud service provider mentioned in section \ref{sec:background}. 
 %\mais{Table ok? You can change the lines or the symbols for explanation. I tried to make it as good and readable as possible. For Azure 2,3 could also be omitted. Gen 1 is in maintenance mode and seems to be no longer possible to be newly created.}
 %\begin{table}[!t]
@@ -31,7 +31,7 @@ This section dscribes the supported runtimes and respective programming language
 For the sake of comparisons and fairness of benchmarking, we are interested in runtimes and programming languages supported by multiple cloud providers.  
 Table~\ref{table:programming_languages} highlights the following facts.
 First, we observe that Node.js\vs{REF} is supported by all cloud providers.
-We explain this by the fact the peculiar features of the language make it particulary fit for serverless offerings, as well as its popularity among developers and its productivity advantages.
+We explain this by the fact the peculiar features of the language make it particularly fit for serverless offerings, as well as its popularity among developers and its productivity advantages.
 % \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?} \mais{I can't tell you why. Probably because it is not compiled, package management is relatively simple and it is popular in general for webservers and APIs}. 
 Python is similarly well supported, except by Azure with Windows \gls{OS}. %\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true} \mais{Why not? Every cloud supports at least 1 version so you can generally run your python code on each one. Also 3.6 and 3.7 is mostly supported}.
 Microsoft's \texttt{.NET Core} lacks support from Google \vs{MAISSEN: add missing details, we cannot say$\rightarrow$ and so forth}. 
@@ -104,7 +104,7 @@ There is support for two main releases of the language.
 %\end{table}
 %\vs{MAISSEN: move into the evaluation setup section:} \mais{Sorry I don't know what you want me to move} This thesis will use Go 1.11 for its benchmark functions.
 
-\textbf{.NET Core} is not uniformely supported by all the cloud providers. 
+\textbf{.NET Core} is not uniformly supported by all the cloud providers. 
 %.NET Core is a free and open-source software framework developed by Microsoft and its community \cite{.NETCore}. The first version was released in June 2016 \cite{.NETCoreReleases}. It supports as languages C\texttt{\#}, F\texttt{\#} and Visual Basic \cite{.NETAbout} and is currently on version 3.1 which was released in December 2019 \cite{.NETCoreBlog}. 
 %Microsoft has declared its love for Linux when Satya Nadella in the end of 2014 at a Microsoft Cloud Briefing in San Francisco presented a slide which stated "Microsoft  Linux". 
 %\cite{MicrosoftCloudBlog}. 
