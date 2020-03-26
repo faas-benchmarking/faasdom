@@ -1,6 +1,6 @@
 %!TEX root = main.tex
 \section{Architecture}\label{sec:architecture}
-This section describes the architecture of the \sys prototype, depicted in Figure~\ref{fig:architecture}.
+This section describes the architecture of the \sys prototype, depicted in Figure~\ref{fig:architecture}, as well as providing some additional implementation details (Section~\ref{ssec:impl}).
 %In this chapter, the implementation of the main application, whose main role is to  orchestrate the execution of the various benchmarks across the cloud providers. 
 %We provdie an overview of the varius compoentns and functionalities the components and their functions will be briefly explained and later every main task the user can do will be explained in detail.
 %\subsection{Overview}
@@ -137,12 +137,7 @@ Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test result
 
 %An example result of a general test can be seen in section \ref{sec:general_test}.
 
-
-\subsection{Benchmarking}
-\vs{STOPPED HERE}
-The benchmarking part mainly relies on the wrk2 image. The parameters can be set in the web interface but they are basically just forwarded to wrk2. For the benchmark itself the user can choose the following parameters: requests per second, duration of the benchmark and the desired test to run e.g. the \gls{CPU} factors test. Afterwards the load test will start and benchmark the chosen function on each cloud and runtime it was deployed to. This process has to run sequentially otherwise the host of the benchmark suite could potentially not handle the load. After the test has completed results will be parsed and inserted into the database and can be viewed as a table in Grafana. Figure \ref{fig:benchmark_table} shows an excerpt of a result.
-
-\begin{figure*}[htp]
+\begin{figure*}[!t]
 \begin{center}
 \includegraphics[width=1\textwidth]{bilder/benchmark_table.png}
 \captionsetup{justification=centering, labelfont=bf}
@@ -151,13 +146,36 @@ The benchmarking part mainly relies on the wrk2 image. The parameters can be set
 \end{center}
 \end{figure*}
 
-A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
+\subsection{Benchmarking}
+The benchmarking component injects specific workloads toward a function exposed by a given serverless provider.
+Our design is modular and currently supports \sloppy{\texttt{wrk2}~\ref{wrk2}}, a constant throuput/fixed latency benchmarking tool. 
+Additional tools are easy to integrate by providing a Docker container and a simple REST interface to exchange parameters and results. 
+Successively, results can be easily analyzed via Grafana, as shown in Figure~\ref{fig:benchmark_table}.
+%mainly relies on the wrk2 image. The parameters can be set in the web interface but they are basically just forwarded to wrk2. For the benchmark itself the user can choose the following parameters: requests per second, duration of the benchmark and the desired test to run e.g. the \gls{CPU} factors test. 
+%Afterwards the load test will start and benchmark the chosen function on each cloud and runtime it was deployed to. 
+%This process has to run sequentially otherwise the host of the benchmark suite could potentially not handle the load. 
+%After the test has completed results will be parsed and inserted into the database and can be viewed as a table in Grafana. Figure \ref{fig:benchmark_table} shows an excerpt of a result.
 
-\subsection{Pricing}
-With this component of the application one can calculate hypothetical prices by entering number of invocations, execution time per call, size of the return body and allocated memory. The prices for all clouds will be calculated and displayed in a table. The functionality is basically the same as the pricing calculators provided by the cloud providers, except here all is in one place and directly comparable.\\
-Furthermore, the calculator takes the performed tests into account. One can select a previously run test, select a runtime and then one only needs to provide the estimated number of invocations per month. The calculation will happen by taking the execution time from the test results which of course can vary quite a lot between cloud providers and runtimes. This method allows a much better approach of estimated cost. In section \ref{sec:pricing} the same example will be explained and calculated for both hypothetical and with actual test results as input.
 
 
-\subsection{Implementation Details}
-\vs{Since the main application runs on Docker and invokes other containers which also run in Docker, the main container needs access to \texttt{/var/run/docker.sock} \emph{i.e.} mounting it as volume. 
-Otherwise a container cannot run or start another container for security and integrity reasons. This concept is called Docker-in-Docker and should generally not be used and is more of a hack than a feature. In this case it serves a simple purpose and does not implicate any issues.}
+%A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
+
+\subsection{Billing Costs Prospection}
+\vs{MAISSEN: this component is not in the architecture drawing? if so, where does it fit?}
+This component can be used to predict the cost of executing a given benchmark on a specific cloud provider.
+One can provide the executed workload that is going to be injected (\emph{e.g.}, number of invocations, execution time per call, size of the return body and allocated memory).
+The \sys prototype produces an overview of the billing costs across the various serverless providers.
+In future work, we envision this module to be able to prospect the costs of a full-fledged serverless application rather than a synthetic or stressful workload.
+%The prices for all clouds will be calculated and displayed in a table. 
+%The functionality is basically the same as the pricing calculators provided by the cloud providers, except here all is in one place and directly comparable.
+%Furthermore, the calculator takes the performed tests into account. 
+%One can select a previously run test, select a runtime and then one only needs to provide the estimated number of invocations per month. 
+%The calculation will happen by taking the execution time from the test results which of course can vary quite a lot between cloud providers and runtimes. 
+%This method allows a much better approach of estimated cost. 
+%In section \ref{sec:pricing} the same example will be explained and calculated for both hypothetical and with actual test results as input.
+
+\subsection{Implementation Details}\label{ssec:impl}
+The implementation of \sys rely on Docker containers.
+Specifically, the main container must invoke other containers, using a technique called \emph{Docker-in-Docker}.\footnote{\url{https://www.docker.com/blog/docker-can-now-run-within-docker/}}
+We do so by granting access to the main container to \texttt{/var/run/docker.sock}, \emph{i.e.} mounting it as volume.
+During our evaluation, we did not observe specific performance degradations using this approach.
