@@ -179,3 +179,5 @@ The implementation of \sys rely on Docker containers.
 Specifically, the main container must invoke other containers, using a technique called \emph{Docker-in-Docker}.\footnote{\url{https://www.docker.com/blog/docker-can-now-run-within-docker/}}
 We do so by granting access to the main container to \texttt{/var/run/docker.sock}, \emph{i.e.} mounting it as volume.
 During our evaluation, we did not observe specific performance degradations using this approach.
+
+The implementation of \sys is freely available to the open-source community at \url{https://github.com/faasdom/benchmark-suite-serverless-computing}, and it consists of \vs{MAISSEN: FIX} lines of Node.js code.
