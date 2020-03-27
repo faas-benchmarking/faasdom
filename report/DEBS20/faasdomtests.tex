@@ -3,20 +3,34 @@
 The \sys benchmark suite currently consists of few tests which differ on the system aspect being stressed.
 While some difference might be needed to comply with the different discrepancies across the cloud providers, the code executed is largely the same for all of them.
 All functions are implemented using an \gls{HTTP} trigger, a common mean supported by all the supported serverless providers.
-Currently, \sys includes:
-\begin{itemize}
-\item \texttt{faas-fact} and \texttt{faas-matrix-mult}: two CPU-bound benchmarks, respectively to factorize an integer and to multiply large integer matrices;
-\item \texttt{faas-netlatency}: it immediately returns upon invocation, with a small \gls{JSON} (HTTP body ~ 79 bytes, HTTP complete response including headers around 500 bytes). This test is network-bound and useful to verify the roundtrip times for geographically distibuted deployments;
-\item \texttt{faas-diskio}: an IO-bound benchmark to evalute the performance of a disk. Perhaps surprisingly, each serverless cloud provides a temporary file system that functions can use to read/write intermediate results. 
-%The function can for example write a file with some intermediate results which it will later read again for further use. 
-Other function calls which run in the same instance share this file system and can access the same file. %Given that serverless tends to be or should be stateless, the feature of a temporary storage is not of great importance. 
-%Nevertheless, specific applications might benefit from such a feature and therefore it is included in this thesis. 
-I/O operations are typically expensive \vs{MAISSEN: any link to online catalogue of prices to show this?} \mais{In this case I didn't mean expensive money wise but regarding performance/execution (I/O operations are most times slower than CPU operations)} %and in a synchronous function that can lead to \gls{CPU} wait.
-\item \texttt{faas-custom}: our design allows developers to easily implement custom functions. 
+Currently, \sys includes the followings:
+
+\textbf{\texttt{faas-fact}} and \textbf{\texttt{faas-matrix-mult}}. 
+Two CPU-bound benchmarks, respectively to factorize an integer and to multiply large integer matrices.
+
+\textbf{\texttt{faas-netlatency}}. This network-bound test immediately returns upon invocation, with a small \gls{JSON} (HTTP body ~ 79 bytes, HTTP complete response including headers around 500 bytes). This test is used to verify the roundtrip times for geographically distibuted deployments
+
+\textbf{\texttt{faas-diskio}}. An IO-bound benchmark to evalute the performance of a disk. 
+Perhaps surprisingly, each serverless cloud provides a temporary file-system that functions can use to read/write intermediate results. 
+Other functions executed by the same instance share this file-system to access its content.
+
+\textbf{\texttt{faas-custom}}. Our design allows developers to easily implement custom functions. 
 The suite provides templates for the currently supported cloud providers and the supported implementation languages. 
 In the long term, we expect the number of custom functions to greatly outnumber the ones provided by the suite itself.
-%Last but not least there is a customizable test. The objective of this test is that the user can easily implement his own function and then benchmark it. The skeleton is provided for each one of the four clouds in each of the four languages. A timer is included to measure the execution time which can later be further analysed.
-\end{itemize}
+
+%\begin{itemize}
+%\item \texttt{faas-fact} and \texttt{faas-matrix-mult}: two CPU-bound benchmarks, respectively to factorize an integer and to multiply large integer matrices;
+%\item \texttt{faas-netlatency}: it immediately returns upon invocation, with a small \gls{JSON} (HTTP body ~ 79 bytes, HTTP complete response including headers around 500 bytes). This test is network-bound and useful to verify the roundtrip times for geographically distibuted deployments;
+%\item \texttt{faas-diskio}: an IO-bound benchmark to evalute the performance of a disk. Perhaps surprisingly, each serverless cloud provides a temporary file system that functions can use to read/write intermediate results. 
+%%The function can for example write a file with some intermediate results which it will later read again for further use. 
+%Other function calls which run in the same instance share this file system and can access the same file. %Given that serverless tends to be or should be stateless, the feature of a temporary storage is not of great importance. 
+%%Nevertheless, specific applications might benefit from such a feature and therefore it is included in this thesis. 
+%I/O operations are typically expensive \vs{MAISSEN: any link to online catalogue of prices to show this?} \mais{In this case I didn't mean expensive money wise but regarding performance/execution (I/O operations are most times slower than CPU operations)} %and in a synchronous function that can lead to \gls{CPU} wait.
+%\item \texttt{faas-custom}: our design allows developers to easily implement custom functions. 
+%The suite provides templates for the currently supported cloud providers and the supported implementation languages. 
+%In the long term, we expect the number of custom functions to greatly outnumber the ones provided by the suite itself.
+%%Last but not least there is a customizable test. The objective of this test is that the user can easily implement his own function and then benchmark it. The skeleton is provided for each one of the four clouds in each of the four languages. A timer is included to measure the execution time which can later be further analysed.
+%\end{itemize}
 
 
 
