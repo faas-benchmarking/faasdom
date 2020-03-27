@@ -1,35 +1,52 @@
 %!TEX root = main.tex
 \section{Evaluation}
 \label{sec:evaluation}
-In this chapter results of performed tests will be presented and explained, an example for a pricing calculation will be given, the services among the cloud providers will be compared and some general advantages and disadvantages about serverless computing will be specified derived from these results.
+This section presents the results obtained by using \sys. 
+We executed these tests between \vs{MAISSEN: insert start date} and \vs{MAISSEN: insert end date}.
+We designed these experiments to answer the following questions: \emph{(1)} what is the most effective programming language to use for serverlerss applications, \emph{(2)}, what is the most convenient provider, and \emph{(3)} which provider provides the most predictable results.
 
-In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
-\subsection{Latency Test}
-The objective of the latency test was to measure the latency for all clouds and regions. This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. Every 5 seconds, a requests was sent to each cloud and region until a sample size of 100 was obtained. This test was carried out from Bern, Switzerland.
-\begin{remarks}
-\text{ }
-\begin{itemize}
-    \item For Azure, this test was only done with Linux as underlying OS. The OS should not matter in regards to latency.
-    \item The \textit{westus} region of Azure had problems deploying it in Node.js and therefore .NET was used. Following error was produced: \texttt{The scale operation is not allowed for this subscription in this region. Try selecting different region or scale option.}\\
-    Also trying to create the function in the Azure portal failed and an error was indicated but the error message could not be viewed.
-    \item On Azure region \textit{australiaeast} the function could not be deployed, although no error was risen. Therefore it was deployed on Windows instead of Linux.
-\end{itemize}
-\end{remarks}
-The graphic \ref{fig:latency_plot} shows a scatter plot with the results of the test.
+%chapter results of performed tests will be presented and explained, an example for a pricing calculation will be given, the services among the cloud providers will be compared and some general advantages and disadvantages about serverless computing will be specified derived from these results.
+%
+%In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
 
-\begin{figure}[htp]
+\begin{figure*}[!t]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{bilder/latency/scatterplot_latency.pdf}
-\captionsetup{justification=centering, labelfont=bf}
-\caption[Latency test scatter plot]{Latency test scatter plot, \\ Source: illustration by author}
+\includegraphics[width=1.0\textwidth]{bilder/latency/scatterplot_latency.pdf}
+\caption{Latency test scatter plot. At the tiem of our experiment, \texttt{azure-west-us}  had issues deploying Node.js, hence re resort to \texttt{.NET}.  \vs{MAISSEN: Remove - Bern, Switzerlad (it discloses authors location, against double-blind); it'd be better to have the x-tics rotated a bit, see email}}
 \label{fig:latency_plot}
 \end{center}
-\end{figure}
+\end{figure*}
 
-For more detailed results see table \ref{tab:latency}. 
-The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
+\subsection{Latency Test}
+In this test, we measure the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
+%This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. 
+Unless specified otherwise, we deploy the Node.js version of the test using 128\gls{MB}.
+With the exception of \textit{aws-australia-east}, we deploy Linux \vs{MAISSEN: version/distribution}.   
+%The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. 
+Every 5 seconds, a requests was sent to each cloud and region until a sample size of 100 was obtained. 
+Figure~\ref{fig:latency_plot} reports our results. 
+%This test was carried out from Bern, Switzerland.
+%\begin{remarks}
+%\text{ }
+%\begin{itemize}
+%    \item For Azure, this test was only done with Linux as underlying OS. The OS should not matter in regards to latency.
+%    \item The \textit{westus} region of Azure had problems deploying it in Node.js and therefore .NET was used. Following error was produced: \texttt{The scale operation is not allowed for this subscription in this region. Try selecting different region or scale option.}\\
+%    Also trying to create the function in the Azure portal failed and an error was indicated but the error message could not be viewed.
+%    \item On Azure region \textit{australiaeast} the function could not be deployed, although no error was risen. Therefore it was deployed on Windows instead of Linux.
+%\end{itemize}
+%\end{remarks}
+%The graphic \ref{fig:latency_plot} shows a scatter plot with the results of the test.
+\vs{MAISSEN: here we need a short discussion on the results. Something like the following, can you complete ? I'll check afterwards}.
+We observe the following.
+We achieve the lowest latency on \vs{MAISSEN: FIX}, about \vs{MAISSEN: FIX}, and the highest of \vs{FIX}. 
+The average latency is \vs{MAISSEN: FIX}.
+Finally, the best performing cloud provider is \vs{MAISSEN: FIX, explain}.
+
+%For more detailed results see table \ref{tab:latency}. 
+%The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
 
 \subsection{Cold Start Test}
+\vs{STOPPED HERE}
 \label{sec:coldstart}
 This test measured the cold start latency. A cold start happens when the function takes longer to start up and run than usual. This occurs mostly after the deployment, after the function has not been used in a while or when a new instance needs to be provisioned for scaling purposes. In order for the cloud provider to get up the instance and deploy the specific code on it, some time can pass. Figure \ref{fig:azure_coldstart} shows what happens on Azure when a cold start is required and when the app is already warm.
 
