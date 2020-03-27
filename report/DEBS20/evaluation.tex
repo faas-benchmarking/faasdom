@@ -17,7 +17,7 @@ We designed these experiments to answer the following questions: \emph{(1)} what
 \end{center}
 \end{figure*}
 
-\subsection{Latency Test}
+\subsection{Benchmark: Latency}
 In this test, we measure the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
 %This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. 
 Unless specified otherwise, we deploy the Node.js version of the test using 128\gls{MB}.
@@ -45,37 +45,62 @@ Finally, the best performing cloud provider is \vs{MAISSEN: FIX, explain}.
 %For more detailed results see table \ref{tab:latency}. 
 %The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
 
-\subsection{Cold Start Test}
+\subsection{Benchmark: Cold/Start}
 \vs{STOPPED HERE}
 \label{sec:coldstart}
-This test measured the cold start latency. A cold start happens when the function takes longer to start up and run than usual. This occurs mostly after the deployment, after the function has not been used in a while or when a new instance needs to be provisioned for scaling purposes. In order for the cloud provider to get up the instance and deploy the specific code on it, some time can pass. Figure \ref{fig:azure_coldstart} shows what happens on Azure when a cold start is required and when the app is already warm.
+%This test measured the cold start latency. 
+A cold start happens when a function takes longer than usual to start up and execute. 
+This occurs mostly after the deployment, when the function has not been used in a while\vs{MAISSEN: is it know how long is this period?} or when a new instance needs to be provisioned for scaling purposes. 
+\vs{MAISSEN: can't understand this sentence, can you rephrase? In order for the cloud provider to get up the instance and deploy the specific code on it, some time can pass.} 
+Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as ooposed to the \emph{warm} case, but a similar workflow is valid on the other cloud providers.
+\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?}
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{bilder/azure-coldstart.jpeg}
-\captionsetup{justification=centering, labelfont=bf}
-\caption[Cold and warm start on Azure]{Cold and warm start on Azure. Source: Azure \cite{AzureColdStart}}
+\includegraphics[width=0.4\textwidth]{bilder/azure-coldstart.jpeg}
+\caption{Workflow for cold and warm start on Azure~\cite{AzureColdStart}\vs{Fig to be re-done}}
 \label{fig:azure_coldstart}
 \end{center}
 \end{figure}
-As indicated in the figure, several steps are required initially before the function can execute. A server has to be allocated, the worker is set up with the relevant code, packages and extensions are loaded (if needed), the function gets loaded into memory and then finally it can run. If the function is warm and no cold start happens, it is ready and can just be invoked. This process is similar in other clouds.\\
-The cold start latency has been tested ten times for each runtime on each cloud. Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. The test was realized in the following regions: \gls{AWS} on \texttt{eu-central-1}, Azure on \texttt{westeurope}, Google on \texttt{europe-west1} and \gls{IBM} on \texttt{eu-de}. However, the region should not have any implications on the cold start latency. The cold start latency was calculated the following way:
-$$\text{Total Request Time} - \text{Normal Average Latency} = \text{Cold Start Latency}$$
-Figure \ref{fig:coldstart_plot} shows the result of this test. 
-A box plot shows the cold start latency for every cloud service provider and runtime. \gls{AWS} is overall the fastest, with an average cold start latency of only 335 ms for Node.js, Python and Go. For .NET it is much higher with an average of 1739 ms, possibly due to the nature and compilation of .NET respectively C\#. On Azure, cold start latency is always more than 2 seconds and ascends up to 5 seconds, except for .NET on Windows which has an average cold start latency of 1917 ms. Google has compared to \gls{AWS} and \gls{IBM} relatively high cold start latency around 2 to 3 seconds. \gls{IBM} shows a similar pattern as \gls{AWS} although the cold start latency is around 600 ms higher for Node.js, Python and Go but similar for .NET.
 
-\begin{figure}[htp]
+There are several steps to perform before a function can execute: allocate a server, setup a workier with the associated code, packages and extensions, load the function in memory, and finally run it.
+When the function is warm, the function is ready and can just be invoked immediately. 
+
+We execute each test ten times for each runtime and each cloud. 
+Functions are executed using 512 \gls{MB} and without external packages, to reduce the baseline memory footprint (and the corresponding loading time) to the bare minimum.
+%The cold start latency has been tested ten times for each runtime on each cloud.
+%Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. 
+We executed these tests on the following regions: \texttt{eu-central-1} for AWS,  \texttt{west-europe} for Azure,  \texttt{europe-west1} for Google and \texttt{eu-de} for IBM. 
+Note however that chosen region has no impact the cold start latency. 
+We compute the cold start latency as:
+\begin{equation*}
+(cold\ start\ latency) = (tot.\ req.\ time) - (normal\ avg.\ latency)
+\end{equation*}
+
+Figure~\ref{fig:coldstart_plot} reports our results using a box plot.
+ \gls{AWS} is overall the fastest, with an average cold start latency of only 335 ms for Node.js, Python and Go. 
+Using .NET achieves worse results, up to 1739 ms, possibly due to the nature and compilation of .NET respectively C\#. 
+On Azure, cold start latency is strictly more than 2 seconds and up to 5 seconds, with the exception of the combination .NET on Windows, which averages at 1917 ms. 
+Google compares similarly to \gls{AWS}.
+Finally, \gls{IBM} consistenly produces  higher cold start latency, in the 2-3 seconds range. 
+\gls{IBM} shows a similar pattern \vs{MAISSEN: can you clarify? you mean that the ranking of the results wrt to the languages is the same?} as \gls{AWS} although the cold start latency is around 600 ms higher for Node.js, Python and Go but similar for .NET.
+
+\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?}
+On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for the instance to be recycled by the provider; the same took up to 20 minutes on Azure. 
+On Google, this time varied varied from 10 minutes up to 10 hours.
+
+\begin{figure}[!t]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{bilder/cold_start/boxplot_coldstart_all.pdf}
-\captionsetup{justification=centering, labelfont=bf}
-\caption[Cold start latency box plot]{Cold start latency box plot. Source: illustration by author}
+\caption{Cold start latency.}
 \label{fig:coldstart_plot}
 \end{center}
 \end{figure}
 
-On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for the instance to be recycled by the provider, on Azure around 10-20 minutes and on Google it varied from 10 minutes up to 10 hours.
+
 
 \subsection{General Test}
+\vs{STOPPED HERE}
 \label{sec:general_test}
 This test was performed to analyze the functions under normal circumstances, meaning that there is not much load respectively that the load can be handled well by the cloud provider. The objective is to compare the achieved performance of the clouds regarding execution speed and the thereby implicated costs. For this evaluation the \gls{CPU} factors test (see section \ref{sec:factors_test}) was executed. The function was invoked every five seconds until a sample size of $n=100$ was reached. This for each \gls{MB} configuration, each runtime and each cloud. As input parameter $26'888'346'474'443$ was selected since with this number the function finished ahead of the timeout for low configurations and simultaneously was not too quickly finished for high configurations. Figure \ref{fig:general_python_plot} illustrates the result of this test in Python in a scatter plot.
 \begin{figure}[htp]
