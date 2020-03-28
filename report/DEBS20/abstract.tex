@@ -1,18 +1,18 @@
 %!TEX root = main.tex
 %\nocite{Pellegrini_2019}
 \begin{abstract}
-A major trend for cloud providers is serverless computing. 
-Developers fully delegate to the cloud provider the task of managing the servers, dynamically allocate the required resources, as well as handling availability and fault-tolerance matters.
-In doing so, application developers solely focus on their application functions, which are then completely managed on the cloud.
+Serverless computing has become a major trend among cloud providers. 
+With serverless computing, developers fully delegate to the cloud provider the task of managing the servers, dynamically allocate the required resources, as well as handling availability and fault-tolerance matters.
+In doing so, developers can solely focus on the application logic of their software, which is then deployed and completely managed in the cloud.
 
-Despite its increasing popularity, little data is known regarding the actual system performance achievable on the currently available serverless platforms.
-Specifically, it is cumbersome to benchmark such systems in an languag- or runtime-independent manner.
+Despite its increasing popularity, not much is known regarding the actual system performance achievable on the currently available serverless platforms.
+Specifically, it is cumbersome to benchmark such systems in a language- or runtime-independent manner.
 Instead, one must resort to a full application deployment, to later take informed decisions on the most convenient solution along several dimensions, including performance and economic costs.
 
-\sys is a modular architecture and proof-of-concept implementation of a benchmark suite for serveless computing platforms.
+\sys is a modular architecture and proof-of-concept implementation of a benchmark suite for serverless computing platforms.
 It currently supports the current mainstream serverless cloud providers (\emph{i.e.}, AWS, Azure, Google, IBM), a large set of benchmark tests and a variety of implementation languages.
-The suite fully automatizes the deployment, execution and clean-up of such tests, providing insights (including historical ones) on the performance observed by serverless applications. 
-We further provided \sys with a model to estimate budget costs for deployments across the supported providers.
+The suite fully automatizes the deployment, execution and clean-up of such tests, providing insights (including historical) on the performance observed by serverless applications. 
+\sys also integrates a model to estimate budget costs for deployments across the supported providers.
 \sys is open-source and available at \sloppy{\url{https://github.com/faasdom/benchmark-suite-serverless-computing}}.
 %Among all the services the cloud offers, serverless computing is very popular and every large cloud service provider offers a serverless platform. 
 %However, there has not been much effort to test, benchmark or compare these services. 
