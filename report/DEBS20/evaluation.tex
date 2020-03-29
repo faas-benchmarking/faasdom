@@ -99,21 +99,41 @@ On Google, this time varied varied from 10 minutes up to 10 hours.
 
 
 
-\subsection{General Test}
-\vs{STOPPED HERE}
+\subsection{Benchmark: CPU-bound}
+\vs{find better section name}
 \label{sec:general_test}
-This test was performed to analyze the functions under normal circumstances, meaning that there is not much load respectively that the load can be handled well by the cloud provider. The objective is to compare the achieved performance of the clouds regarding execution speed and the thereby implicated costs. For this evaluation the \gls{CPU} factors test (see section \ref{sec:factors_test}) was executed. The function was invoked every five seconds until a sample size of $n=100$ was reached. This for each \gls{MB} configuration, each runtime and each cloud. As input parameter $26'888'346'474'443$ was selected since with this number the function finished ahead of the timeout for low configurations and simultaneously was not too quickly finished for high configurations. Figure \ref{fig:general_python_plot} illustrates the result of this test in Python in a scatter plot.
-\begin{figure}[htp]
+%This test was performed to analyze the functions under normal circumstances, meaning that there is not much load respectively that the load can be handled well by the cloud provider. The objective is to compare the achieved performance of the clouds regarding execution speed and the thereby implicated costs. 
+This benchmark evaluates how CPU-bound workload behave across the different cloud providers.
+% evaluation the \gls{CPU} factors test (see section \ref{sec:factors_test}) was executed. 
+A function (\texttt{faas-fact}) is invoked every five seconds, using a large-enough integer as parameter. 
+We collect 100 results for every configuration (runtime, memory, cloud provider).
+%The function was invoked every five seconds until a sample size of $n=100$ was reached. 
+%This for each \gls{MB} configuration, each runtime and each cloud. 
+A%s input parameter $26'888'346'474'443$ was selected since with this number the function finished ahead of the timeout for low configurations and simultaneously was not too quickly finished for high configurations. 
+Figure~\ref{fig:general_python_plot} depicts our result for Python.
+
+\begin{figure}[!t]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{bilder/general_python/scatterplot_general_python.pdf}
-\captionsetup{justification=centering, labelfont=bf}
-\caption[Scatter plot of execution times of the \gls{CPU} factors test in Python]{Scatter plot of execution times of the \gls{CPU} factors test in Python\\ Source: illustration by author}
+\caption{Scatter plot of execution times of the \gls{CPU} factors test in Python.}
 \label{fig:general_python_plot}
 \end{center}
 \end{figure}
 
-A few interesting characteristics can be observed. On \gls{AWS} Lambda everything seems as it should be and is hence a good showcase. Firstly, the standard deviation is very low and therefore the execution time extremely consistent. With every doubling of the allocated memory the execution time is halved, as it should be since \gls{CPU} performance scales linearly to allocated memory, according to Amazon \cite{AWSLambdaConfig}. Conforming to Azure's memory configuration of 1536 \gls{MB} its performance should be between 1024 and 2048 \gls{MB} of the competitors performance. However, it is even slower than 1024 \gls{MB} instances of the other clouds. The results on the Google Cloud Platform follow a similar pattern as on \gls{AWS}, but they are more scattered especially for 128 \gls{MB} of memory. Moreover Google is faster than \gls{AWS} for 128, 256, 512 and 1024 \gls{MB} but not for 2048 \gls{MB}. For the first three times doubling the memory leads to halved execution time. But not entirely for the next two steps since Google does not scale \gls{CPU} completely linear to allocated memory \cite{GoogleFunctionsPricing}. At last, \gls{IBM} shows a very strange pattern. It seems that memory allocation does not correlate with \gls{CPU} allocation in any way. All five different sizes perform practically the same. This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Seconds used. This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.\\
-The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}.
+We note few interesting facts.
+On \gls{AWS} Lambda, the standard deviation is very low (\vs{MAISSEN: how much is the lowest?}), with very consistent execution times. 
+As expected, every doubling of the allocated memory achieves halving of the execution time, performance scales linearly to allocated memory~\cite{AWSLambdaConfig}. 
+
+Azure's memory configuration of 1536 \gls{MB} suggests its performance to be in the 1024-2048 \gls{MB} range.
+Surprisingly, it is slower than 1024 \gls{MB} instances of the other clouds.  
+Google Cloud Platform performs similarly to \gls{AWS}, although more scattered for 128 \gls{MB} of memory. 
+Google achieves bette results for several memory configurations than \gls{AWS} (128, 256, 512 and 1024 \gls{MB}). % but not for 2048 \gls{MB}. For the first three times doubling the memory leads to halved execution time. 
+Note however that the performance scaling behaves differently on the Google platform~\cite{GoogleFunctionsPricing}.
+%But not entirely for the next two steps since Google does not scale \gls{CPU} completely linear to allocated memory \cite{GoogleFunctionsPricing}. 
+The resuls we gathered on the \gls{IBM} platform suggests that memory allocation does not correlate with \gls{CPU} allocation in any way, with five different configurations perform very closely. 
+This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Seconds used. 
+\vs{MAISSEN: Is this true for all the languages? These resuls are only for Phython. Do you have the same tests for all the other languges? This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.}
+%The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}.
 
 \subsection{Load Test}
 \label{sec:loadtest}
