@@ -1,22 +1,23 @@
 %!TEX root = main.tex
 \section{Introduction}
+
 %This chapter explains the motivation behind the project and the importance to test and benchmark the different available platforms from cloud providers. It introduces the topics of cloud computing and particularly serverless computing and briefly explains the term benchmarking.
 %\subsection{Motivation}
 %In today's world cloud computing is for many companies and organizations a good and maybe the best option to set up their computing infrastructure or migrate to it. 
 %Smaller or newer companies often cannot afford to invest in high-performance hardware which they also need to manage themselves. Sometimes companies don't have the knowledge to maintain hardware properly and just want their databases and web servers to work, instead of worrying about a hardware failure or a power outage. 
 %Furthermore most businesses want to focus on their core business which many times means using computing resources and tools instead of managing them.\\
 %This thesis is going to investigate a specific region of cloud computing; generally known as 
-The serverless computing paradigm is an emerging approach to develop cloud-based applications~\cite{Baldini2017, riseofserverless, vanEyk:2017:SCG:3154847.3154848}.
-\gls{IBM}~\cite{serverlessibm} defines it as \emph{"an approach to computing that offloads responsibility for common infrastructure management tasks (scaling, scheduling, patching, provisioning, etc.) to cloud providers and tools, allowing engineers to focus their time and effort on the business logic specific to their applications or process"}.\vs{nicer way to report quote?}
-Serverless requires less expertise than other self-managed approaches.
-Users don't manage directly the infrastructure and runtime of the system, delegating its operations to the cloud provider.
-Additionally, cloud providers can deploy finer-grain billing policies (\emph{e.g.}, on a per service-call basis) for any of the offered services~\cite{serverlessaws, serverlessazure}, generally leading to reduced costs for developers.
+The serverless computing paradigm is an emerging approach for developing cloud-based applications~\cite{Baldini2017, riseofserverless, vanEyk:2017:SCG:3154847.3154848}.
+\gls{IBM}~\cite{serverlessibm} defines it as \emph{``an approach to computing that offloads responsibility for common infrastructure management tasks (scaling, scheduling, patching, provisioning, \etc) to cloud providers and tools, allowing engineers to focus their time and effort on the business logic specific to their applications or process''}.
+Serverless computing requires less expertise than other self-managed approaches.
+Users do not manage directly the infrastructure and runtime of the system, but instead delegate its operations to the cloud provider.
+Additionally, cloud providers can deploy finer-grain billing policies (\eg, on a per service-call basis) for any of the offered services~\cite{serverlessaws, serverlessazure}, generally leading to reduced costs for developers.
 
 \begin{figure}[!t]
 \begin{center}
-\includegraphics[scale=0.2]{bilder/FaaS_architecture.png}
+\includegraphics[scale=0.7]{bilder/FaaS}
 %\captionsetup[table]{justification=centering, labelfont=bf}
-\caption{Typical FaaS architecture. The main aspects to benchmark are: performance of a worker (\emph{i.e.}, execution speed of a function) and quality of the auto-scaling mechanism (\emph{e.g.}, allocation of new VMs, how to handle flash-crowds~\cite{jung2002flash}).\label{fig:faas_arch}}
+\caption{Typical FaaS architecture. The main aspects to benchmark are: performance of a worker (\ie, execution speed of a function) and quality of the auto-scaling mechanism (\eg, allocation of new VMs, how to handle flash-crowds~\cite{jung2002flash}).\label{fig:faas_arch}}
 \end{center}
 \end{figure}
 %\vs{MAISSEN: you mean time to allocate/deallocate a new VM?}
@@ -26,29 +27,43 @@ Additionally, cloud providers can deploy finer-grain billing policies (\emph{e.g
 %Although those technologies might come with certain limitations or performance bottlenecks that won't fit to the user's needs.\\
 %The most important key features of serverless computing are the following: 
 %No server or infrastructure management of the user is required, the workload is scaled dynamically and automatically and it is usually paid per usage, e.g. only charged for the occupied storage in a service \cite{serverlessaws, serverlessazure}.\\
-One can distinguish between various serverless paradigms: \emph{(1)} FaaS (Function as a Service, and focus of our work) implemented for instance by \gls{AWS} Lambda~\cite{AWSLambda}, \emph{(2)} DBaaS (Database as a Service), as available through Microsoft Azure Database for PostgreSQL~\cite{AzureDBaaS} and \emph{(3)} STaaS (Storage as a service), via Google Cloud Storage~\cite{serverlessgoogle}. 
+One can distinguish between various serverless paradigms:
+\emph{(1)} FaaS (\emph{function as a service}, and focus of our work) implemented for instance by \gls{AWS} Lambda~\cite{AWSLambda},
+\emph{(2)} DBaaS (\emph{database as a service}), as available through Microsoft Azure for PostgreSQL~\cite{AzureDBaaS}; and
+\emph{(3)} STaaS (\emph{storage as a service}), via Google Cloud~\cite{serverlessgoogle}. 
 FaaS can be considered an hybrid between \gls{PaaS} and the \gls{SaaS} service model: data and infrastructure are fully managed by the provider, while the application is handled by the user.
-Figure \ref{fig:faas_arch} illustrates a typical FaaS infrastructure.
+\autoref{fig:faas_arch} illustrates a typical FaaS infrastructure.
 %\vs{Maissen: please expand description of Figure~\ref{fig:faas_arch}, mention which components require benchmarking - typically the ones that we find again in the evaluation}.
-In the typical FaaS approach, developers bypass the setup, maintenance and management of a compute node (\emph{i.e.}, bare metal, virtual machines, or even containers). % don't need to setup or manage its operating system.
+In the typical FaaS approach, developers bypass the setup, maintenance and management of a compute node (\ie, bare metal, virtual machines, or even containers). % don't need to setup or manage its operating system.
 Instead, users provide the application code for specific \emph{functions} to be deployed to the cloud.
-Specific events (\emph{e.g.}, \gls{HTTP} requests, storage or database conditions) trigger their execution, typically implementing data processing~\cite{AWSLambda, GoogleFunctions}.
+Specific events (\eg, \gls{HTTP} requests, storage or database conditions) trigger their execution, typically implementing data processing~\cite{AWSLambda, GoogleFunctions}.
 The provider then handles the load, as well as availability and scaling requirements. % the application generates and other important elements like 
 Despite the convenience of the approach, it is currently hard to decide on a specific FaaS provider based on criteria such as performance, workload adaptability or costs.
 %Which cloud provider to choose to run an application on? Can the cloud provider handle the load? How much is it going to cost? 
 
 This paper introduces \sys, a testing suite that tackles this problem.
-In a nutshell, application developers can use the \sys suite to automatically deploy several performance tests a set of Faas providers. 
-The results can hen be easily compared along several dimensions.
+In a nutshell, application developers can use the \sys suite to automatically deploy several performance tests a set of FaaS providers.
+The results can then be easily compared along several dimensions.
+Based on this information, deployers can evaluate the ``FaaS-domness'' of the providers and decide which one is best adapted for their applications, in terms of performance, reliability or cost.
 % and the suite helps to make the decision easier.
 
-While few efforts exist to benchmark serverless computing~\cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34}, they ...\vs{fill in with 1 sentence saying why those efforts are not sufficient/clear/poor/}. 
+While few efforts exist to benchmark serverless computing~\cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34}, they are relatively limited in terms of supported providers, comparison metrics, diversity of benchmarks (\eg, user-defined functions), or operating modes (\eg, stress-test vs. continuous monitoring).
+% ...\vs{fill in with 1 sentence saying why those efforts are not sufficient/clear/poor/}. 
 Similarly, studies on benchmarking cloud platforms lack an in-depth evaluation of serverless computing platforms~\cite{Gan:2019:OBS:3297858.3304013}. 
 
+In this paper, we introduce \sys, a modular and extensible benchmark suite for evaluating serverless computing.
+\sys natively supports major FaaS providers (AWS, Azure, Google, IBM) but can be easily extended to benchmark additional platforms.
+It includes a wide range of workloads, including user-defined functions, and implementation languages.
+\sys uses several metrics to compare FaaS platforms against multiple dimensions, in terms of latency, throughput and operating costs.
+It provides a Web-based interface that allows users to perform benchmarks in a fully automatic way (including deployment, execution and clean-up of the tests), and keeps track of historical data.
+In that way, \sys can be used both for one-shot benchmarks and for continuous monitoring over time of the providers.
+\sys is the first system to support such in-depth, comprehensive and extensible benchmarking of serverless computing.
 
-\vs{we need to say what are the main contributions of this work}
-\vs{then, say how the paper is organized.} 
- 
+The remainder of this paper is organised as follows.
+We first introduce background concepts (\S\ref{sec:background}) and the supported frameworks (\S\ref{sec:runtime}).
+We then describe the \sys architecture (\S\ref{sec:architecture}) and its different benchmarks (\S\ref{sec:tests}).
+We finally present and discuss evaluation results (\S\ref{sec:evaluation}), before concluding with a summary of lessons learned and open perspectives(\S\ref{sec:conclusion})
+
 %\subsection{Cloud Computing}
 %The \gls{NIST} defines cloud computing as a model which enables ubiquitous, on-demand network access to computing resources which can be rapidly and easily provisioned and released \cite{Mell:2011:SND:2206223}. Computing resources can be servers (dedicated hardware or \gls{VM}s), storage, applications, services, etc. Those resources are managed by a cloud service provider in their data centers and are normally accessible to everyone on a pay per usage model. The \gls{NIST} also states the following \textbf{essential characteristics} of cloud computing \cite{Mell:2011:SND:2206223}.
 %\begin{itemize}
