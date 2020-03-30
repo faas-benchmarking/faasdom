@@ -1,9 +1,12 @@
 %!TEX root = main.tex
 \section{Evaluation}
 \label{sec:evaluation}
-This section presents the results obtained by using \sys. 
-We executed these tests between \vs{MAISSEN: insert start date} and \vs{MAISSEN: insert end date}.
-We designed these experiments to answer the following questions: \emph{(1)} what is the most effective programming language to use for serverlerss applications, \emph{(2)}, what is the most convenient provider, and \emph{(3)} which provider provides the most predictable results.
+Rather than presenting an evaluation of the \sys internal components, this section presents the typical evaluation results users can achieve by using \sys.
+We carried out these tests between \vs{MAISSEN: insert start date} and \vs{MAISSEN: insert end date}.
+We designed these experiments to answer the following questions: 
+\emph{(1)} what is the most effective programming language to use for serverless applications;
+\emph{(2)} what is the most convenient provider; 
+and \emph{(3)} which provider provides the most predictable results.
 
 %chapter results of performed tests will be presented and explained, an example for a pricing calculation will be given, the services among the cloud providers will be compared and some general advantages and disadvantages about serverless computing will be specified derived from these results.
 %
@@ -11,8 +14,8 @@ We designed these experiments to answer the following questions: \emph{(1)} what
 
 \begin{figure*}[!t]
 \begin{center}
-\includegraphics[width=1.0\textwidth]{bilder/latency/scatterplot_latency.pdf}
-\caption{Latency test scatter plot. At the tiem of our experiment, \texttt{azure-west-us}  had issues deploying Node.js, hence re resort to \texttt{.NET}.  \vs{MAISSEN: Remove - Bern, Switzerlad (it discloses authors location, against double-blind); it'd be better to have the x-tics rotated a bit, see email}}
+\includegraphics[width=1.0\textwidth]{bilder/latency/latency.pdf}
+\caption{Latency test scatter plot. At the time of our experiment, \texttt{azure-west-us}  had issues deploying Node.js, hence we resort to \texttt{.NET}.}
 \label{fig:latency_plot}
 \end{center}
 \end{figure*}
