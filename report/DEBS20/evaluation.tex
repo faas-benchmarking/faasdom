@@ -13,11 +13,10 @@ and \emph{(3)} which provider provides the most predictable results.
 %In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
 
 \begin{figure*}[!t]
-\begin{center}
+\centering
 \includegraphics[width=1.0\textwidth]{bilder/latency/latency.pdf}
 \caption{Latency test scatter plot. At the time of our experiment, \texttt{azure-west-us}  had issues deploying Node.js, hence we resort to \texttt{.NET}.}
 \label{fig:latency_plot}
-\end{center}
 \end{figure*}
 
 \subsection{Benchmark: Latency}
@@ -59,11 +58,10 @@ Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start o
 \vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?}
 
 \begin{figure}[htp]
-\begin{center}
+\centering
 \includegraphics[width=0.4\textwidth]{bilder/azure-coldstart.jpeg}
 \caption{Workflow for cold and warm start on Azure~\cite{AzureColdStart}\vs{Fig to be re-done}}
 \label{fig:azure_coldstart}
-\end{center}
 \end{figure}
 
 There are several steps to perform before a function can execute: allocate a server, setup a workier with the associated code, packages and extensions, load the function in memory, and finally run it.
@@ -93,11 +91,10 @@ On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for 
 On Google, this time varied varied from 10 minutes up to 10 hours.
 
 \begin{figure}[!t]
-\begin{center}
+\centering
 \includegraphics[width=0.5\textwidth]{bilder/cold_start/boxplot_coldstart_all.pdf}
 \caption{Cold start latency.}
 \label{fig:coldstart_plot}
-\end{center}
 \end{figure}
 
 
@@ -116,11 +113,11 @@ A%s input parameter $26'888'346'474'443$ was selected since with this number the
 Figure~\ref{fig:general_python_plot} depicts our result for Python.
 
 \begin{figure}[!t]
-\begin{center}
+\centering
 \includegraphics[width=0.5\textwidth]{bilder/general_python/cpufact.pdf}
 \caption{Execution times of the \texttt{faas-fact} benchmark in Python. Azure allows only one single memory configuration (1536 MB)}
 \label{fig:general_python_plot}
-\end{center}
+
 \end{figure}
 
 We note few interesting facts.
@@ -150,18 +147,13 @@ Figure~\ref{fig:load_test_latency_all} shows our results for the \texttt{faas-ma
 %Subsequently with 25, 50, 100, 200, 400, 800 and finally 1000 requests per second each time for one minute. 
 %In between is a short break of 10 seconds to allow the function to process requests that are still queued. As test, the matrix function with a parameter of 100 is used. With this setup the matrix function should have an average execution time of about 100ms for Node.js, Go and .NET and around 250ms for Python. The graphic \ref{fig:load_test_latency_all} displays the average latency results grouped by runtime.
 
-\begin{figure}[!t]
-\begin{center}
-%\includegraphics[width=0.83\textwidth]{bilder/plot_average_latency_all.png}
-\begin{tabular}{c c}
-\includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_node.pdf} & \includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_python.pdf} \\
-\includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_go.pdf} & \includegraphics[width=0.25\textwidth]{bilder/loadtest_average_latency/plot_average_latency_dotnet.pdf} \\
-\end{tabular}
-\captionsetup{justification=centering, labelfont=bf}
-\caption[Load test average latency]{Load test average latency. Source: illustration by author}
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.5]{bilder/loadtest_average_latency/tputlat_combined.pdf}
+\caption{Load test average latency.}
 \label{fig:load_test_latency_all}
-\end{center}
-\end{figure}
+
+\end{figure*}
 \vs{STOPPED HERE}
 The results are now discussed step by step. \gls{AWS} has for all four runtimes an extremely steady response latency throughout the increasing load. This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
 On Azure it looks quite different. Azure can handle the load on Windows as operating system. But in the first increasing steps from 10 to 100 or 200 RPS latency rises although it flattens out afterwards. On Linux, Azure performs very bad and can not scale out quickly enough to serve the requests in an acceptable time frame. The response time climbs more or less linearly to the amount of request per second sent. That is a strong indication that none or too few new instances are allocated to handle the load. At the time of 1000 requests per second one could see in the Azure portal Live Metrics Stream that e.g. for .NET only 12 instances have been deployed (see figure \ref{fig:live_metrics_stream}). Additionally the screenshot shows that only 500 requests per second get handled by the function, the rest is probably waiting in a queue.
@@ -170,12 +162,10 @@ In the screenshot the request duration differs from the wrk2 results since that 
 \end{remark}
 
 \begin{figure}[htp]
-\begin{center}
+\centering
 \includegraphics[width=0.5\textwidth]{bilder/Azure_Dotnet_1000.png}
-\captionsetup{justification=centering, labelfont=bf}
 \caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
 \label{fig:live_metrics_stream}
-\end{center}
 \end{figure}
 
 For Node.js and .NET the latencies went up to 24s respectively 18s and are not plotted in the graph for illustration purposes. On Python, Azure returned from 200 \gls{RPS} and above almost only \gls{HTTP} errors and the result of wrk2 is not representative and hence not plotted.\\
