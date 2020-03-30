@@ -1,4 +1,13 @@
 %!TEX root = main.tex
+
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=1.0\textwidth]{bilder/latency/latency.pdf}
+\caption{Latency test scatter plot. At the time of our experiment, \texttt{azure-west-us}  had issues deploying Node.js, hence we resort to \texttt{.NET}.}
+\label{fig:latency_plot}
+\end{figure*}
+
 \section{Evaluation}
 \label{sec:evaluation}
 Rather than presenting an evaluation of the \sys internal components, this section presents the typical evaluation results users can achieve by using \sys.
@@ -12,12 +21,6 @@ and \emph{(3)} which provider provides the most predictable results.
 %
 %In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
 
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=1.0\textwidth]{bilder/latency/latency.pdf}
-\caption{Latency test scatter plot. At the time of our experiment, \texttt{azure-west-us}  had issues deploying Node.js, hence we resort to \texttt{.NET}.}
-\label{fig:latency_plot}
-\end{figure*}
 
 \subsection{Benchmark: Latency}
 In this test, we measure the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
@@ -26,7 +29,7 @@ Unless specified otherwise, we deploy the Node.js version of the test using 128\
 With the exception of \textit{aws-australia-east} \mais{This was Azure not AWS, so should be Azure australiaeast}, we deploy Linux \vs{MAISSEN: version/distribution} \mais{AWS: Amazon Linux 2, Image: Custom, Kernel: 4.14.138-99.102.amzn2.x86\_64; see \url{https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html}} \mais{Azure, Google and IBM do not mention anything about the OS. Unfortunately that did not come to my mind when testing it. I can try to find things out by executing commands like 'uname -a'. Please let me know if I shall do that.}.   
 %The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. 
 Every 5 seconds, a requests was sent to each cloud and region until a sample size of 100 was obtained. 
-Figure~\ref{fig:latency_plot} reports our results. 
+Figure~\ref{fig:latency_plot} reports our results across 39 different configurations. 
 %This test was carried out from Bern, Switzerland.
 %\begin{remarks}
 %\text{ }
@@ -47,8 +50,7 @@ Finally, the best performing cloud provider is Amazon, it has a slightly lower l
 %For more detailed results see table \ref{tab:latency}. 
 %The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
 
-\subsection{Benchmark: Cold/Start}
-\vs{STOPPED HERE}
+\subsection{Benchmark: Cold Start}
 \label{sec:coldstart}
 %This test measured the cold start latency. 
 A cold start happens when a function takes longer than usual to start up and execute. 
