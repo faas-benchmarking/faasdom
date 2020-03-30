@@ -30,12 +30,12 @@ This section describes the supported runtimes and respective programming languag
 %\end{table}
 For the sake of comparisons and fairness of benchmarking, we are interested in runtimes and programming languages supported by multiple cloud providers.  
 Table~\ref{table:programming_languages} highlights the following facts.
-First, we observe that Node.js\vs{REF} is supported by all cloud providers.
+First, we observe that Node.js is supported by all cloud providers.
 We explain this by the fact the peculiar features of the language make it particularly fit for serverless offerings, as well as its popularity among developers and its productivity advantages.
 % \vs{MAISSEN: why is that? is it because it is a cloud-native language? just very popular?} \mais{I can't tell you why. Probably because it is not compiled, package management is relatively simple and it is popular in general for webservers and APIs}. 
-Python is similarly well supported, except by Azure with Windows \gls{OS}. %\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true} \mais{Why not? Every cloud supports at least 1 version so you can generally run your python code on each one. Also 3.6 and 3.7 is mostly supported}.
-Microsoft's \texttt{.NET Core} lacks support from Google \vs{MAISSEN: add missing details, we cannot say$\rightarrow$ and so forth}. 
-In the reminder of this paper, including our evaluation of \sys, we focus our comparison on the top best supported runtimes, namely Node.js, Python, Go and .NET Core. 
+Python is similarly well supported, except by Azure using Windows. %\vs{MAISSEN: from \ref{table:programming_languages}, this seems not to be totally true} \mais{Why not? Every cloud supports at least 1 version so you can generally run your python code on each one. Also 3.6 and 3.7 is mostly supported}.
+Microsoft's \texttt{.NET Core} lacks support from Google. 
+In the reminder of this paper, we focus our comparison on the top best supported runtimes, namely Node.js, Python, Go and .NET Core, briefly introduced next.
 %A brief summary of each runtime will be given in the following subsections.
 
 \textbf{Node.js.}~\cite{tilkov2010node} is a JavaScript runtime built on Chrome's V8 JavaScript engine~\cite{Nodejs}. 
@@ -83,8 +83,8 @@ At the time of this writing, all cloud providers support version 3.7, hence we r
 %\end{table}
 
 
-\textbf{Go}~\cite{GoProject} is a procedural open source programming language developed by a team at Google and other contributors \cite{GoDoc, GoProject}. 
-There is support for two main releases of the language.
+\textbf{Go}~\cite{GoProject,GoProject} is supported by the FaaS providers for two recent releases of the language.
+
 %It is a relatively new language and was first released in March 2012 \cite{GoProject}. 
 %It is compiled and therefore more efficient than interpreted languages and it has good concurrency mechanisms to benefit from today's multi-core architecture \cite{GoDoc}. 
 %Go also has a garbage collector in contrast to C \cite{GoDoc}. 
