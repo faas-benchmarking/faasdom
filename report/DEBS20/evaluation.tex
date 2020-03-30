@@ -2,7 +2,7 @@
 \section{Evaluation}
 \label{sec:evaluation}
 Rather than presenting an evaluation of the \sys internal components, this section presents the typical evaluation results users can achieve by using \sys.
-We carried out these tests between \vs{MAISSEN: insert start date} and \vs{MAISSEN: insert end date}.
+We carried out these tests between January 13th 2020 and February 4th 2020.
 We designed these experiments to answer the following questions: 
 \emph{(1)} what is the most effective programming language to use for serverless applications;
 \emph{(2)} what is the most convenient provider; 
@@ -23,7 +23,7 @@ and \emph{(3)} which provider provides the most predictable results.
 In this test, we measure the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
 %This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. 
 Unless specified otherwise, we deploy the Node.js version of the test using 128\gls{MB}.
-With the exception of \textit{aws-australia-east}, we deploy Linux \vs{MAISSEN: version/distribution}.   
+With the exception of \textit{aws-australia-east} \mais{This was Azure not AWS, so should be Azure australiaeast}, we deploy Linux \vs{MAISSEN: version/distribution} \mais{AWS: Amazon Linux 2, Image: Custom, Kernel: 4.14.138-99.102.amzn2.x86\_64; see \url{https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html}} \mais{Azure, Google and IBM do not mention anything about the OS. Unfortunately that did not come to my mind when testing it. I can try to find things out by executing commands like 'uname -a'. Please let me know if I shall do that.}.   
 %The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. 
 Every 5 seconds, a requests was sent to each cloud and region until a sample size of 100 was obtained. 
 Figure~\ref{fig:latency_plot} reports our results. 
@@ -38,11 +38,11 @@ Figure~\ref{fig:latency_plot} reports our results.
 %\end{itemize}
 %\end{remarks}
 %The graphic \ref{fig:latency_plot} shows a scatter plot with the results of the test.
-\vs{MAISSEN: here we need a short discussion on the results. Something like the following, can you complete ? I'll check afterwards}.
+\vs{MAISSEN: here we need a short discussion on the results. Something like the following, can you complete ? I'll check afterwards}. \mais{OK?}
 We observe the following.
-We achieve the lowest latency on \vs{MAISSEN: FIX}, about \vs{MAISSEN: FIX}, and the highest of \vs{FIX}. 
-The average latency is \vs{MAISSEN: FIX}.
-Finally, the best performing cloud provider is \vs{MAISSEN: FIX, explain}.
+We achieve the lowest latency on AWS Lambda (eu-central-1), about 80 ms, and the highest of Google (asia-east2) with around 1770 ms. 
+The average latency over all clouds and regions is 538 ms.
+Finally, the best performing cloud provider is Amazon, it has a slightly lower latency for the same geographical locations of other providers.
 
 %For more detailed results see table \ref{tab:latency}. 
 %The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
@@ -52,10 +52,10 @@ Finally, the best performing cloud provider is \vs{MAISSEN: FIX, explain}.
 \label{sec:coldstart}
 %This test measured the cold start latency. 
 A cold start happens when a function takes longer than usual to start up and execute. 
-This occurs mostly after the deployment, when the function has not been used in a while\vs{MAISSEN: is it know how long is this period?} or when a new instance needs to be provisioned for scaling purposes. 
-\vs{MAISSEN: can't understand this sentence, can you rephrase? In order for the cloud provider to get up the instance and deploy the specific code on it, some time can pass.} 
+This occurs mostly after the deployment, when the function has not been used in a while\vs{MAISSEN: is it know how long is this period?} \mais{It is normally around 10 minutes of no invocation for an instance, but can also be higher. E.g. Google had an instance up for about 12h before disallocating it.} or when a new instance needs to be provisioned for scaling purposes. 
+\vs{MAISSEN: can't understand this sentence, can you rephrase?} \mais{In order for the cloud provider to prepare the VM instance and deploy the user function code on it, some time can pass.}
 Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as ooposed to the \emph{warm} case, but a similar workflow is valid on the other cloud providers.
-\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?}
+\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?} \mais{This is just exemplary done for Azure. Should be very similar on other clouds. see \url{https://cloud.google.com/functions/docs/bestpractices/tips} , little doc of providers because a 'disadvantage' of serverless}
 
 \begin{figure}[htp]
 \centering
@@ -84,9 +84,9 @@ Using .NET achieves worse results, up to 1739 ms, possibly due to the nature and
 On Azure, cold start latency is strictly more than 2 seconds and up to 5 seconds, with the exception of the combination .NET on Windows, which averages at 1917 ms. 
 Google compares similarly to \gls{AWS}.
 Finally, \gls{IBM} consistenly produces  higher cold start latency, in the 2-3 seconds range. 
-\gls{IBM} shows a similar pattern \vs{MAISSEN: can you clarify? you mean that the ranking of the results wrt to the languages is the same?} as \gls{AWS} although the cold start latency is around 600 ms higher for Node.js, Python and Go but similar for .NET.
+\gls{IBM} shows a similar pattern \vs{MAISSEN: can you clarify? you mean that the ranking of the results wrt to the languages is the same?} \mais{Yes that's what I meant, similar ranking/pattern} as \gls{AWS} although the cold start latency is around 600 ms higher for Node.js, Python and Go but similar for .NET.
 
-\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?}
+\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?} \mais{Recycling meaning in this context deallocating a VM instance of the user and make it available to all users in the cloud's total pool}
 On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for the instance to be recycled by the provider; the same took up to 20 minutes on Azure. 
 On Google, this time varied varied from 10 minutes up to 10 hours.
 
@@ -121,7 +121,7 @@ Figure~\ref{fig:general_python_plot} depicts our result for Python.
 \end{figure}
 
 We note few interesting facts.
-On \gls{AWS} Lambda, the standard deviation is very low (\vs{MAISSEN: how much is the lowest?}), with very consistent execution times. 
+On \gls{AWS} Lambda, the standard deviation is very low (\vs{MAISSEN: how much is the lowest?} \mais{lowest overall is 50 ms for 2048Mb .NET}), with very consistent execution times. 
 As expected, every doubling of the allocated memory achieves halving of the execution time, performance scales linearly to allocated memory~\cite{AWSLambdaConfig}. 
 
 Azure's memory configuration of 1536 \gls{MB} suggests its performance to be in the 1024-2048 \gls{MB} range.
@@ -132,7 +132,7 @@ Note however that the performance scaling behaves differently on the Google plat
 %But not entirely for the next two steps since Google does not scale \gls{CPU} completely linear to allocated memory \cite{GoogleFunctionsPricing}. 
 The resuls we gathered on the \gls{IBM} platform suggests that memory allocation does not correlate with \gls{CPU} allocation in any way, with five different configurations perform very closely. 
 This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Seconds used. 
-\vs{MAISSEN: Is this true for all the languages? These resuls are only for Phython. Do you have the same tests for all the other languges? This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.}
+\vs{MAISSEN: Is this true for all the languages? These resuls are only for Phython. Do you have the same tests for all the other languges? This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.} \mais{Yes this is true for all languages, see {https://github.com/Bschitter/benchmark-suite-serverless-computing/blob/master/results/3-general} files with name scatterplot\_general\_<RUNTIME>.png}
 %The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}.
 
 \subsection{Benchmark: Throughput/Latency}
