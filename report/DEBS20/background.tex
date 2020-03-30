@@ -109,19 +109,20 @@ We only identified Intel-based processors during our experiments.
 %The service is available in seven out of twenty regions~\cite{GoogleFunctionsLocations}.
 
 \begin{table}[!t]
-
-\caption{Google Cloud Functions: Possible memory allocation and corresponding CPU frequency~\cite{GoogleFunctionsPricing}.}
+\small
+\setlength{\tabcolsep}{1pt}
+\caption{Memory/CPU configurations supported by Google Cloud Functions~\cite{GoogleFunctionsPricing}.}
 %\captionsetup[table]{justification=centering, labelfont=bf}
 \centering
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{l|r|r|r|r|r} 
+% \resizebox{\columnwidth}{!}{
+\begin{tabular}{l@{\hskip 3pt}|@{\hskip 3pt}rl@{\hskip 3pt}|@{\hskip 3pt}rl@{\hskip 3pt}|@{\hskip 3pt}rl@{\hskip 3pt}|@{\hskip 3pt}rl@{\hskip 3pt}|@{\hskip 3pt}rl} 
  \hline
-	\textbf{Memory} & 128\,\gls{MB} & 256\,\gls{MB} & 512\,\gls{MB} & 1,024\,\gls{MB} & 2,048\,\gls{MB} \\ 
-	\textbf{CPU} & 200\,\gls{MHz} & 400\,\gls{MHz} & 800\,\gls{MHz} & 1.4\,\gls{GHz} & 2.4\,\gls{GHz} \\
+	\textbf{Memory} & 128&\gls{MB}  & 256&\gls{MB}  & 512&\gls{MB}  & 1,024&\gls{MB}  & 2,048&\gls{MB} \\ 
+	\textbf{CPU}    & 200&\gls{MHz} & 400&\gls{MHz} & 800&\gls{MHz} &   1.4&\gls{GHz} &   2.4&\gls{GHz} \\
 	\hline
 \end{tabular}
 \vspace{-10pt}
-}
+% }
 \label{table:google_functions_cpu_ram}
 \end{table}
 
