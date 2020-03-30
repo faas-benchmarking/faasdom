@@ -1,8 +1,9 @@
 %!TEX root = main.tex
 \section{The \sys Benchmark Suite}\label{sec:tests}
-The \sys benchmark suite currently consists of few tests which differ on the system aspect being stressed.
-While some difference might be needed to comply with the different discrepancies across the cloud providers, the code executed is largely the same for all of them.
-All functions are implemented using an \gls{HTTP} trigger, a common mean supported by all the supported serverless providers.
+The \sys benchmark suite consists of tests targeting different system aspects.
+Each test is implemented in several programming languages, to support the variety of the available runtimes.
+While some difference might be needed to comply with the little discrepancies across cloud providers, the code executed for each programming langauge is largely the same for all of them.
+All functions are implemented using an \gls{HTTP} trigger, as supported by all the serverless providers.
 Currently, \sys includes the followings:
 
 \textbf{\texttt{faas-fact}} and \textbf{\texttt{faas-matrix-mult}}. 
