@@ -26,7 +26,10 @@ and \emph{(3)} which provider provides the most predictable results.
 In this test, we measure the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
 %This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. 
 Unless specified otherwise, we deploy the Node.js version of the test using 128\gls{MB}.
-With the exception of \textit{aws-australia-east} \mais{This was Azure not AWS, so should be Azure australiaeast}, we deploy Linux \vs{MAISSEN: version/distribution} \mais{AWS: Amazon Linux 2, Image: Custom, Kernel: 4.14.138-99.102.amzn2.x86\_64; see \url{https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html}} \mais{Azure, Google and IBM do not mention anything about the OS. Unfortunately that did not come to my mind when testing it. I can try to find things out by executing commands like 'uname -a'. Please let me know if I shall do that.}.   
+Functions are executed in a Linux OS.
+In particular, AWS functions run under a custom kernel 4.14.138-99.102.amzn2.x86\_64.\footnote{\url{https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html}} 
+Host details are not announced by Azure, Google and IBM.
+%\mais{Azure, Google and IBM do not mention anything about the OS. Unfortunately that did not come to my mind when testing it. I can try to find things out by executing commands like 'uname -a'. Please let me know if I shall do that.}.   
 %The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. 
 Every 5 seconds, a requests was sent to each cloud and region until a sample size of 100 was obtained. 
 Figure~\ref{fig:latency_plot} reports our results across 39 different configurations. 
@@ -41,11 +44,12 @@ Figure~\ref{fig:latency_plot} reports our results across 39 different configurat
 %\end{itemize}
 %\end{remarks}
 %The graphic \ref{fig:latency_plot} shows a scatter plot with the results of the test.
-\vs{MAISSEN: here we need a short discussion on the results. Something like the following, can you complete ? I'll check afterwards}. \mais{OK?}
+%\vs{MAISSEN: here we need a short discussion on the results. Something like the following, can you complete ? I'll check afterwards}. %\mais{OK?}
 We observe the following.
-We achieve the lowest latency on AWS Lambda (eu-central-1), about 80 ms, and the highest of Google (asia-east2) with around 1770 ms. 
-The average latency over all clouds and regions is 538 ms.
-Finally, the best performing cloud provider is Amazon, it has a slightly lower latency for the same geographical locations of other providers.
+The average latency over all clouds and regions is 538~ms.
+We achieve the shorted latency on AWS Lambda (\texttt{eu-central-1}),at 80~ms.
+We observed the longest latency  on Google (\texttt{asia-east2}), at 1770~ms. 
+Overall, the best performing cloud provider is Amazon, with slightly lower latency for the same geographical locations of other providers.
 
 %For more detailed results see table \ref{tab:latency}. 
 %The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
