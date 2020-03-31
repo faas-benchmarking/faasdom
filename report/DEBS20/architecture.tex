@@ -156,13 +156,12 @@ Upon cleanup, all deployed Lambda functions are permanently deleted, as well as 
 
 \subsection{Billing Costs Calculator}
 
-The core component embeds a pricing calculator, which can be used to calculate beforehand the cost of executing a certain workload (\ie for a given number of function calls, memory, \etc) on the supported cloud providers. 
-It does so either by setting the corresponding parameters manually or by exploiting results from previous executions.
-
-This component can be used to predict the cost of executing a given benchmark on a specific cloud provider.
-One can provide the executed workload that is going to be injected (\emph{e.g.}, number of invocations, execution time per call, size of the return body and allocated memory).
+The core component embeds a pricing calculator, which can be used to calculate beforehand the cost of executing a certain workload on the supported cloud providers. 
+%It does so either by setting the corresponding parameters manually or by exploiting results from previous executions.
+%This component can be used to predict the cost of executing a given benchmark on a specific cloud provider.
+Developers provide the planned workload (\eg number of function invocations, execution time per call, size of the return body and allocated memory, \etc).
 The \sys prototype produces an overview of the billing costs across the various serverless providers.
-In future work, we envision this module to be able to prospect the costs of a full-fledged serverless application rather than a synthetic or stressful workload.
+In future work, we envision this module to be able to forecast the billing costs even for full-fledged serverless applications, by applying machine-learning techniques to the system traces produced by sampling executions serving real-world workloads.
 %The prices for all clouds will be calculated and displayed in a table. 
 %The functionality is basically the same as the pricing calculators provided by the cloud providers, except here all is in one place and directly comparable.
 %Furthermore, the calculator takes the performed tests into account. 
