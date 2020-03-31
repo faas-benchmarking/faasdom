@@ -496,22 +496,22 @@ Finally, some (important) features are left undocumented, such as the limit of 3
 %\end{itemize}
 %
 
-Table~\ref{tab:summary} recaps our findings.
-\begin{table*}[!t]
-\caption{Summary and comparison of services}
-  \setlength{\tabcolsep}{3pt}
-  \scriptsize
-  \center
-  \rowcolors{1}{gray!10}{gray!0}
-  \begin{tabular}{l|c|c|c|c}
-  \rowcolor{gray!45}
-	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\\hline 
-\textbf{Performance} & very good and consistent & good & good, not consistent for 128MB & good \\ 
-\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ 
-\textbf{Scaling} & very good,  response time does almost not increase & good on Windows, very bad on Linux & generally good, not for Python or longer running functions & not that good,  high spikes are possible \\ 
-\textbf{CLI} & good and stable,  some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ 
-\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ 
-\textbf{General cons} & Not great monitoring on the portal\n the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ 
-\end{tabular}
-    \label{tab:summary}
-\end{table*}
+%Table~\ref{tab:summary} recaps our findings.
+%\begin{table*}[!t]
+%\caption{Summary and comparison of services}
+%  \setlength{\tabcolsep}{3pt}
+%  \scriptsize
+%  \center
+%  \rowcolors{1}{gray!10}{gray!0}
+%  \begin{tabular}{l|c|c|c|c}
+%  \rowcolor{gray!45}
+%	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\\hline 
+%\textbf{Performance} & very good and consistent & good & good, not consistent for 128MB & good \\ 
+%\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ 
+%\textbf{Scaling} & very good,  response time does almost not increase & good on Windows, very bad on Linux & generally good, not for Python or longer running functions & not that good,  high spikes are possible \\ 
+%\textbf{CLI} & good and stable,  some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ 
+%\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ 
+%\textbf{General cons} & Not great monitoring on the portal\n the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ 
+%\end{tabular}
+%    \label{tab:summary}
+%\end{table*}
