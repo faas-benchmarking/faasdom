@@ -187,32 +187,13 @@ Additionally, only 500 requests per second were actually served, leaving a large
 %\label{fig:live_metrics_stream}
 %\end{figure}
 
-For Node.js and .NET, response latencies spike up to 24~s and 18~s respectively. % and are not plotted in the graph for illustration purposes. 
-Using Python, Azure managed to handle up to 200 \gls{RPS}, beyond which none of the requests could be served correctly.
-Google can manage the load generally well, although latency increases a little bit for Node.js and Go. 
-However, Python functions deployed Google suffer from poor performance, in particular at higher request rates. 
-Results suggest poor capacity in adapting quickly to flash-crowd requests, with the average request duration increased from 1356~ms to 18448~ms when increasing the rate from 10 reqs/sec up to 25 reqs/sec \gls{RPS}. 
-%After that, this phenomena happens again but less drastically. 
-%Since functions take on average a longer time to execute in Python, it seems and Google can scale longer running functions less good. %Overall the performance is good. 
-We investigate further this effect. 
-Specifically, Figure~\ref{fig:google_graph_go} shows the number of instances allocated during the load test on Google, suggesting indeed that the the auto-scalability features provided by Google Functions might lead to poor results for a large majority of the requests.
-\vs{this was for Go}
-
-\begin{figure}[!t]
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[!t]
+\scriptsize
 \centering
-\includegraphics[scale=0.7]{bilder/go_instances/go_instances.pdf}
-\caption{Google Go active instances during load test}
-\label{fig:google_graph_go}
-\end{figure}
-
-Lastly, the result of \gls{IBM} will be discussed. Those outcomes differ from the others relatively much. On Node.js and .NET it can roughly keep up to the competition but operates a little slower and on Node.js it has a striking outlier. The Python function on IBM nearly performs as well as on \gls{AWS}, but the same cannot be said about Go. The Go runtime performed much slower in the load test as with the competitors, although as seen in the cold start test in section \ref{sec:coldstart} it has a similar cold start latency as Node.js and Python and as shown in the appendix table \ref{tab:general} it performs generally well on Go. Thus this bad performance cannot be derived from this or other tests and it is possible that IBMs auto scaling mechanism does not work well for Go. Of the amount of instances deployed, IBM delivers no statistics.\\
-So far, the latency has been examined and now the actual throughput will be explained. Most of the cloud providers and runtimes could handle the load and only had an irrelevant smaller throughput than tested against. Therefore only significant impacts in throughput will be presented, meaning that the throughput was less than 90\% of the tested one. The subsequent table \ref{table:rps} shows where throughput was below 90\%.
-In addition, there are detailed result plots (figure \ref{fig:loadtest_percentile_node} - \ref{fig:loadtest_percentile_dotnet}) and tables (table \ref{table:aws_load_test} - \ref{table:ibm_load_test}) in the appendix.
-\begin{table}[htp]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\scalebox{0.93}{\begin{tabular}{l|l|r|r|r} 
-\textbf{Cloud} & \textbf{Runtime} & \textbf{RPS (goal)} & \textbf{RPS (actual)} & \textbf{RPS in \%} \\ \hline
+\caption{Latency: goal/target, results in the long-tail (beyond 90$^{th}$ percentile of the target requests/sec)}
+\begin{tabular}{l|l|r|r|r} 
+\textbf{Cloud} & \textbf{Runtime} & \textbf{Req/s (goal)} & \textbf{Req/s (actual)} & \textbf{Req/s (\%)} \\ \hline
 Azure & Node.js & 200 & 179 & 89.50\% \\ \hline
 Azure & Node.js & 400 & 227 & 56.75\% \\ \hline
 Azure & Node.js & 800 & 278 & 34.75\% \\ \hline
@@ -233,10 +214,46 @@ Google & Python & 200 & 168 & 84.00\% \\ \hline
 Google & Python & 400 & 297 & 74.25\% \\ \hline
 Google & Python & 800 & 575 & 71.88\% \\ \hline
 IBM & Go & 25 &  21 & 84.00\% \\ \hline
-\end{tabular}}
-\caption[Load tests that achieved less than 90\% of RPS]{Load tests that achieved less than 90\% of RPS}
+\end{tabular}
 \label{table:rps}
+\vspace{-15pt}
 \end{table}
+
+For Node.js and .NET, response latencies spike up to 24~s and 18~s respectively. % and are not plotted in the graph for illustration purposes. 
+Using Python, Azure managed to handle up to 200 \gls{RPS}, beyond which none of the requests could be served correctly.
+Google can manage the load generally well, although latency increases a little bit for Node.js and Go. 
+However, Python functions deployed Google suffer from poor performance, in particular at higher request rates. 
+Results suggest poor capacity in adapting quickly to flash-crowd requests, with the average request duration increased from 1356~ms to 18448~ms when increasing the rate from 10 reqs/sec up to 25 reqs/sec \gls{RPS}. 
+%After that, this phenomena happens again but less drastically. 
+%Since functions take on average a longer time to execute in Python, it seems and Google can scale longer running functions less good. %Overall the performance is good. 
+We investigate further (Figure~\ref{fig:google_graph_go}) by analyzing the scaling behaviour for instances running Google Functions.
+The plot shows the number of instances allocated during the load test on Google, suggesting indeed that the the auto-scalability features provided by Google Functions might lead to poor results, as requests start overwhelming.
+\vs{this was for Go}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[scale=0.7]{bilder/go_instances/go_instances.pdf}
+\caption{Google Go: number of active compute instances during the wrk2 load test.}
+\label{fig:google_graph_go}
+\end{figure}
+
+%Finally, we discuss the results obtained using \gls{IBM} Cloud Functions.
+%Lastly, the result of \gls{IBM} will be discussed. 
+%Those outcomes differ from the others relatively much. 
+On \gls{IBM} Cloud Functions, Node.js performs particularly poorly when compared to the other providers, while Python functions perform on par with \gls{AWS}.
+Instead, Go functions achieves far worse than for other providers, despite the cold start results present earlier suggest similar behaviour. 
+We leave to future work to investigate more in depth the reasons of such results on \gls{IBM}.
+%On Node.js and .NET it can roughly keep up to the competition but operates a little slower and on Node.js it has a striking outlier. 
+%The Python function on IBM nearly performs as well as on \gls{AWS}, but the same cannot be said about Go. 
+%The Go runtime performed much slower in the load test as with the competitors, although as seen in the cold start test in section \ref{sec:coldstart} it has a similar cold start latency as Node.js and Python and as shown in the appendix table \ref{tab:general} it performs generally well on Go. 
+%Thus this bad performance cannot be derived from this or other tests and it is possible that IBMs auto scaling mechanism does not work well for Go. 
+%Of the amount of instances deployed, IBM delivers no statistics.
+\vs{MAISSEN: can you confirm I understood correctly the results in table 3?}
+Table~\ref{table:rps} reports for which cases the target throughput (set as target by \texttt{wrk2} was not reached). 
+In particular, we only report the cases for which 90\% of the results were below such target (right-most column).
+%So far, the latency has been examined and now the actual throughput will be explained. Most of the cloud providers and runtimes could handle the load and only had an irrelevant smaller throughput than tested against. Therefore only significant impacts in throughput will be presented, meaning that the throughput was less than 90\% of the tested one. The subsequent table \ref{table:rps} shows where throughput was below 90\%.
+%In addition, there are detailed result plots (figure \ref{fig:loadtest_percentile_node} - \ref{fig:loadtest_percentile_dotnet}) and tables (table \ref{table:aws_load_test} - \ref{table:ibm_load_test}) in the appendix.
+
 
 \subsection{Pricing}
 \label{sec:pricing}
