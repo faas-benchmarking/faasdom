@@ -146,28 +146,32 @@ This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Sec
 %\vs{MAISSEN: Is this true for all the languages? These resuls are only for Phython. Do you have the same tests for all the other languges? This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.} \mais{Yes this is true for all languages, see {https://github.com/Bschitter/benchmark-suite-serverless-computing/blob/master/results/3-general} files with name scatterplot\_general\_<RUNTIME>.png}
 %The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}.
 
+\begin{figure*}[!t]
+\centering
+\includegraphics[scale=0.7]{bilder/loadtest_average_latency/tputlat_combined.pdf}
+\caption{Throughput/Latency benchmark using \texttt{wrk2}~\cite{wrk2} and \sys's  \texttt{faas-matrix-mult} stress function.}
+\label{fig:load_test_latency_all}
+\end{figure*}
+
 \subsection{Benchmark: Throughput/Latency}
 \label{sec:loadtest}
 To understand the saturation point of the deployed services, we rely on \texttt{wrk2}~\cite{wrk2}, a constant throughput/exact latency HTTP-based benchmarking tool.
 We design this benchmark to issue function call invocations at increasingly high request rates, from 10 up to 1000 req/sec.
 For each of the configurations, \texttt{wrk2} reports the average latency to handle the requests (\emph{i.e.}, the functions).
 Between each configuration, the benchmark waits for sufficient time to process potential pending requests in the queue.
-Figure~\ref{fig:load_test_latency_all} shows our results for the \texttt{faas-matrix-mult} test function.
+Figure~\ref{fig:load_test_latency_all} shows our results for the \texttt{faas-matrix-mult} test function and the 4 different programming languages under test.
 %The load test is designed to benchmark the serverless functions up to 1000 requests per second. 
 %This is carried out with the \gls{HTTP} benchmark tool \textit{wrk2} (see \cite{wrk2}). A function is first called with 10 requests per second for the duration of 1 minute. 
 %Subsequently with 25, 50, 100, 200, 400, 800 and finally 1000 requests per second each time for one minute. 
 %In between is a short break of 10 seconds to allow the function to process requests that are still queued. As test, the matrix function with a parameter of 100 is used. With this setup the matrix function should have an average execution time of about 100ms for Node.js, Go and .NET and around 250ms for Python. The graphic \ref{fig:load_test_latency_all} displays the average latency results grouped by runtime.
+%The results are now discussed step by step. 
 
-\begin{figure*}[!t]
-\centering
-\includegraphics[scale=0.7]{bilder/loadtest_average_latency/tputlat_combined.pdf}
-\caption{Load test average latency.}
-\label{fig:load_test_latency_all}
-
-\end{figure*}
-\vs{STOPPED HERE}
-The results are now discussed step by step. \gls{AWS} has for all four runtimes an extremely steady response latency throughout the increasing load. This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
-On Azure it looks quite different. Azure can handle the load on Windows as operating system. But in the first increasing steps from 10 to 100 or 200 RPS latency rises although it flattens out afterwards. On Linux, Azure performs very bad and can not scale out quickly enough to serve the requests in an acceptable time frame. The response time climbs more or less linearly to the amount of request per second sent. That is a strong indication that none or too few new instances are allocated to handle the load. At the time of 1000 requests per second one could see in the Azure portal Live Metrics Stream that e.g. for .NET only 12 instances have been deployed (see figure \ref{fig:live_metrics_stream}). Additionally the screenshot shows that only 500 requests per second get handled by the function, the rest is probably waiting in a queue.
+We observe \gls{AWS} achieves stable response latencies for all the tested workloads. 
+%This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
+Azure has surpring results. 
+When using Windows OS, Azure can tolerate high loads the load on Windows as operating system. 
+But in the first increasing steps from 10 to 100 or 200 RPS latency rises although it flattens out afterwards. 
+On Linux, Azure performs very bad and can not scale out quickly enough to serve the requests in an acceptable time frame. The response time climbs more or less linearly to the amount of request per second sent. That is a strong indication that none or too few new instances are allocated to handle the load. At the time of 1000 requests per second one could see in the Azure portal Live Metrics Stream that e.g. for .NET only 12 instances have been deployed (see figure \ref{fig:live_metrics_stream}). Additionally the screenshot shows that only 500 requests per second get handled by the function, the rest is probably waiting in a queue.
 \begin{remark}
 In the screenshot the request duration differs from the wrk2 results since that is most likely only considering execution time without queuing time.
 \end{remark}
