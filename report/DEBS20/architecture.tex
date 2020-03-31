@@ -92,7 +92,7 @@ The \sys architecture allows developers to ship runtime images, fo instance used
 \subsection{Deployment}
 %This section will describe the deployment process of the tests.
 Once the main application has started, the client can deploy the desired tests, for instance via the web-based interface shown in Figure~\ref{fig:ui}.
-Functions can be parametrized with memory allocated per single execution, timeouts, which serverless providers to use for the benchmarks, which runtime version to use, and into which geographical regions (as supported by the cloud provider) to deploy the tests. 
+Functions can be parametrized with memory allocated \mais{per single execution, to each instance not each execution}, timeouts, which serverless providers to use for the benchmarks, which runtime version to use, and into which geographical regions (as supported by the cloud provider) to deploy the tests. 
 %\begin{itemize}
 %    \item \textbf{Test:} a unique identifier for the test to execute to deploy;
 %    \item \textbf{Memory:} The amount of memory to allocate per function.\footnote{Azure assignmes memory dynamically, up to 1536 \gls{MB} per function}
@@ -147,7 +147,7 @@ Additional tools are easy to integrate by providing a Docker container and a sim
 %After the test has completed results will be parsed and inserted into the database and can be viewed as a table in Grafana. Figure \ref{fig:benchmark_table} shows an excerpt of a result.
 
 \subsection{Cleanup}
-Upon cleanup, all deployed Lambda functions are permanently deleted, as well as all the configurations and resource groups created at deployment time. % and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
+Upon cleanup, all deployed Lambda \mais{omit Lambda or use serverless} functions are permanently deleted, as well as all the configurations and resource groups created at deployment time. % and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
 %It should therefore be used very carefully and ideally with separate accounts only for this purpose.
 
 
