@@ -59,7 +59,7 @@ Overall, the best performing cloud provider is Amazon, with slightly lower laten
 %This test measured the cold start latency. 
 A cold start happens when a function takes longer than usual to start up and execute. 
 This occurs mostly after the deployment, when the function has not been used in a while, \eg after 10 minutes without invocations.
-However, we observed longer timings, for instance on Google, with up to 12 hours before de-allocating the instance.  
+However, we observed longer timings, for instance on Google, with up to 10 hours before de-allocating the instance. \mais{I don't understand the previous sentence.}
 A function can also be de-allocated when a new instance needs to be provisioned for scaling purposes. 
 %\vs{MAISSEN: can't understand this sentence, can you rephrase?} \mais{In order for the cloud provider to prepare the VM instance and deploy the user function code on it, some time can pass.}
 Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as opposed to the \emph{warm} case, but a similar workflow is valid on the other cloud providers.
@@ -73,9 +73,9 @@ Note that, while we evalute and report results on Azure, we expect similar resul
 \label{fig:azure_coldstart}
 \end{figure}
 
-There are several steps to perform before a function can execute: allocate a server, setup a workier with the associated code, packages and extensions, load the function in memory, and finally run it.
+There are several steps to perform before a function can execute: allocate a server, setup a worker with the associated code, packages and extensions, load the function in memory, and finally run it.
 These steps contribute clearly to the cold start effect that we observe in our results.
-Instead, when the function is warm, the function is ready in memory	1 and can just be invoked immediately. 
+Instead, when the function is warm, the function is ready in memory and can just be invoked immediately. 
 
 We execute each test ten times for each runtime and each cloud. 
 Functions are executed using 512 \gls{MB} and without external packages, to reduce the baseline memory footprint (and the corresponding loading time) to the bare minimum.
@@ -92,13 +92,13 @@ Figure~\ref{fig:coldstart_plot} reports our results using a box-and-whiskers plo
 It stands out that \gls{AWS} is overall the fastest, with an average cold start latency of only 335~ms for Node.js, Python and Go. 
 Using .NET achieves worse results, up to 1739~ms, possibly due to the nature and compilation of .NET respectively C\#. 
 On Azure, cold start latency is strictly more than 2 seconds and up to 5 seconds, with the exception of the combination .NET on Windows, which averages at 1917~ms. 
-Google compares similarly to \gls{AWS}.
-Finally, \gls{IBM} consistenly produces  higher cold start latency, in the 2-3 seconds range. 
+Google compares similarly to \gls{AWS} \mais{You mean IBM to AWS, right?}.
+Finally, \gls{IBM} \mais{Here should be Google?} consistenly produces  higher cold start latency, in the 2-3 seconds range. 
 \gls{IBM} shows a similar behaviour across the spectrum of supported languages as \gls{AWS},  although the cold start latency is around 600~ms higher for Node.js, Python and Go but similar for .NET.
 
 %\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?} \mais{Recycling meaning in this context deallocating a VM instance of the user and make it available to all users in the cloud's total pool}
 On \gls{AWS} and \gls{IBM}, it took usually around 10 minutes of no activity for the computing instance to be recycled by the provider and re-inserted into the pool of available ones, and up to 20 minutes on Azure. 
-On Google, this time varied varied from 10 minutes up to 10 hours.
+On Google, this time varied varied from 10 minutes up to 10 hours. \mais{I said to you 12 hours as mentioned previously in this section. I meant also 10. I corrected this, you can remove this comment.}
 
 \begin{figure}[!t]
 \centering
@@ -149,7 +149,8 @@ This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Sec
 \begin{figure*}[!t]
 \centering
 \includegraphics[scale=0.7]{bilder/loadtest_average_latency/tputlat_combined.pdf}
-\caption{Throughput/Latency benchmark using \texttt{wrk2}~\cite{wrk2} and \sys's  \texttt{faas-matrix-mult} stress function.}
+\caption{Throughput/Latency benchmark using \texttt{wrk2}~\cite{wrk2} and \sys's  \texttt{faas-matrix-mult} stress function.
+\mais{Something's wrong. Did you intentially not plot Azure Windows for Node.js and .NET? Further, the .NET plot is wrong: AWS not plotted, Azure (Linux) has the color of AWS}}
 \label{fig:load_test_latency_all}
 \end{figure*}
 
@@ -248,8 +249,8 @@ We leave to future work to investigate more in depth the reasons of such results
 %The Go runtime performed much slower in the load test as with the competitors, although as seen in the cold start test in section \ref{sec:coldstart} it has a similar cold start latency as Node.js and Python and as shown in the appendix table \ref{tab:general} it performs generally well on Go. 
 %Thus this bad performance cannot be derived from this or other tests and it is possible that IBMs auto scaling mechanism does not work well for Go. 
 %Of the amount of instances deployed, IBM delivers no statistics.
-\vs{MAISSEN: can you confirm I understood correctly the results in table 3?}
-Table~\ref{table:rps} reports for which cases the target throughput (set as target by \texttt{wrk2} was not reached). 
+\vs{MAISSEN: can you confirm I understood correctly the results in table 3?} \mais{Yes I think so, but bad wording for the last sentence. ->  In particular, we only report the cases which achieved 90\% and below of the target throughput (right-most column).}
+Table~\ref{table:rps} reports for which cases the target throughput (set as target by \texttt{wrk2}) was not reached. 
 In particular, we only report the cases for which 90\% of the results were below such target (right-most column).
 %So far, the latency has been examined and now the actual throughput will be explained. Most of the cloud providers and runtimes could handle the load and only had an irrelevant smaller throughput than tested against. Therefore only significant impacts in throughput will be presented, meaning that the throughput was less than 90\% of the tested one. The subsequent table \ref{table:rps} shows where throughput was below 90\%.
 %In addition, there are detailed result plots (figure \ref{fig:loadtest_percentile_node} - \ref{fig:loadtest_percentile_dotnet}) and tables (table \ref{table:aws_load_test} - \ref{table:ibm_load_test}) in the appendix.
@@ -387,7 +388,7 @@ In particular, we use it to evaluate the cost of the CPU-bound benchmarks~\ref{s
 %\subsection*{Example 2}
 %This example takes the result of the \gls{CPU} factors test of section \ref{sec:general_test} as a basis. 
 \textbf{Assumptions.} We assume a Python runtime, and 10M function calls/months.
-Let's also assume 10 million function calls are invoked per month. 
+Let's also assume 10 million function calls are invoked per month. \mais{Repetitve: 2x 10 m calls}
 Similarly, the allowed memory is set to 100~\gls{MB} function, and a return payload of 4~KB per call.
 %With the fixed parameter of $26'888'346'474'443$ the function should not consume more than 100 \gls{MB} of memory. 
 %Its return size is around 4 KB per call. 
@@ -395,12 +396,12 @@ Similarly, the allowed memory is set to 100~\gls{MB} function, and a return payl
 We note that Azure supposedly charges the GB-Seconds the function actually used, rounded up to the next 128 \gls{MB} step \cite{AzurePricing}. 
 It seems therefore that the pricing model of Azure is similar to the one of \gls{IBM}, delivering the same performance independent of memory size.
 %Doing the equivalent calculations as in example 1, the following results are obtained as shown in table \ref{table:example2}.
-Table~\ref{table:example2} shows the costs computed by \sys.\vs{MAISSEN: how much do they differ from the real costs - those actually charged? do we know?}
+Table~\ref{table:example2} shows the costs computed by \sys.\vs{MAISSEN: how much do they differ from the real costs - those actually charged? do we know?} \mais{No I don't know. Free tier and the low quantity did not allow to calculate that exactly. This is just an approximation.}
 We observe that \gls{AWS} is particularly accurate: for every doubling of memory, execution time halves, keeping the costs constant.
 Despite not being the cheapest option, it remains the most predictable one. 
 %Azure is the cheapest provider: with th
 %\gls{AWS} is an exemplar in showing how the pricing works. Since with each doubling of memory execution time halves the price is exactly the same because also the GB-Seconds remain the same. But with 170\$ to 200\$ it is not the cheapest in the list.\\
-Azure strikes out to be very cheap. Since this example function application only uses 100 \gls{MB} Azure also only charges for 128 \gls{MB}.  \vs{MAISSEN: why only 1 row of results for Azure ? }
+Azure strikes out to be very cheap. Since this example function application only uses 100 \gls{MB} Azure also only charges for 128 \gls{MB}.  \vs{MAISSEN: why only 1 row of results for Azure ? } \mais{Because memory is allocated and billed dynamically up to the needed next 128MB step. In this example the functions uses only 100 MB (because it is CPU bound) and Azure bills 128MB. Clear?}
 %However the actual metrics of how much memory was used does not exist for Linux and is only depicted in a graph for Windows. But in the case this test is correct the cost-performance ratio is very good for low memory applications.\\
 The costs of deploying Google Functions follows closely those of \gls{AWS}, especially for mid-range configurations.
 For the least- and most-expensive configurations, AWS reveals to be not the best trade-off in terms of cost/performance.
