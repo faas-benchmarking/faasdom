@@ -191,7 +191,7 @@ Additionally, only 500 requests per second were actually served, leaving a large
 \begin{table}[!t]
 \scriptsize
 \centering
-\caption{Latency: goal/target, results in the long-tail (beyond 90$^{th}$ percentile of the target requests/sec)}
+\caption{Latency: goal/target, results in the long-tail (below 90\% of the target requests/sec)}
 \begin{tabular}{l|l|r|r|r} 
 \textbf{Cloud} & \textbf{Runtime} & \textbf{Req/s (goal)} & \textbf{Req/s (actual)} & \textbf{Req/s (\%)} \\ \hline
 Azure & Node.js & 200 & 179 & 89.50\% \\ \hline
@@ -254,91 +254,159 @@ In particular, we only report the cases for which 90\% of the results were below
 %So far, the latency has been examined and now the actual throughput will be explained. Most of the cloud providers and runtimes could handle the load and only had an irrelevant smaller throughput than tested against. Therefore only significant impacts in throughput will be presented, meaning that the throughput was less than 90\% of the tested one. The subsequent table \ref{table:rps} shows where throughput was below 90\%.
 %In addition, there are detailed result plots (figure \ref{fig:loadtest_percentile_node} - \ref{fig:loadtest_percentile_dotnet}) and tables (table \ref{table:aws_load_test} - \ref{table:ibm_load_test}) in the appendix.
 
+%\begin{table}[!t]
+%\centering
+%\scriptsize
+%\setlength{\tabcolsep}{3pt}
+%\caption[Pricing example regarding test results]{Pricing example regarding test results}
+%\begin{tabular}{l|c|c|c|c|c|c} 
+%     &   \textbf{Rounded time}  & \textbf{Invocation} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{Network} & \textbf{Total} \\ \hline
+%AWS  128MB      & 8000~ms &  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+%AWS  256MB      & 4000~ms &  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+%AWS  512MB      & 2000~ms &  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+%AWS 1024MB      & 1000~ms &  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
+%AWS 2048MB      &  600~ms &  2.00\$  &  200.00\$     &  -        & 3.43\$ & 205.43\$ \\ \hline
+%Azure 128MB     & 1267~ms &  2.00\$  &   25.34\$     &  -        & 3.32\$ &  30.66\$ \\ \hline
+%Google  128MB   & 7700~ms &  4.00\$  &   24.06\$     &  154.00\$ & 4.58\$ & 186.64\$ \\ \hline
+%Google  256MB   & 3200~ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
+%Google  512MB   & 1600~ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
+%Google 1024MB   &  900~ms &  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\ \hline
+%Google 2048MB   &  800~ms &  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\ \hline
+%IBM  128MB      &  700~ms &  -       &   14.88\$     &  -        & -      &  14.88\$ \\ \hline
+%IBM  256MB      &  600~ms &  -       &   25.50\$     &  -        & -      &  25.50\$ \\ \hline
+%IBM  512MB      &  600~ms &  -       &   51.00\$     &  -        & -      &  51.00\$ \\ \hline
+%IBM 1024MB      &  600~ms &  -       &  102.00\$     &  -        & -      &  102.00\$ \\ \hline
+%IBM 2048MB      &  700~ms &  -       &  238.00\$     &  -        & -      &  238.00\$ \\ \hline
+%\end{tabular}
+%\label{table:example2}
+%\end{table}
+
+\begin{table}[!t]
+    \caption{Pricing calculation: cost of the CPU-bound benchmarks computed by \sys according to the pricing models of each cloud.
+    \label{table:example2}}
+    \setlength{\tabcolsep}{3pt}
+  \scriptsize
+  \center
+  \rowcolors{1}{gray!10}{gray!0}
+  \begin{tabular}{l|c|c|c|c|c|c}
+  \rowcolor{gray!45}
+  \textbf{Memory} & \textbf{Exec. time}  & \textbf{Invocation} & \textbf{GB/sec} & \textbf{GHz/sec} & \textbf{BW} & \textbf{Total} \\
+    \hline
+  \rowcolor{gray!25}
+    AWS  & & & & & &\\
+    128~MB & 8000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
+    256~MB & 4000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
+    512~MB & 2000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
+	1~GB   & 1000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
+	2GB~MB &  600~ms &  2.00\$  &  200.00\$  &  - & 3.43\$ & 205.43\$ \\
+    \hline
+  \rowcolor{gray!25}
+    Azure  & & & & & &\\
+    128~MB & 1267~ms &  2.00\$  &   25.34\$     &  -        & 3.32\$ &  30.66\$ \\
+    \hline
+  \rowcolor{gray!25}
+    Google  & & & & & &\\
+    128~MB & 7700~ms &  4.00\$  &   24.06\$     &  154.00\$ & 4.58\$ & 186.64\$ \\
+    256~MB & 3200~ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
+    512~MB & 1600~ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
+	1~GB   &  900~ms &  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\
+	2GB~MB &  800~ms &  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\
+    \hline
+  \rowcolor{gray!25}
+    IBM & & & & & &\\
+    128~MB & 700~ms &  -       &   14.88\$     &  -        & -      &  14.88\$\\
+    256~MB & 600~ms &  -       &   25.50\$     &  -        & -      &  25.50\$\\ 
+    512~MB & 600~ms &  -       &   51.00\$     &  -        & -      &  51.00\$\\ 
+	1~GB   & 600~ms &  -       &  102.00\$     &  -        & -      &  102.00\$\\
+	2~GB   & 700~ms &  -       &  238.00\$     &  -        & -      &  238.00\$\\
+    \hline
+  \end{tabular}
+%\vspace{-10pt}
+\end{table}
 
 \subsection{Pricing}
 \label{sec:pricing}
-In this section two pricing examples will be calculated and explained. The first one will be theoretical and the second one will be based on the general test in section \ref{sec:general_test}. Table \ref{table:pricing} shows the prices per unit for each cloud. Prices on \gls{AWS} and Azure can vary depending on the location. The table and the examples use the prices of the region \texttt{eu-central1} for \gls{AWS} and \texttt{westeurope} for Azure. All clouds round up GB-Seconds and GHz-Seconds up to the next 100ms per invocation, except for Azure which rounds it up to the next 1ms.
+We conclude our evaluation to showcase one possible usage of \sys's billing calculator (\S\ref{ssec:billingcalc}).
+In particular, we use it to evaluate the cost of the CPU-bound benchmarks~\ref{sec:general_test} if executed across all the serverless providers.
 
-\begin{table}[htp]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\begin{tabular}{l|l|l|l|l} 
-         & \textbf{per invocation} & \textbf{per GB-Second} & \textbf{per GHz-Second} & \textbf{per GB network egress} \\ \hline
-\textbf{AWS}      &  0.0000002  &  0.000016667 &  -       & 0.09 \\ \hline
-\textbf{Azure}    &  0.0000002  &  0.000016    &  -       & 0.087 \\ \hline
-\textbf{Google}   &  0.0000004  &  0.0000025   &  0.00001 & 0.12 \\ \hline
-\textbf{IBM}      &  -          &  0.000017    &  -       & - \\
-\end{tabular}
-\caption[Serverless functions pricing]{Serverless functions pricing, all prices in USD as of 22.01.2020\\ Data source: \cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
-\label{table:pricing}
-\end{table}
-
-As one can see Google seems to be to have the most sophisticated pricing model of all. Charging exactly for not only the GB-Seconds used but also the GHz-Seconds. The pricing model of \gls{AWS} and Azure are very similar and the one of \gls{IBM} only takes into account GB-Seconds and they are not significantly more expensive.\\
-All of the cloud have a certain free tier quantity which is included per month. Table \ref{table:free_tier} lists the free quantities. Network egress free tier is shared with all network egress of the cloud. Free tier is not considered in the following two examples.
-
-\begin{table}[htp]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\begin{tabular}{l|l|l|l|l} 
-         & \textbf{Invocations} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{GB network egress} \\ \hline
-\textbf{AWS}      &  1'000'000  &  400'000     &  -       & 1 \\ \hline
-\textbf{Azure}    &  1'000'000  &  400'000     &  -       & 5 \\ \hline
-\textbf{Google}   &  2'000'000  &  400'000     &  200'000 & 5 \\ \hline
-\textbf{IBM}      &  -          &  400'000     &  -       & - \\
-\end{tabular}
-\caption[Serverless functions free tier]{Serverless functions free tier as of 22.01.2020\\Data source: \cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
-\label{table:free_tier}
-\end{table}
-
-\subsection*{Example 1}
-Let's assume a company has a custom application for image processing written in Python. It does some modifications to the image and then saves the result in a storage solution of the correspondent cloud. Each month around 10 million images are processed. This task is not time critical but should be cost efficient. On a developers desktop computer the task takes around 5 seconds to complete and uses up to 450 \gls{MB} of memory. On a cloud platform a similar result is expected. In this example there is no network egress.
-\subsubsection*{Calculation}
-\begin{align*}
-\text{\textbf{Cloud}}&: \text{\textbf{Invocations}} &+\quad& \text{\textbf{GB-Seconds}} &+\quad& \text{\textbf{GHz-Seconds}} &=\quad& \text{\textbf{Cost}} \\
-\text{AWS}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016667 \$ & & &=\quad& 418.675 \$ \\ 
-\text{Azure}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016 \$ & & &=\quad& 402.000 \$ \\
-\text{Google}&: 10\text{M} \cdot 0.0000004 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.0000025 \$ &+\quad&  10\text{M} \cdot 0.8 \cdot 5 \cdot 0.00001 \$ &=\quad& 466.500 \$ \\
-\text{IBM}&:  &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000017 \$ & & &=\quad& 425.000 \$ \\ 
-\end{align*}
-
-As one can see the cheapest in this case would be Azure, followed by \gls{AWS}, \gls{IBM} and finally Google as the most expensive. With that amount of invocations and execution time all clouds are comparable.\\
-Now the problem with this calculation is that it only assumes the execution times on the clouds which is the most essential part of the pricing calculation. Some clouds may perform much better than others. Example 2 will take actual execution time into consideration.
-\subsection*{Example 2}
-This example takes the result of the \gls{CPU} factors test of section \ref{sec:general_test} as a basis. This test is also in the runtime Python. Let's also assume 10 million function calls are invoked per month. With the fixed parameter of $26'888'346'474'443$ the function should not consume more than 100 \gls{MB} of memory. Its return size is around 4 KB per call. As execution times we take the average (rounded up to 100ms if applicable) of the result.
-\begin{remark}
-Azure claims that it only charges the GB-Seconds the function actually used, rounded up to the next 128 \gls{MB} step \cite{AzurePricing}. It seems therefore that the pricing model of Azure is similar to the one of \gls{IBM}, delivering the same performance independent of memory size.
-\end{remark}
-Doing the equivalent calculations as in example 1, the following results are obtained as shown in table \ref{table:example2}.
-
-\begin{table}[htp]
-\centering
-\captionsetup[table]{justification=centering, labelfont=bf}
-\begin{tabular}{|l|r|r|r|r|r|r|} \hline
-     &   \textbf{Rounded time}  & \textbf{Invocation} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{Network} & \textbf{Total} \\ \hline
-AWS  128MB      & 8000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
-AWS  256MB      & 4000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
-AWS  512MB      & 2000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
-AWS 1024MB      & 1000ms&  2.00\$  &  166.67\$     &  -        & 3.43\$ & 172.10\$ \\ \hline
-AWS 2048MB      &  600ms&  2.00\$  &  200.00\$     &  -        & 3.43\$ & 205.43\$ \\ \hline
-Azure 128MB     & 1267ms&  2.00\$  &   25.34\$     &  -        & 3.32\$ &  30.66\$ \\ \hline
-Google  128MB   & 7700ms&  4.00\$  &   24.06\$     &  154.00\$ & 4.58\$ & 186.64\$ \\ \hline
-Google  256MB   & 3200ms&  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
-Google  512MB   & 1600ms&  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\ \hline
-Google 1024MB   &  900ms&  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\ \hline
-Google 2048MB   &  800ms&  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\ \hline
-IBM  128MB      &  700ms&  -       &   14.88\$     &  -        & -      &  14.88\$ \\ \hline
-IBM  256MB      &  600ms&  -       &   25.50\$     &  -        & -      &  25.50\$ \\ \hline
-IBM  512MB      &  600ms&  -       &   51.00\$     &  -        & -      &  51.00\$ \\ \hline
-IBM 1024MB      &  600ms&  -       &  102.00\$     &  -        & -      &  102.00\$ \\ \hline
-IBM 2048MB      &  700ms&  -       &  238.00\$     &  -        & -      &  238.00\$ \\ \hline
-\end{tabular}
-\caption[Pricing example regarding test results]{Pricing example regarding test results}
-\label{table:example2}
-\end{table}
-\gls{AWS} is an exemplar in showing how the pricing works. Since with each doubling of memory execution time halves the price is exactly the same because also the GB-Seconds remain the same. But with 170\$ to 200\$ it is not the cheapest in the list.\\
-Azure strikes out to be very cheap. Since this example function application only uses 100 \gls{MB} Azure also only charges for 128 \gls{MB}. However the actual metrics of how much memory was used does not exist for Linux and is only depicted in a graph for Windows. But in the case this test is correct the cost-performance ratio is very good for low memory applications.\\
-Google generally conforms with the pricing results of \gls{AWS}. It positions itself in the same price region although it climbs in costs at 128 \gls{MB} and 2048 \gls{MB}. This can be traced back to the fact that it performed inconsistent and relatively seen slower for 128 MB, and for 2048 MB not much performance was gained. Therefore these two options are more expensive.\\
-IBM leans on Azure's method of calculating prices. It only charges for the defined and allocated GB-Seconds, but performs basically always the same. Hence, it gets approximately linearly more expensive with more memory allocation.
+%In this section two pricing examples will be calculated and explained. 
+%The first one will be theoretical and the second one will be based on the general test in section \ref{sec:general_test}. Table \ref{table:pricing} shows the prices per unit for each cloud. 
+%Prices on \gls{AWS} and Azure can vary depending on the location. 
+%The table and the examples use the prices of the region \texttt{eu-central1} for \gls{AWS} and \texttt{westeurope} for Azure. 
+%All clouds round up GB-Seconds and GHz-Seconds up to the next 100ms per invocation, except for Azure which rounds it up to the next 1ms.
+%\renewcommand{\arraystretch}{1.2}
+%\begin{table}[!tp]
+%\scriptsize	
+%\centering
+%\begin{tabular}{l|c|c|c|c} 
+%         & \textbf{per invocation} & \textbf{per GB-Second} & \textbf{per GHz-Second} & \textbf{per GB network egress} \\ \hline
+%\textbf{AWS}      &  0.0000002  &  0.000016667 &  -       & 0.09 \\ \hline
+%\textbf{Azure}    &  0.0000002  &  0.000016    &  -       & 0.087 \\ \hline
+%\textbf{Google}   &  0.0000004  &  0.0000025   &  0.00001 & 0.12 \\ \hline
+%\textbf{IBM}      &  -          &  0.000017    &  -       & - \\
+%\end{tabular}
+%\caption{Serverless functions pricing, all prices in USD as of 22.01.2020~\cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
+%\label{table:pricing}
+%\end{table}
+%
+%As one can see Google seems to be to have the most sophisticated pricing model of all. 
+%Charging exactly for not only the GB-Seconds used but also the GHz-Seconds. 
+%The pricing model of \gls{AWS} and Azure are very similar and the one of \gls{IBM} only takes into account GB-Seconds and they are not significantly more expensive.
+%All of the cloud have a certain free tier quantity which is included per month. 
+%Table \ref{table:free_tier} lists the free quantities. 
+%Network egress free tier is shared with all network egress of the cloud. 
+%Free tier is not considered in the following two examples.
+%
+%\begin{table}[htp]
+%\centering
+%\captionsetup[table]{justification=centering, labelfont=bf}
+%\begin{tabular}{l|l|l|l|l} 
+%         & \textbf{Invocations} & \textbf{GB-Seconds} & \textbf{GHz-Seconds} & \textbf{GB network egress} \\ \hline
+%\textbf{AWS}      &  1'000'000  &  400'000     &  -       & 1 \\ \hline
+%\textbf{Azure}    &  1'000'000  &  400'000     &  -       & 5 \\ \hline
+%\textbf{Google}   &  2'000'000  &  400'000     &  200'000 & 5 \\ \hline
+%\textbf{IBM}      &  -          &  400'000     &  -       & - \\
+%\end{tabular}
+%\caption[Serverless functions free tier]{Serverless functions free tier as of 22.01.2020\\Data source: \cite{AWSPricing, AzurePricing, GoogleFunctionsPricing,IBMPricing}}
+%\label{table:free_tier}
+%\end{table}
+%
+%\subsection*{Example 1}
+%Let's assume a company has a custom application for image processing written in Python. It does some modifications to the image and then saves the result in a storage solution of the correspondent cloud. Each month around 10 million images are processed. This task is not time critical but should be cost efficient. On a developers desktop computer the task takes around 5 seconds to complete and uses up to 450 \gls{MB} of memory. On a cloud platform a similar result is expected. In this example there is no network egress.
+%\subsubsection*{Calculation}
+%\begin{align*}
+%\text{\textbf{Cloud}}&: \text{\textbf{Invocations}} &+\quad& \text{\textbf{GB-Seconds}} &+\quad& \text{\textbf{GHz-Seconds}} &=\quad& \text{\textbf{Cost}} \\
+%\text{AWS}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016667 \$ & & &=\quad& 418.675 \$ \\ 
+%\text{Azure}&: 10\text{M} \cdot 0.0000002 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000016 \$ & & &=\quad& 402.000 \$ \\
+%\text{Google}&: 10\text{M} \cdot 0.0000004 \$ &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.0000025 \$ &+\quad&  10\text{M} \cdot 0.8 \cdot 5 \cdot 0.00001 \$ &=\quad& 466.500 \$ \\
+%\text{IBM}&:  &+\quad& 10\text{M} \cdot 0.5 \cdot 5 \cdot 0.000017 \$ & & &=\quad& 425.000 \$ \\ 
+%\end{align*}
+%
+%As one can see the cheapest in this case would be Azure, followed by \gls{AWS}, \gls{IBM} and finally Google as the most expensive. With that amount of invocations and execution time all clouds are comparable.\\
+%Now the problem with this calculation is that it only assumes the execution times on the clouds which is the most essential part of the pricing calculation. Some clouds may perform much better than others. Example 2 will take actual execution time into consideration.
+%\subsection*{Example 2}
+%This example takes the result of the \gls{CPU} factors test of section \ref{sec:general_test} as a basis. 
+\textbf{Assumptions.} We assume a Python runtime, and 10M function calls/months.
+Let's also assume 10 million function calls are invoked per month. 
+Similarly, the allowed memory is set to 100~\gls{MB} function, and a return payload of 4~KB per call.
+%With the fixed parameter of $26'888'346'474'443$ the function should not consume more than 100 \gls{MB} of memory. 
+%Its return size is around 4 KB per call. 
+%As execution times we take the average (rounded up to 100~ms if applicable) of the result.
+We note that Azure supposedly charges the GB-Seconds the function actually used, rounded up to the next 128 \gls{MB} step \cite{AzurePricing}. 
+It seems therefore that the pricing model of Azure is similar to the one of \gls{IBM}, delivering the same performance independent of memory size.
+%Doing the equivalent calculations as in example 1, the following results are obtained as shown in table \ref{table:example2}.
+Table~\ref{table:example2} shows the costs computed by \sys.\vs{MAISSEN: how much do they differ from the real costs - those actually charged? do we know?}
+We observe that \gls{AWS} is particularly accurate: for every doubling of memory, execution time halves, keeping the costs constant.
+Despite not being the cheapest option, it remains the most predictable one. 
+%Azure is the cheapest provider: with th
+%\gls{AWS} is an exemplar in showing how the pricing works. Since with each doubling of memory execution time halves the price is exactly the same because also the GB-Seconds remain the same. But with 170\$ to 200\$ it is not the cheapest in the list.\\
+Azure strikes out to be very cheap. Since this example function application only uses 100 \gls{MB} Azure also only charges for 128 \gls{MB}.  \vs{MAISSEN: why only 1 row of results for Azure ? }
+%However the actual metrics of how much memory was used does not exist for Linux and is only depicted in a graph for Windows. But in the case this test is correct the cost-performance ratio is very good for low memory applications.\\
+The costs of deploying Google Functions follows closely those of \gls{AWS}, especially for mid-range configurations.
+For the least- and most-expensive configurations, AWS reveals to be not the best trade-off in terms of cost/performance.
+Finally, IBM's billing method let this provider to offer predictable costs, roughly linearly dependant from the chosen memory configurations.
+%Google generally conforms with the pricing results of \gls{AWS}. It positions itself in the same price region although it climbs in costs at 128 \gls{MB} and 2048 \gls{MB}. This can be traced back to the fact that it performed inconsistent and relatively seen slower for 128 MB, and for 2048 MB not much performance was gained. Therefore these two options are more expensive.\\
+%IBM leans on Azure's method of calculating prices. It only charges for the defined and allocated GB-Seconds, but performs basically always the same. Hence, it gets approximately linearly more expensive with more memory allocation.
 
 \subsection{Evaluation of all services}
 In this section. the four serverless services will be compared. Two aspects were crucial for the evaluation: First, the previously discussed test and benchmark results and secondly, my personal opinion which was developed during this research and its implementation.
