@@ -154,10 +154,9 @@ Upon cleanup, all deployed Lambda functions are permanently deleted, as well as 
 
 %A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
 
-\subsection{Billing Costs Prospection}
+\subsection{Billing Costs Calculator}
 
-The core component embeds a pricing calculator.
-Its goal is to calculate the cost of executing a certain amount of functions on the supported cloud providers. 
+The core component embeds a pricing calculator, which can be used to calculate beforehand the cost of executing a certain workload (\ie for a given number of function calls, memory, \etc) on the supported cloud providers. 
 It does so either by setting the corresponding parameters manually or by exploiting results from previous executions.
 
 This component can be used to predict the cost of executing a given benchmark on a specific cloud provider.
