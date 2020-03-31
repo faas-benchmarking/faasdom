@@ -11,7 +11,7 @@ set bmargin 10
 set rmargin 4
 
 
-set title "{/bold Latency of Cloud Functions over 4 Cloud Providres and 39 different regions}" offset 0,-0.5
+set title "{/bold Latency of cloud functions over 4 cloud providers and 39 different regions}" offset 0,-0.5
 #set ytics 10000000
 set yrange [0:2500]
 #set mytics 10
