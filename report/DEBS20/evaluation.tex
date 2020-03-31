@@ -158,7 +158,7 @@ This is remarkable since the pricing model of \gls{IBM} only accounts for GB-Sec
 To understand the saturation point of the deployed services, we rely on \texttt{wrk2}~\cite{wrk2}, a constant throughput/exact latency HTTP-based benchmarking tool.
 We design this benchmark to issue function call invocations at increasingly high request rates, from 10 up to 1000 req/sec.
 For each of the configurations, \texttt{wrk2} reports the average latency to handle the requests (\emph{i.e.}, the functions).
-Between each configuration, the benchmark waits for sufficient time to process potential pending requests in the queue.
+Between each configuration, the benchmark waits for sufficient time to process potential requests still enqueued.
 Figure~\ref{fig:load_test_latency_all} shows our results for the \texttt{faas-matrix-mult} test function and the 4 different programming languages under test.
 %The load test is designed to benchmark the serverless functions up to 1000 requests per second. 
 %This is carried out with the \gls{HTTP} benchmark tool \textit{wrk2} (see \cite{wrk2}). A function is first called with 10 requests per second for the duration of 1 minute. 
@@ -168,29 +168,40 @@ Figure~\ref{fig:load_test_latency_all} shows our results for the \texttt{faas-ma
 
 We observe \gls{AWS} achieves stable response latencies for all the tested workloads. 
 %This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
-Azure has surpring results. 
-When using Windows OS, Azure can tolerate high loads the load on Windows as operating system. 
+Azure shows surprising results. 
+On Windows OS, Azure can tolerate high loads.
 But in the first increasing steps from 10 to 100 or 200 RPS latency rises although it flattens out afterwards. 
-On Linux, Azure performs very bad and can not scale out quickly enough to serve the requests in an acceptable time frame. The response time climbs more or less linearly to the amount of request per second sent. That is a strong indication that none or too few new instances are allocated to handle the load. At the time of 1000 requests per second one could see in the Azure portal Live Metrics Stream that e.g. for .NET only 12 instances have been deployed (see figure \ref{fig:live_metrics_stream}). Additionally the screenshot shows that only 500 requests per second get handled by the function, the rest is probably waiting in a queue.
-\begin{remark}
-In the screenshot the request duration differs from the wrk2 results since that is most likely only considering execution time without queuing time.
-\end{remark}
+On Linux, performance on Azure performs very inconsistently, and response latency grows almost linearly with the total requests per second injected. 
+That is a strong indication that none (or too few) new instances were allocated to handle the load. 
+We investigated this behaviour further through the Azure portal Live Metrics Stream (not shown). 
+When reaching 1000 requests per second, only a total of for .NET only 12 instances to serve .NET functions. % have been deployed (see figure \ref{fig:live_metrics_stream}). 
+Additionally, only 500 requests per second were actually served, leaving a large percentage of requests in the waiting queue.
+%\begin{remark}
+%In the screenshot the request duration differs from the wrk2 results since that is most likely only considering execution time without queuing time.
+%\end{remark}
+
+%\begin{figure}[htp]
+%\centering
+%\includegraphics[scale=0.3]{bilder/Azure_Dotnet_1000.png}
+%\caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
+%\label{fig:live_metrics_stream}
+%\end{figure}
+
+For Node.js and .NET, response latencies spike up to 24~s and 18~s respectively. % and are not plotted in the graph for illustration purposes. 
+Using Python, Azure managed to handle up to 200 \gls{RPS}, beyond which none of the requests could be served correctly.
+Google can manage the load generally well, although latency increases a little bit for Node.js and Go. 
+However, Python functions deployed Google suffer from poor performance, in particular at higher request rates. 
+Results suggest poor capacity in adapting quickly to flash-crowd requests, with the average request duration increased from 1356~ms to 18448~ms when increasing the rate from 10 reqs/sec up to 25 reqs/sec \gls{RPS}. 
+%After that, this phenomena happens again but less drastically. 
+%Since functions take on average a longer time to execute in Python, it seems and Google can scale longer running functions less good. %Overall the performance is good. 
+We investigate further this effect. 
+Specifically, Figure~\ref{fig:google_graph_go} shows the number of instances allocated during the load test on Google, suggesting indeed that the the auto-scalability features provided by Google Functions might lead to poor results for a large majority of the requests.
+\vs{this was for Go}
 
 \begin{figure}[htp]
 \centering
-\includegraphics[scale=1.0]{bilder/Azure_Dotnet_1000.png}
-\caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
-\label{fig:live_metrics_stream}
-\end{figure}
-
-For Node.js and .NET the latencies went up to 24s respectively 18s and are not plotted in the graph for illustration purposes. On Python, Azure returned from 200 \gls{RPS} and above almost only \gls{HTTP} errors and the result of wrk2 is not representative and hence not plotted.\\
-Google can manage the load generally well, although latency increases a little bit for Node.js and Go. With Python, Google has the biggest problems and seems overwhelmed when requests increase. It can not scale quickly enough and the average request duration increased from 1356ms to 18448ms with 10 \gls{RPS} respectively 25 \gls{RPS}. After that, this phenomena happens again but less drastically. This can possibly be explained by the fact that the function has a longer execution time in Python and Google can scale longer running functions less good. Overall the performance is good. Figure \ref{fig:google_graph_go} shows the number of instances allocated during the Go load test on Google.
-
-\begin{figure}[htp]
-\begin{center}
-\includegraphics[width=0.5\textwidth]{bilder/Google_Go_Instances.png}
-\captionsetup{justification=centering, labelfont=bf}
-\caption[Google Go active instances during load test]{Google Go active instances during load test\\Source: screenshot Google cloud portal}
+\includegraphics[scale=0.7]{bilder/go_instances/go_instances.pdf}
+\caption{Google Go active instances during load test}
 \label{fig:google_graph_go}
 \end{center}
 \end{figure}
