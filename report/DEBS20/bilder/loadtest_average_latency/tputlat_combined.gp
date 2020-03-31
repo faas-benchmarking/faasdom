@@ -24,7 +24,7 @@ set lmargin MX+0.5
 set rmargin MX+12
 
 set tmargin MY+4
-set bmargin MY+0
+set bmargin MY+0.12
 
 set multiplot
 
@@ -37,7 +37,7 @@ set ylabel "Average Latency\n[ms, x1000]" offset 0.5,0
 set ytics nomirror
 set grid y
 set yrange[0:3000]
-set xtics ("10" 1,"25" 2,"50" 3,"100" 4,"" 5, "400" 6, "800" 7)
+set xtics ("10" 1,"25" 2,"50" 3,"100" 4,"200" 5, "400" 6, "800" 7) rotate by -45
 set ytics ("0" 0, "0.5" 500, "1" 1000, "1.5" 1500, "2" 2000, "2.5" 2500, "3" 3000)
 set xlabel "Request Rate" offset 0,0.5
 set title "Node.js" offset 0,-1.0
