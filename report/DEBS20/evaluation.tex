@@ -198,12 +198,11 @@ We investigate further this effect.
 Specifically, Figure~\ref{fig:google_graph_go} shows the number of instances allocated during the load test on Google, suggesting indeed that the the auto-scalability features provided by Google Functions might lead to poor results for a large majority of the requests.
 \vs{this was for Go}
 
-\begin{figure}[htp]
+\begin{figure}[!t]
 \centering
 \includegraphics[scale=0.7]{bilder/go_instances/go_instances.pdf}
 \caption{Google Go active instances during load test}
 \label{fig:google_graph_go}
-\end{center}
 \end{figure}
 
 Lastly, the result of \gls{IBM} will be discussed. Those outcomes differ from the others relatively much. On Node.js and .NET it can roughly keep up to the competition but operates a little slower and on Node.js it has a striking outlier. The Python function on IBM nearly performs as well as on \gls{AWS}, but the same cannot be said about Go. The Go runtime performed much slower in the load test as with the competitors, although as seen in the cold start test in section \ref{sec:coldstart} it has a similar cold start latency as Node.js and Python and as shown in the appendix table \ref{tab:general} it performs generally well on Go. Thus this bad performance cannot be derived from this or other tests and it is possible that IBMs auto scaling mechanism does not work well for Go. Of the amount of instances deployed, IBM delivers no statistics.\\
