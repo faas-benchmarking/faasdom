@@ -409,62 +409,109 @@ Finally, IBM's billing method let this provider to offer predictable costs, roug
 %Google generally conforms with the pricing results of \gls{AWS}. It positions itself in the same price region although it climbs in costs at 128 \gls{MB} and 2048 \gls{MB}. This can be traced back to the fact that it performed inconsistent and relatively seen slower for 128 MB, and for 2048 MB not much performance was gained. Therefore these two options are more expensive.\\
 %IBM leans on Azure's method of calculating prices. It only charges for the defined and allocated GB-Seconds, but performs basically always the same. Hence, it gets approximately linearly more expensive with more memory allocation.
 
-\subsection{Evaluation of all services}
-In this section. the four serverless services will be compared. Two aspects were crucial for the evaluation: First, the previously discussed test and benchmark results and secondly, my personal opinion which was developed during this research and its implementation.
-\subsection*{Amazon Web Services Lambda}
-Overall, \gls{AWS} was astonishing with its performance. It has by far the lowest cold start latency and is very consistent regarding execution time. Furthermore it could handle the increasing load test without any issues. The request time did not increase significantly and the desired amount of requests per second was nearly achieved.\\
-Also the management of function deployments with the \gls{CLI} or in the portal worked flawlessly. At first, it is a little tricky to set up a function with a trigger (especially with the \gls{CLI}, see figure \ref{fig:aws_deploy}) but the documentation is good and there are many examples on the internet.\\
-Following is a list of some small problems or aspects that could be improved:
-\begin{itemize}
-    \item No official Docker image for the \gls{AWS} \gls{CLI}. There are other prebuilt ones that can be used or it is easy to make your own.
-    \item To delete functions, one needs to invoke the command \texttt{aws lambda list-functions} in the \gls{CLI}. Sadly, this command only takes into account one region and does not allow to retrieve multiple regions at once.
-    \item For security reasons one can only delete every 30 seconds an \gls{API} gateway. There is no possibility to remove or configure this restriction.
-\end{itemize}
-\subsection*{Microsoft Azure Functions}
-Azure cannot compete to Amazon in terms of performance and usability. The cold start latency is around two to four seconds and possibly therefore it does not scale that well (at least on Linux). As a result, load tests were good on Windows but very bad on Linux. Normal or low use performance is nonetheless okay.\\
-Using the portal can be frustrating since navigating through it or deploying something can be slow. In general, the \gls{CLI} works good but there are some actions that can only be done on the portal and sometimes a specific deployment command failed (see this issue on Github  \href{https://github.com/Azure/azure-cli/issues/10574}{https://github.com/Azure/azure-cli/issues/10574}). Additionally to the \gls{CLI}, Azure Functions Core Tools is a required Node.js program to run and test the functions locally and ideally they are also deployed with this program. This tool however is not included in the \gls{CLI} and there is also no Docker image available nor was I able to create one that worked. There is an alternate way to deploy the function (which was used in this thesis) with a zipped package that was built before.\\ From time to time various documentations of Microsoft were contradicting each other or not up to date.\\
-Azure has on the portal a nice \textit{Live Metrics Stream} where one can monitor the functions. It shows real time data (only about 1-2 seconds behind) such as requests per second, execution time per request, \gls{CPU} utilization and the number of servers which are allocated (see figure \ref{fig:live_metrics_stream}).\\
-Considering that Azure has three different function generations and three different execution plans it makes the impression that the service architecture has grown over time and is thus a little chaotic.\\
-Some more prospects that can be improved are:
-\begin{itemize}
-    \item The name given to the function app has to be unique since it forms part of the invocation link. This can lead to unnecessary deployment errors if the process is automated.
-    \item Azure functions generation 3 did not work at all. I tried upgrading from generation 2 to 3 when it became generally available but the parameter for generation 3 in the configuration file was simply not considered by Azure. This setting also can not be changed afterwards with the \gls{CLI}, only in portal. Not at all for Linux environments since they are read only when deployed with the \gls{CLI}.
-\end{itemize}
-Approximately 80\% of debugging and fixing the application can be traced back to Azure behaving badly or being vastly different than the other three cloud service providers.
-\subsection*{Google Cloud Functions}
-The Google Cloud was very satisfactory to use. The portal is simple and clearly structured and the \gls{CLI} handled well. Where the other clouds need multiple commands to get a function deployed and running it is just one simple command with Google (see figure \ref{fig:google_deploy}). The documentation is complete and clear.\\
-In regards to performance Google functions is good. The cold start latency is relatively high compared to \gls{AWS} and \gls{IBM}. Execution times are similar as on \gls{AWS} and scaling during the load test was okay. It seems to work well for fast executing functions but not so good for slower functions (higher than 0.5 seconds) which could be a deal breaker. On paper Google is the most expensive of them all.\\
-In the Google portal there are some nice graphs to monitor number of allocated instances, execution time, number of invocations and memory used per call. It is not properly real time as the one of Azure since it lags behind a few minutes.
-\subsection*{IBM Cloud Functions}
-Working with the \gls{IBM} Cloud was a little bit tougher than the others. The \gls{CLI} documentation is not that straightforward and structured as the ones of the competition and the \gls{CLI} itself can only be used if there is cloud foundry support for the corresponding region, which luckily is the case for all public regions except Tokyo, Japan.\\
-\gls{IBM} comes in second place in respect to cold start latency. It has very good performance even with low memory configurations. However it could not keep up to \gls{AWS} in the load tests and was pretty bad for the Go runtime. A few other remarks:
-\begin{itemize}
-    \item \gls{IBM} cloud functions has a 3000 requests per minute limit, however it is not mentioned in the documentation \cite{IBMLimits}. In order to increase this limit a request with a business case has to be submitted to \gls{IBM} and if reasonable they will increase the limit. I have discovered this limit only during the benchmark test.
-    \item The \gls{CLI} won't be able to load resources (i.e. \texttt{ibmcloud fn api list}) after it hasn't been used for some time. I was not able to figure out the problem. The second try however will work.
-    \item IBM only charges per memory used per time unit (GB-Seconds) but delivers as seen in figure \ref{fig:general_python_plot} always the same performance. This was discussed in section \ref{sec:general_test} and in my own opinion this pricing model can be exploited and is not well balanced (counterexample Google \cite{IBMPricing, GoogleFunctionsPricing}). However further testing would be necessary to confirm this behaviour.
-\end{itemize}
-\subsection*{Discussion and Comparison}
-In the following, some of the most important aspects to be considered when using serverless platforms will be summarized.
+\subsection{Usability Considerations}
+%In this section. the four serverless services will be compared. Two aspects were crucial for the evaluation: First, the previously discussed test and benchmark results and secondly, my personal opinion which was developed during this research and its implementation.
+We finally report on some usability considerations regarding the cloud providers and their serverless offerings.
 
-\begin{itemize}
-    \item It is very important to test the function carefully before going into production. Measuring the execution time, optimizing the code as much as possible and deciding which instance size fits best for the function.
-    \item Test the scaling mechanism well and according to the request pattern of the application. Otherwise a big surprise could be right around the corner.
-    \item Calculating prices in theory is okay but it is much more accurate to actually measure execution times of the functions and calculate the prices regarding these times.
-\end{itemize}
+\textbf{AWS Lambda.} Overall, it was the best-performing cloud provider. 
+While we keep monitoring the service, it seems to remain consistent through the months.
+Management via the \gls{CLI} or web-based portal is efficient, while setting up HTTP triggers remain convoluted.
 
-Table \ref{tab:summary} shows a summary and comparison of the key features and general advantages and disadvantages each cloud provider has to offer.
-\vs{CHECK COMMENTED TABLE, something wrong with alingmnets}
-%\begin{table}[h]
-%\begin{tabularx}{\textwidth}{ |l| *4{>{\centering}X|}}
-%\cline{1-5}
-%	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\ 
-%\textbf{Performance} & very good and consistent & good & good, not consistent for 128MB & good \\ 
-%\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ 
-%\textbf{Scaling} & very good,  response time does almost not increase & good on Windows, very bad on Linux & generally good, not for Python or longer running functions & not that good,  high spikes are possible \\ 
-%\textbf{CLI} & good and stable,  some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ 
-%\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ 
-%\textbf{General cons} & Not great monitoring on the portal, the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ 
-%\end{tabularx}
-%\caption[Summary and comparison of services]{Summary and comparison of services}
-%    \label{tab:summary}
-%\end{table}
+\emph{Drawbacks:} 
+\emph{(i)} lack of official Docker image for the \gls{AWS} \gls{CLI}; 
+\emph{(ii)} deleting a function requires \texttt{aws lambda list-functions}, which however only works on a per-region basis;
+\emph{(iii)} security counter-measures imposed by the AWS (\ie changing public APIs more frequently than 30s) reduce the productivity of the developers as well as quick testing.
+
+\textbf{Azure Functions.} Performance and usability are worse than AWS. 
+The cold start latency of 2s~4s makes it not suitable for short-lived sessions, leading to increased costs especially under heavy workloads.
+The web-based portal provides useful insights on the real-time performance, as well as system insights from telemetry-based monitoring on the supporting computing instances.
+
+\emph{Drawbacks:} 
+\emph{(i)} there is a discrepancy between the actions available via the official CLI and the web portal;
+\emph{(ii)} additional tools are required also for local debugging (\eg the Azure Functions Core Tools\footnote{\url{https://github.com/Azure/azure-functions-core-tools}}), which seems counter-intuitive, and no official Docker image ships it either;
+\emph{(iii)} the overall architecture, as well as the different generations of APIs, contribute in making the learning curve for Azure rather steep. Additionally, some of the (public) APIs suffer from frequent issues.
+
+
+%Overall, \gls{AWS} was astonishing with its performance. It has by far the lowest cold start latency and is very consistent regarding execution time. Furthermore it could handle the increasing load test without any issues. The request time did not increase significantly and the desired amount of requests per second was nearly achieved.\\
+%Also the management of function deployments with the \gls{CLI} or in the portal worked flawlessly. At first, it is a little tricky to set up a function with a trigger (especially with the \gls{CLI}, see figure \ref{fig:aws_deploy}) but the documentation is good and there are many examples on the internet.\\
+%Following is a list of some small problems or aspects that could be improved:
+%\begin{itemize}
+%    \item No official Docker image for the \gls{AWS} \gls{CLI}. There are other prebuilt ones that can be used or it is easy to make your own.
+%    \item To delete functions, one needs to invoke the command \texttt{aws lambda list-functions} in the \gls{CLI}. Sadly, this command only takes into account one region and does not allow to retrieve multiple regions at once.
+%    \item For security reasons one can only delete every 30 seconds an \gls{API} gateway. There is no possibility to remove or configure this restriction.
+%\end{itemize}
+
+%\subsection*{Microsoft Azure Functions}
+%Azure cannot compete to Amazon in terms of performance and usability. The cold start latency is around two to four seconds and possibly therefore it does not scale that well (at least on Linux). As a result, load tests were good on Windows but very bad on Linux. Normal or low use performance is nonetheless okay.\\
+%Using the portal can be frustrating since navigating through it or deploying something can be slow. In general, the \gls{CLI} works good but there are some actions that can only be done on the portal and sometimes a specific deployment command failed (see this issue on Github  \href{https://github.com/Azure/azure-cli/issues/10574}{https://github.com/Azure/azure-cli/issues/10574}). Additionally to the \gls{CLI}, Azure Functions Core Tools is a required Node.js program to run and test the functions locally and ideally they are also deployed with this program. This tool however is not included in the \gls{CLI} and there is also no Docker image available nor was I able to create one that worked. There is an alternate way to deploy the function (which was used in this thesis) with a zipped package that was built before.\\ From time to time various documentations of Microsoft were contradicting each other or not up to date.\\
+%Azure has on the portal a nice \textit{Live Metrics Stream} where one can monitor the functions. It shows real time data (only about 1-2 seconds behind) such as requests per second, execution time per request, \gls{CPU} utilization and the number of servers which are allocated (see figure \ref{fig:live_metrics_stream}).\\
+%Considering that Azure has three different function generations and three different execution plans it makes the impression that the service architecture has grown over time and is thus a little chaotic.\\
+%Some more prospects that can be improved are:
+%\begin{itemize}
+%    \item The name given to the function app has to be unique since it forms part of the invocation link. This can lead to unnecessary deployment errors if the process is automated.
+%    \item Azure functions generation 3 did not work at all. I tried upgrading from generation 2 to 3 when it became generally available but the parameter for generation 3 in the configuration file was simply not considered by Azure. This setting also can not be changed afterwards with the \gls{CLI}, only in portal. Not at all for Linux environments since they are read only when deployed with the \gls{CLI}.
+%\end{itemize}
+%Approximately 80\% of debugging and fixing the application can be traced back to Azure behaving badly or being vastly different than the other three cloud service providers.
+
+\textbf{Google Cloud Functions.} The Google-based offering leverages a simple and clearly structured web-portal, as well a a consistent \gls{CLI} tool. 
+Particularly practical is the support for single-command operations. 
+%Where the other clouds need multiple commands to get a function deployed and running it is just one simple command with Google (see figure \ref{fig:google_deploy}). The documentation is complete and clear.\\
+While cold start latency is higher than AWS or IBM, it remains within usable limits. 
+Regarding billing costs, Google is the least convenient operator.
+
+\emph{Drawbacks:}
+\emph{(i)} the monitoring measurements available to the developers lag few minutes behind the real execution, preventing prompt (\eg sub-second) interventions.
+\vs{MAISSEN: anything else we could mention here?}
+%In regards to performance Google functions is good. The cold start latency is relatively high compared to \gls{AWS} and \gls{IBM}. 
+%Execution times are similar as on \gls{AWS} and scaling during the load test was okay. It seems to work well for fast executing functions but not so good for slower functions (higher than 0.5 seconds) which could be a deal breaker. On paper Google is the most expensive of them all.\\
+%In the Google portal there are some nice graphs to monitor number of allocated instances, execution time, number of invocations and memory used per call. It is not properly real time as the one of Azure since it lags behind a few minutes.
+
+\textbf{IBM Cloud Functions.}
+The current public release of IBM lacks straightforward and well-structured documentation.
+The cold-start performance suggests this provider to be a good candidate for quick tests, where an application can start invoking functions with short waiting times.
+According to our experimental evaluation, IBM achieves the lowest memory footprint.
+Finally, some (important) features are left undocumented, such as the limit of 3000 req/minute authorized for normal accounts.
+
+\emph{Drawbacks:}
+\emph{(i)} the official IBM \gls{CLI} can only be used if there is a corresponding cloud foundry support for the intended region, (currently the case for all public regions except for Tokyo);
+\emph{(ii)} the support for the Go runtime is rather poor, resulting in the worst performance for this case;
+ 
+
+%Working with the \gls{IBM} Cloud was a little bit tougher than the others. The \gls{CLI} documentation is not that straightforward and structured as the ones of the competition and the \gls{CLI} itself can only be used if there is cloud foundry support for the corresponding region, which luckily is the case for all public regions except Tokyo, Japan.\\
+%\gls{IBM} comes in second place in respect to cold start latency. It has very good performance even with low memory configurations. However it could not keep up to \gls{AWS} in the load tests and was pretty bad for the Go runtime. A few other remarks:
+%\begin{itemize}
+%    \item \gls{IBM} cloud functions has a 3000 requests per minute limit, however it is not mentioned in the documentation \cite{IBMLimits}. In order to increase this limit a request with a business case has to be submitted to \gls{IBM} and if reasonable they will increase the limit. I have discovered this limit only during the benchmark test.
+%    \item The \gls{CLI} won't be able to load resources (i.e. \texttt{ibmcloud fn api list}) after it hasn't been used for some time. I was not able to figure out the problem. The second try however will work.
+%    \item IBM only charges per memory used per time unit (GB-Seconds) but delivers as seen in figure \ref{fig:general_python_plot} always the same performance. This was discussed in section \ref{sec:general_test} and in my own opinion this pricing model can be exploited and is not well balanced (counterexample Google \cite{IBMPricing, GoogleFunctionsPricing}). However further testing would be necessary to confirm this behaviour.
+%\end{itemize}
+
+
+%\subsection{Discussion and Comparison}
+%In the following, some of the most important aspects to be considered when using serverless platforms will be summarized.
+%
+%\begin{itemize}
+%    \item It is very important to test the function carefully before going into production. Measuring the execution time, optimizing the code as much as possible and deciding which instance size fits best for the function.
+%    \item Test the scaling mechanism well and according to the request pattern of the application. Otherwise a big surprise could be right around the corner.
+%    \item Calculating prices in theory is okay but it is much more accurate to actually measure execution times of the functions and calculate the prices regarding these times.
+%\end{itemize}
+%
+
+Table~\ref{tab:summary} recaps our findings.
+\begin{table*}[!t]
+\caption{Summary and comparison of services}
+  \setlength{\tabcolsep}{3pt}
+  \scriptsize
+  \center
+  \rowcolors{1}{gray!10}{gray!0}
+  \begin{tabular}{l|c|c|c|c}
+  \rowcolor{gray!45}
+	&	\textbf{AWS}	&	\textbf{Azure}	&	\textbf{Google}	&	\textbf{IBM} \\\hline 
+\textbf{Performance} & very good and consistent & good & good, not consistent for 128MB & good \\ 
+\textbf{Cold start} & 223 - 1798 ms & 1256 - 4974 ms & 1178 - 3847 ms &  599 - 1829 ms\\ 
+\textbf{Scaling} & very good,  response time does almost not increase & good on Windows, very bad on Linux & generally good, not for Python or longer running functions & not that good,  high spikes are possible \\ 
+\textbf{CLI} & good and stable,  some improvements possible & slow, unexpected errors happen often & very good and stable, also fast & good, sometimes unexpected behaviour\\ 
+\textbf{General pros} & Everything handles and performs good & Live Metrics Stream, relatively cheap & Nice graphs for monitoring, sometimes a functions gets executed on a faster instance & Low memory configuration have same performance as big ones, therefore cheap \\ 
+\textbf{General cons} & Not great monitoring on the portal\n the user has to work with randomly generated IDs in the CLI & Portal is slow, CLI usage is only okay, unique naming is necessary for the function app name & More expensive, not in that many regions available & Poor CLI documentation, not in that many regions available \\ 
+\end{tabular}
+    \label{tab:summary}
+\end{table*}
