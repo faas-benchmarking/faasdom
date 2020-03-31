@@ -1,9 +1,18 @@
 %!TEX root = main.tex
 
 \section{Conclusion and Future Work}\label{sec:conclusion}
-This thesis and benchmark suite have provided a valuable open source application that users and companies can use to test and evaluate their specific demands regarding serverless computing. Since all is packaged with Docker it is easy to setup and use and no big time commitment needs to be made to conduct some tests.\\
-With the gathered results this thesis has established that serverless computing can definitely be useful and even powerful depending on the scenario, cloud and runtime.\\
-Unfortunately, there is no common framework or standard used by the cloud providers at the expense of the user or customer. This application tries to smooth the way for the user in testing and analyzing the results in order that later deciding on the most suitable serverless platform is more easy to do.
 
-Although this benchmark suite covers the most important aspects it can be developed and be improved further. Apart from general improvements and optimizations more runtimes respectively languages and cloud providers could be supported, more different tests could be implemented and provided. In addition, a plotting integration (e.g. with R) would be useful as Grafana does not provide much exporting and plotting capabilities and is rather focused on live monitoring.\\
-There could be a test regarding continuous deployment and inspect the behaviour of the platform. Besides, a special focus could lay on deploying and testing Docker images because that might be an important aspect and trend in the future, considering there are no runtime restrictions of the provider. Several providers already offer to deploy just a Docker image (AWS, Azure, IBM) and Google has its service Cloud Run which has become generally available on November 14, 2019 \cite{cloudrun} and is a fully managed, serverless container platform.\\ Moreover, the load test should probably be carried out with different function execution times to get a better understanding of the possible connection between scaling and execution time, if there is any at all. Also, a real world application test would be beneficial and demonstrate the usability of serverless computing.
+Motivated by the lack of common FaaS framework or standard platform to evaluate serverless platforms, this paper presented \sys, a user-space application that facilitates the performance testing across a variety of serverless platform.
+\sys is an open-source benchmark suite easy deploy, and that provides meaningful insights across a variety of metrics. 
+
+We envision to extend \sys along the following directions.
+The set of supported languages and runtime will be expanded, also by integrating contributions from the open-source community.
+A continuous, online deployment of the \sys, publicly accessible, will allows us to build a larger dataset of measurements, which we also plan to release to the research community.
+We intend to include native support for Docker images to ship functions, to facilitate integration with services such as Google Cloud Run~\cite{cloudrun}.
+
+
+%Although this benchmark suite covers the most important aspects it can be developed and be improved further. Apart from general improvements and optimizations more runtimes respectively languages and cloud providers could be supported, more different tests could be implemented and provided. 
+%In addition, a plotting integration (e.g. with R) would be useful as Grafana does not provide much exporting and plotting capabilities and is rather focused on live monitoring.\\
+%There could be a test regarding continuous deployment and inspect the behaviour of the platform. Besides, a special focus could lay on deploying and testing Docker images because that might be an important aspect and trend in the future, considering there are no runtime restrictions of the provider. Several providers already offer to deploy just a Docker image (AWS, Azure, IBM) and Google has its service Cloud Run which has become generally available on November 14, 2019 \cite{cloudrun} and is a fully managed, serverless container platform.\\ 
+%Moreover, the load test should probably be carried out with different function execution times to get a better understanding of the possible connection between scaling and execution time, if there is any at all. 
+%Also, a real world application test would be beneficial and demonstrate the usability of serverless computing.
