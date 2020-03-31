@@ -58,12 +58,15 @@ Overall, the best performing cloud provider is Amazon, with slightly lower laten
 \label{sec:coldstart}
 %This test measured the cold start latency. 
 A cold start happens when a function takes longer than usual to start up and execute. 
-This occurs mostly after the deployment, when the function has not been used in a while\vs{MAISSEN: is it know how long is this period?} \mais{It is normally around 10 minutes of no invocation for an instance, but can also be higher. E.g. Google had an instance up for about 12h before disallocating it.} or when a new instance needs to be provisioned for scaling purposes. 
-\vs{MAISSEN: can't understand this sentence, can you rephrase?} \mais{In order for the cloud provider to prepare the VM instance and deploy the user function code on it, some time can pass.}
-Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as ooposed to the \emph{warm} case, but a similar workflow is valid on the other cloud providers.
-\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?} \mais{This is just exemplary done for Azure. Should be very similar on other clouds. see \url{https://cloud.google.com/functions/docs/bestpractices/tips} , little doc of providers because a 'disadvantage' of serverless}
+This occurs mostly after the deployment, when the function has not been used in a while, \eg after 10 minutes without invocations.
+However, we observed longer timings, for instance on Google, with up to 12 hours before de-allocating the instance.  
+A function can also be de-allocated when a new instance needs to be provisioned for scaling purposes. 
+%\vs{MAISSEN: can't understand this sentence, can you rephrase?} \mais{In order for the cloud provider to prepare the VM instance and deploy the user function code on it, some time can pass.}
+Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as opposed to the \emph{warm} case, but a similar workflow is valid on the other cloud providers.
+Note that, while we evalute and report results on Azure, we expect similar results on other serverless cloud-providers, where the cold start effect is also known.~\footnote{Google Functions and cold-start \url{https://cloud.google.com/functions/docs/bestpractices/tips}.}
+%\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?} \mais{This is just exemplary done for Azure. Should be very similar on other clouds. see \url{https://cloud.google.com/functions/docs/bestpractices/tips} , little doc of providers because a 'disadvantage' of serverless}
 
-\begin{figure}[htp]
+\begin{figure}[!t]
 \centering
 \includegraphics[width=0.4\textwidth]{bilder/azure-coldstart.jpeg}
 \caption{Workflow for cold and warm start on Azure~\cite{AzureColdStart}\vs{Fig to be re-done}}
@@ -71,7 +74,8 @@ Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start o
 \end{figure}
 
 There are several steps to perform before a function can execute: allocate a server, setup a workier with the associated code, packages and extensions, load the function in memory, and finally run it.
-When the function is warm, the function is ready and can just be invoked immediately. 
+These steps contribute clearly to the cold start effect that we observe in our results.
+Instead, when the function is warm, the function is ready in memory	1 and can just be invoked immediately. 
 
 We execute each test ten times for each runtime and each cloud. 
 Functions are executed using 512 \gls{MB} and without external packages, to reduce the baseline memory footprint (and the corresponding loading time) to the bare minimum.
@@ -84,16 +88,16 @@ We compute the cold start latency as:
 (cold\ start\ latency) = (tot.\ req.\ time) - (normal\ avg.\ latency)
 \end{equation*}
 
-Figure~\ref{fig:coldstart_plot} reports our results using a box plot.
- \gls{AWS} is overall the fastest, with an average cold start latency of only 335 ms for Node.js, Python and Go. 
-Using .NET achieves worse results, up to 1739 ms, possibly due to the nature and compilation of .NET respectively C\#. 
-On Azure, cold start latency is strictly more than 2 seconds and up to 5 seconds, with the exception of the combination .NET on Windows, which averages at 1917 ms. 
+Figure~\ref{fig:coldstart_plot} reports our results using a box-and-whiskers plot.
+It stands out that \gls{AWS} is overall the fastest, with an average cold start latency of only 335~ms for Node.js, Python and Go. 
+Using .NET achieves worse results, up to 1739~ms, possibly due to the nature and compilation of .NET respectively C\#. 
+On Azure, cold start latency is strictly more than 2 seconds and up to 5 seconds, with the exception of the combination .NET on Windows, which averages at 1917~ms. 
 Google compares similarly to \gls{AWS}.
 Finally, \gls{IBM} consistenly produces  higher cold start latency, in the 2-3 seconds range. 
-\gls{IBM} shows a similar pattern \vs{MAISSEN: can you clarify? you mean that the ranking of the results wrt to the languages is the same?} \mais{Yes that's what I meant, similar ranking/pattern} as \gls{AWS} although the cold start latency is around 600 ms higher for Node.js, Python and Go but similar for .NET.
+\gls{IBM} shows a similar behaviour across the spectrum of supported languages as \gls{AWS},  although the cold start latency is around 600~ms higher for Node.js, Python and Go but similar for .NET.
 
-\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?} \mais{Recycling meaning in this context deallocating a VM instance of the user and make it available to all users in the cloud's total pool}
-On \gls{AWS} and \gls{IBM} it took usually around 10 minutes of no activity for the instance to be recycled by the provider; the same took up to 20 minutes on Azure. 
+%\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?} \mais{Recycling meaning in this context deallocating a VM instance of the user and make it available to all users in the cloud's total pool}
+On \gls{AWS} and \gls{IBM}, it took usually around 10 minutes of no activity for the computing instance to be recycled by the provider and re-inserted into the pool of available ones, and up to 20 minutes on Azure. 
 On Google, this time varied varied from 10 minutes up to 10 hours.
 
 \begin{figure}[!t]
