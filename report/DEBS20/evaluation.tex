@@ -213,30 +213,34 @@ Additionally, only 500 requests per second were actually served, leaving a large
 
 \renewcommand{\arraystretch}{1.2}
 \begin{table}[!t]
+\setlength{\tabcolsep}{3pt}
 \scriptsize
 \centering
 \caption{Latency: goal/target, results in the long-tail (below 90\% of the target requests/sec)}
+\rowcolors{1}{gray!10}{gray!0}
 \begin{tabular}{l|l|r|r|r} 
+\rowcolor{gray!45}
 \textbf{Cloud} & \textbf{Runtime} & \textbf{Req/s (goal)} & \textbf{Req/s (actual)} & \textbf{Req/s (\%)} \\ \hline
-Azure & Node.js & 200 & 179 & 89.50\% \\ \hline
-Azure & Node.js & 400 & 227 & 56.75\% \\ \hline
-Azure & Node.js & 800 & 278 & 34.75\% \\ \hline
-Azure & Node.js & 1000 & 327 & 32.70\% \\ \hline
-Azure & Python & 10 & 6 & 60.00\% \\ \hline
-Azure & Python & 25 & 12 & 48.00\% \\ \hline
-Azure & Python & 50 & 18 & 36.00\% \\ \hline
-Azure & Python & 100 & 25 & 25.00\% \\ \hline
-Azure & Python & 200 & 30 & 15.00\% \\ \hline
-Azure & Python & 400 & 15 & 3.75\% \\ \hline
-Azure & Python & 800 & 14 & 1.75\% \\ \hline
-Azure & Python & 1000 & 15 & 1.50\% \\ \hline
-Azure & .NET & 400 & 324  & 81.00\% \\ \hline
-Azure & .NET & 800 & 407 & 50.88\% \\ \hline
-Azure & .NET & 1000 & 512 & 51.20\% \\ \hline
-Google & Python & 25 & 12 & 48.00\% \\ \hline
-Google & Python & 200 & 168 & 84.00\% \\ \hline
-Google & Python & 400 & 297 & 74.25\% \\ \hline
-Google & Python & 800 & 575 & 71.88\% \\ \hline
+\rowcolor{gray!25}
+Azure & Node.js & 200 & 179 & 89.50\% \\ 
+Azure & Node.js & 400 & 227 & 56.75\% \\ 
+Azure & Node.js & 800 & 278 & 34.75\% \\ 
+Azure & Node.js & 1000 & 327 & 32.70\% \\
+Azure & Python & 10 & 6 & 60.00\% \\  
+Azure & Python & 25 & 12 & 48.00\% \\ 
+Azure & Python & 50 & 18 & 36.00\% \\ 
+Azure & Python & 100 & 25 & 25.00\% \\ 
+Azure & Python & 200 & 30 & 15.00\% \\ 
+Azure & Python & 400 & 15 & 3.75\% \\ 
+Azure & Python & 800 & 14 & 1.75\% \\ 
+Azure & Python & 1000 & 15 & 1.50\% \\
+Azure & .NET & 400 & 324  & 81.00\% \\
+Azure & .NET & 800 & 407 & 50.88\% \\ 
+Azure & .NET & 1000 & 512 & 51.20\% \\ 
+Google & Python & 25 & 12 & 48.00\% \\ 
+Google & Python & 200 & 168 & 84.00\% \\ 
+Google & Python & 400 & 297 & 74.25\% \\ 
+Google & Python & 800 & 575 & 71.88\% \\ 
 IBM & Go & 25 &  21 & 84.00\% \\ \hline
 \end{tabular}
 \label{table:rps}
