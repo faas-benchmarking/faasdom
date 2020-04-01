@@ -449,7 +449,7 @@ Management via the \gls{CLI} or web-based portal is efficient, while setting up 
 \emph{(iii)} security counter-measures imposed by the AWS (\ie changing public APIs more frequently than 30s) reduce the productivity of the developers as well as quick testing.
 
 \textbf{Azure Functions.} Performance and usability are worse than AWS. 
-The cold start latency of 2s~4s makes it not suitable for short-lived sessions, leading to increased costs especially under heavy workloads.
+The cold start latency of 2s~4s makes it not suitable for short-lived sessions, leading to increased costs \mais{cost should not be higher with cold starts. Clouds only bill when the function is actually running / executing code} especially under heavy workloads.
 The web-based portal provides useful insights on the real-time performance, as well as system insights from telemetry-based monitoring on the supporting computing instances.
 
 \emph{Drawbacks:} 
@@ -487,7 +487,7 @@ Regarding billing costs, Google is the least convenient operator.
 
 \emph{Drawbacks:}
 \emph{(i)} the monitoring measurements available to the developers lag few minutes behind the real execution, preventing prompt (\eg sub-second) interventions.
-\vs{MAISSEN: anything else we could mention here?}
+\vs{MAISSEN: anything else we could mention here?} \mais{maybe that only 3 runtimes are supported, pricing calculated more granularly which makes it hareder for a user to estimate / understand, not that many configuration / control over the service (but this can be seen as good or bad)}
 %In regards to performance Google functions is good. The cold start latency is relatively high compared to \gls{AWS} and \gls{IBM}. 
 %Execution times are similar as on \gls{AWS} and scaling during the load test was okay. It seems to work well for fast executing functions but not so good for slower functions (higher than 0.5 seconds) which could be a deal breaker. On paper Google is the most expensive of them all.\\
 %In the Google portal there are some nice graphs to monitor number of allocated instances, execution time, number of invocations and memory used per call. It is not properly real time as the one of Azure since it lags behind a few minutes.
@@ -495,7 +495,7 @@ Regarding billing costs, Google is the least convenient operator.
 \textbf{IBM Cloud Functions.}
 The current public release of IBM lacks straightforward and well-structured documentation.
 The cold-start performance suggests this provider to be a good candidate for quick tests, where an application can start invoking functions with short waiting times.
-According to our experimental evaluation, IBM achieves the lowest memory footprint.
+According to our experimental evaluation, IBM achieves the lowest memory footprint \mais{Why? I don't understand.}.
 Finally, some (important) features are left undocumented, such as the limit of 3000 req/minute authorized for normal accounts.
 
 \emph{Drawbacks:}
