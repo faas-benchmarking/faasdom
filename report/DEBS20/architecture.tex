@@ -117,29 +117,15 @@ Functions can be parametrized with memory allocated for each instance, timeouts,
 %\end{itemize}
 Once deployed, the interface continuously reports on the progress and potential issues (\eg, timeouts, access problems, \etc). 
 %Next the \textit{Deploy} button can be pressed and the application will initiate the deployment. On the right hand side of the web interface there will be information about the progress. 
-<<<<<<< HEAD
 The deployment process is parallelized, including the creation of the required cloud resources, the build and packaging of the functions, and their upload over the cloud.
 The deployment flow is slightly different for each provider. 
 \autoref{fig:steps}\vs{FIX} illustrates the various steps for those supported by \sys.
-\vs{MAISSEN: I've looked a the flowcharts in the appendix of the report. Apart from the google one which seems very simplistic, I wonder if we could have a figure combining those ones into a figure that we could report here in the deployment section. ... flow charts are illustrating the deployment and cleanup process for each cloud.} \mais{Yes I can try to combine and minify them. Maybe I forget about the runtime differences (build, zip) and only illustrate the essentail 'cloud' part?}\vs{YES :-) Figure should be very minimalistic, to span only 1 column possibly. Use PDF/EPS format - although we might want to tune the figs somehow later one}
-=======
-The deployment process is parallelized, including the creation of the required cloud resources, building and packaging the functions, as well as their upload over the cloud.
-The deployment flows are slightly different for each provider. 
-Figure~\ref{}\vs{new fig coming here, PM will make a first version} illustrates the various deployment steps for the providers supported by \sys.
-%\vs{MAISSEN: I've looked a the flowcharts in the appendix of the report. Apart from the google one which seems very simplistic, I wonder if we could have a figure combining those ones into a figure that we could report here in the deployment section. ... flow charts are illustrating the deployment and cleanup process for each cloud.} \mais{Yes I can try to combine and minify them. Maybe I forget about the runtime differences (build, zip) and only illustrate the essentail 'cloud' part?}\vs{YES :-) Figure should be very minimalistic, to span only 1 column possibly. Use PDF/EPS format - although we might want to tune the figs somehow later one}
->>>>>>> remove comment
 
 \subsection{Testing}
 
 %In this section it is briefly explained how to execute a test and see its results. 
-<<<<<<< HEAD
 When testing a serverless execution, \sys will send every five seconds a request to the functions previously deployed, with the purpose to gather baseline results under low, constant load. %As options, a name for the test and the functions parameter can be set. 
 \autoref{fig:grafana} illustrates a screenshot of Grafana displaying the results of a latency test in Node.js. 
-=======
-The test will send every five seconds a request to the functions previously deployed, with the purpose to gather baseline results under low, constant load. %As options, a name for the test and the functions parameter can be set. 
-Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test results of a latency test in Node.js.
-\vs{if we need space, grafana fig can be cut} 
->>>>>>> remove comment
 %At the top, there are three drop down menus to choose the test type, the test name (given at the start of the test) and the data points interval.
 
 \begin{figure}[!t]
@@ -168,11 +154,7 @@ Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test result
 For evaluating the performance of a deployed function, \sys's benchmarking component injects specific workloads toward the function exposed by a given serverless provider.
 Our design is modular and currently supports \sloppy{\texttt{wrk2}~\cite{wrk2}}, a constant throughput, correct latency HTTP benchmarking tool. 
 Additional tools are easy to integrate by providing a Docker container and a simple REST interface to exchange parameters and results. 
-<<<<<<< HEAD
 The \sys architecture allows users to directly visualize and analyze these results, using Grafana (\autoref{fig:grafana}) or other tools that can fetch the result data from the \gls{TSDB}.
-=======
-\sys architecture allows to directly visualize and analyze these results in Grafana (Figure~\ref{fig:grafana}).
->>>>>>> remove comment
 %mainly relies on the wrk2 image. The parameters can be set in the web interface but they are basically just forwarded to wrk2. For the benchmark itself the user can choose the following parameters: requests per second, duration of the benchmark and the desired test to run e.g. the \gls{CPU} factors test. 
 %Afterwards the load test will start and benchmark the chosen function on each cloud and runtime it was deployed to. 
 %This process has to run sequentially otherwise the host of the benchmark suite could potentially not handle the load. 
