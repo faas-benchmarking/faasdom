@@ -16,36 +16,46 @@ We detail each component next.
 \label{fig:architecture}
 \end{center}
 \end{figure}
-
-
-
-\textbf{Main application.} The \sys core component is implemented in JavaScript and leverages the Node.js framework. 
+\textbf{Main application.}
+The \sys core component is implemented in JavaScript and leverages the Node.js framework. 
 It manages all user input and executes the actions or delegates them to other components. 
 This application is packaged and executed as Docker containers. 
 %Only the Linux packages \texttt{docker-ce} and \texttt{docker-compose} are needed to execute this program. 
 %Figure \ref{fig:architecture} depicts all components and gives an overview of the \sys suite.
-It manages the following main tasks: \emph{(1)} deployment to the clouds, \emph{(2)} execution of tests benchmarks, \emph{(3)} computing price estimations. 
-Users access it through a web \gls{GUI} or via a REST \gls{API}. 
-Once started, the set of configured tests are deployed (some examples given in Section~\ref{sec:tests}) to be executed.
+It manages the following main tasks:
+\emph{(1)}~deployment to the clouds;
+\emph{(2)}~execution of tests benchmarks; and
+\emph{(3)}~computing price estimations. 
+Users access it through a Web-based \gls{GUI} or via a REST \gls{API}. 
+Once started, the set of configured tests are deployed for execution (some examples are given in \S\ref{sec:tests}).
 %After the tests are deployed, they can be tested and benchmarked. 
 
-\textbf{Time Series DB:} a time-series database, where all the results from tests are be stored and later on used by graphical interfaces and pricing calculation. Our prototype uses InfluxDB~\cite{influx}.
+\textbf{Time series DB.}
+\sys uses a time series database (\gls{TSDB}) to store all the results from tests.
+These results are subsequently used by graphical interfaces and pricing calculation.
+Our prototype uses the InfluxDB~\cite{influx} \gls{TSDB}.
 
-\textbf{UI:} the architecture provides an API to easily integrate visualization tools. Our prototype integrates with Grafana~\cite{grafana}, an open source tool to display, plot and monitor data stored in a database. 
-The results gathered by the tests and stored in InfluxDB will be displayed in Grafana.
+\textbf{UI.}
+The \sys architecture provides an API to easily integrate visualization tools.
+Our prototype integrates with Grafana~\cite{grafana}, an open source tool to display, plot and monitor data stored in a database. 
+The results gathered by the tests and stored in InfluxDB are then displayed in Grafana.
 
-\textbf{CLIs:} With the exception of AWS, all cloud providers offer a Docker image for their \gls{CLI}. 
+\textbf{CLIs.}
+With the exception of AWS, all cloud providers offer a Docker image for their \gls{CLI}. 
 Resources can be deployed, deleted and managed completely by the \gls{CLI}.
 
-\textbf{Runtimes (Node.js, Go, .NET):} In addition to the source code of the function(s) to execute, a built and packaged zip file is commonly required to successfully complete the deployment. 
-The \sys architecture allows developers to ship runtime images, fo instance used to install packages and build or run the corresponding sources.
+\textbf{Runtime and languages (Node.js, Go, .NET).}
+In addition to the source code of the function(s) to execute, a pre-built and packaged zip file is commonly required to successfully complete the deployment. 
+The \sys architecture allows developers to ship runtime images, necessary for instance to install packages and build/run the corresponding code.
 
 %\vs{to remove:
 %\textbf{zip:} this image zips the files that need to be deployed to the clouds. 
 %Therefore there is no need to have zip installed on the machine the benchmark suite runs.
 %}
 
-\textbf{Workload Injectors}. The architecture provides hook points to plugin workload injectors. The evaluation results shown in Section~\ref{sec:evaluation} uses \texttt{wrk2}~\cite{wrk2}, a stress tool for REST services. \sys uses it to issue requests toward services and gather throughput/latency results.
+\textbf{Workload Injectors}.
+The \sys architecture provides hook points for plugin workload injectors.
+The evaluation results shown in \S\ref{sec:evaluation} uses \texttt{wrk2}~\cite{wrk2}, a stress tool for REST services, to issue requests toward services and gather throughput/latency results.
 
 %%%MOVE TO GITHUB/README
 %%%\subsection{Requirements}
@@ -86,12 +96,13 @@ The \sys architecture allows developers to ship runtime images, fo instance used
 \begin{figure}[!t]
 \begin{center}
 \includegraphics[width=0.45\textwidth]{bilder/ui.png}
-\caption{\sys: web GUI}
+\caption{\sys Web-based GUI.}
 \label{fig:ui}
 \end{center}
 \end{figure}
 
 \subsection{Deployment}
+
 %This section will describe the deployment process of the tests.
 Once the main application has started, the client can deploy the desired tests, for instance via the web-based interface shown in Figure~\ref{fig:ui}.
 Functions can be parametrized with memory allocated \mais{per single execution, to each instance not each execution}, timeouts, which serverless providers to use for the benchmarks, which runtime version to use, and into which geographical regions (as supported by the cloud provider) to deploy the tests. 
