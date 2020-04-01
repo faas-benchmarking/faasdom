@@ -47,6 +47,7 @@ set key vertical sample 1.0 width 0 maxrows 1 at 25,3560 font "Arial, 18"
 plot\
 	 "average_latency_all.csv" using ($1):($3)  w lp ls 2101 title "AWS",\
 	 "average_latency_all.csv" using ($1):($7)  w lp ls 2102 title "Azure",\
+	 "average_latency_all.csv" using ($1):($10)  w lp ls 2105 title "Azure (win)",\
 	 "average_latency_all.csv" using ($1):($12) w lp ls 2103 title "Google",\
 	 "average_latency_all.csv" using ($1):($15) w lp ls 2104 title "IBM",\
 	 		 	   
@@ -74,14 +75,15 @@ plot\
 	 "average_latency_all.csv" using ($1):($14)  w lp ls 2103 notitle "google",\
 	 "average_latency_all.csv" using ($1):($17) w lp ls 2104 notitle "ibm",\
 
- set origin MX+LX+3*(IX+SX)-0.5,MY+0*(IY+SY)+LY
- set size 0.6,SY
- set yrange[0:7000]
- set title ".NET (Google unsupported)"
- plot\
- 	 "average_latency_all.csv" using ($1):($9)  w lp ls 2101 notitle "aws",\
- 	 "average_latency_all.csv" using ($1):($10)  w lp ls 2105 notitle "aws-win",\
- 	 "average_latency_all.csv" using ($1):($18) w lp ls 2104 notitle "ibm",\
+set origin MX+LX+3*(IX+SX)-0.5,MY+0*(IY+SY)+LY
+set size 0.6,SY
+set yrange[0:7000]
+set title ".NET (Google unsupported)"
+plot\
+	 "average_latency_all.csv" using ($1):($6)  w lp ls 2101 notitle "aws",\
+ 	 "average_latency_all.csv" using ($1):($9)  w lp ls 2102 notitle "azure",\
+	 "average_latency_all.csv" using ($1):($11)  w lp ls 2105 title "Azure-win",\
+	 "average_latency_all.csv" using ($1):($18) w lp ls 2104 notitle "ibm",\
 
 		
 !epstopdf "tputlat_combined.eps"
