@@ -16,6 +16,7 @@ We detail each component next.
 \label{fig:architecture}
 \end{center}
 \end{figure}
+
 \textbf{Main application.}
 The \sys core component is implemented in JavaScript and leverages the Node.js framework. 
 It manages all user input and executes the actions or delegates them to other components. 
@@ -104,8 +105,8 @@ The evaluation results shown in \S\ref{sec:evaluation} uses \texttt{wrk2}~\cite{
 \subsection{Deployment}
 
 %This section will describe the deployment process of the tests.
-Once the main application has started, the client can deploy the desired tests, for instance via the web-based interface shown in Figure~\ref{fig:ui}.
-Functions can be parametrized with memory allocated \mais{per single execution, to each instance not each execution}, timeouts, which serverless providers to use for the benchmarks, which runtime version to use, and into which geographical regions (as supported by the cloud provider) to deploy the tests. 
+Once the main application has started, the client can deploy the desired tests, for instance via the Web-based interface shown in \autoref{fig:ui}.
+Functions can be parametrized with memory allocated, timeouts, list of providers and runtime versions to use for the benchmarks, as well as geographical regions (as supported by the cloud provider) where to deploy the tests. 
 %\begin{itemize}
 %    \item \textbf{Test:} a unique identifier for the test to execute to deploy;
 %    \item \textbf{Memory:} The amount of memory to allocate per function.\footnote{Azure assignmes memory dynamically, up to 1536 \gls{MB} per function}
@@ -114,23 +115,24 @@ Functions can be parametrized with memory allocated \mais{per single execution, 
 %    \item \textbf{Languages:} Runtimes respectively languages to deploy the function in, multiple choices possible.
 %    \item \textbf{Locations:} The region where the function will be deployed to.
 %\end{itemize}
-Once deployed, the interface continuously reports on the progress and potential issues (\emph{e.g.}, timeouts, access problems, etc.). 
+Once deployed, the interface continuously reports on the progress and potential issues (\eg, timeouts, access problems, \etc). 
 %Next the \textit{Deploy} button can be pressed and the application will initiate the deployment. On the right hand side of the web interface there will be information about the progress. 
-The deployment process is parallelized, including the creation of the required cloud resources, building and packaging the functions, as well as their upload over the cloud.
-The deployment flows are slightly different for each provider. 
-Figure~\ref{}\vs{FIX} illustrates the various steps for those supported by \sys.
+The deployment process is parallelized, including the creation of the required cloud resources, the build and packaging of the functions, and their upload over the cloud.
+The deployment flow is slightly different for each provider. 
+\autoref{fig:steps}\vs{FIX} illustrates the various steps for those supported by \sys.
 \vs{MAISSEN: I've looked a the flowcharts in the appendix of the report. Apart from the google one which seems very simplistic, I wonder if we could have a figure combining those ones into a figure that we could report here in the deployment section. ... flow charts are illustrating the deployment and cleanup process for each cloud.} \mais{Yes I can try to combine and minify them. Maybe I forget about the runtime differences (build, zip) and only illustrate the essentail 'cloud' part?}\vs{YES :-) Figure should be very minimalistic, to span only 1 column possibly. Use PDF/EPS format - although we might want to tune the figs somehow later one}
 
 \subsection{Testing}
+
 %In this section it is briefly explained how to execute a test and see its results. 
-The test will send every five seconds a request to the functions previously deployed, with the purpose to gather baseline results under low, constant load. %As options, a name for the test and the functions parameter can be set. 
-Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test results of a latency test in Node.js. 
+When testing a serverless execution, \sys will send every five seconds a request to the functions previously deployed, with the purpose to gather baseline results under low, constant load. %As options, a name for the test and the functions parameter can be set. 
+\autoref{fig:grafana} illustrates a screenshot of Grafana displaying the results of a latency test in Node.js. 
 %At the top, there are three drop down menus to choose the test type, the test name (given at the start of the test) and the data points interval.
 
 \begin{figure}[!t]
 \begin{center}
 \includegraphics[width=0.45\textwidth]{bilder/grafana.png}
-\caption{Visualization of performance results in Grafana}
+\caption{Visualization of performance results in Grafana.}
 \label{fig:grafana}
 \end{center}
 \end{figure}
@@ -148,9 +150,9 @@ Figure~\ref{fig:grafana} illustrates a screenshot of Grafana showing test result
 \end{center}
 \end{figure*}
 
-
 \subsection{Benchmarking}
-The benchmarking component injects specific workloads toward a function exposed by a given serverless provider.
+
+For evaluating the performance of a deployed function, \sys's benchmarking component injects specific workloads toward the function exposed by a given serverless provider.
 Our design is modular and currently supports \sloppy{\texttt{wrk2}~\cite{wrk2}}, a constant throughput/correct latency HTTP benchmarking tool. 
 Additional tools are easy to integrate by providing a Docker container and a simple REST interface to exchange parameters and results. 
 \sys architecture allows to directly visualize and analyze these results, for instance using Grafana (Figure~\ref{fig:grafana}).
