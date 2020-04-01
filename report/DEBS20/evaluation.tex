@@ -47,8 +47,8 @@ Figure~\ref{fig:latency_plot} reports our results across 39 different configurat
 %\vs{MAISSEN: here we need a short discussion on the results. Something like the following, can you complete ? I'll check afterwards}. %\mais{OK?}
 We observe the following.
 The average latency over all clouds and regions is 538~ms.
-We achieve the shorted latency on AWS Lambda (\texttt{eu-central-1}),at 80~ms.
-We observed the longest latency  on Google (\texttt{asia-east2}), at 1770~ms. 
+We achieve the shorted latency on AWS Lambda (\texttt{eu-central-1}) at 80~ms.
+We observed the longest latency on Google (\texttt{asia-east2}) at 1770~ms. 
 Overall, the best performing cloud provider is Amazon, with slightly lower latency for the same geographical locations of other providers.
 
 %For more detailed results see table \ref{tab:latency}. 
@@ -59,10 +59,11 @@ Overall, the best performing cloud provider is Amazon, with slightly lower laten
 %This test measured the cold start latency. 
 A cold start happens when a function takes longer than usual to start up and execute. 
 This occurs mostly after the deployment, when the function has not been used in a while, \eg after 10 minutes without invocations.
-However, we observed longer timings, for instance on Google, with up to 10 hours before de-allocating the instance. \mais{I don't understand the previous sentence.}
+%However, we observed longer timings, for instance on Google, with up to 10 hours before de-allocating the instance. \mais{I don't understand the previous sentence.}
 A function can also be de-allocated when a new instance needs to be provisioned for scaling purposes. 
+When this happens, and a new function invocation arrives, the cold start effect is visible.
 %\vs{MAISSEN: can't understand this sentence, can you rephrase?} \mais{In order for the cloud provider to prepare the VM instance and deploy the user function code on it, some time can pass.}
-Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as opposed to the \emph{warm} case, but a similar workflow is valid on the other cloud providers.
+Figure~\ref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as opposed to the \emph{warm} case. Similar workflows exist on the other cloud providers.
 Note that, while we evalute and report results on Azure, we expect similar results on other serverless cloud-providers, where the cold start effect is also known.~\footnote{Google Functions and cold-start \url{https://cloud.google.com/functions/docs/bestpractices/tips}.}
 %\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?} \mais{This is just exemplary done for Azure. Should be very similar on other clouds. see \url{https://cloud.google.com/functions/docs/bestpractices/tips} , little doc of providers because a 'disadvantage' of serverless}
 
@@ -88,18 +89,6 @@ We compute the cold start latency as:
 (cold\ start\ latency) = (tot.\ req.\ time) - (normal\ avg.\ latency)
 \end{equation*}
 
-Figure~\ref{fig:coldstart_plot} reports our results using a box-and-whiskers plot.
-It stands out that \gls{AWS} is overall the fastest, with an average cold start latency of only 335~ms for Node.js, Python and Go. 
-Using .NET achieves worse results, up to 1739~ms, possibly due to the nature and compilation of .NET respectively C\#. 
-On Azure, cold start latency is strictly more than 2 seconds and up to 5 seconds, with the exception of the combination .NET on Windows, which averages at 1917~ms. 
-Google compares similarly to \gls{AWS} \mais{You mean IBM to AWS, right?}.
-Finally, \gls{IBM} \mais{Here should be Google?} consistenly produces  higher cold start latency, in the 2-3 seconds range. 
-\gls{IBM} shows a similar behaviour across the spectrum of supported languages as \gls{AWS},  although the cold start latency is around 600~ms higher for Node.js, Python and Go but similar for .NET.
-
-%\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?} \mais{Recycling meaning in this context deallocating a VM instance of the user and make it available to all users in the cloud's total pool}
-On \gls{AWS} and \gls{IBM}, it took usually around 10 minutes of no activity for the computing instance to be recycled by the provider and re-inserted into the pool of available ones, and up to 20 minutes on Azure. 
-On Google, this time varied varied from 10 minutes up to 10 hours. \mais{I said to you 12 hours as mentioned previously in this section. I meant also 10. I corrected this, you can remove this comment.}
-
 \begin{figure}[!t]
 \centering
 \includegraphics[width=0.5\textwidth]{bilder/cold_start/coldstart_whisker.pdf}
@@ -108,6 +97,35 @@ On Google, this time varied varied from 10 minutes up to 10 hours. \mais{I said 
 \end{figure}
 
 
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.5\textwidth, trim={0 40 0 0}]{bilder/general_python/cpufact.pdf}
+\caption{Execution time, \texttt{faas-fact} in Python.}
+\label{fig:general_python_plot}
+\end{figure}
+
+Figure~\ref{fig:coldstart_plot} reports our results using a box-and-whiskers plot.
+It stands out that \gls{AWS} is overall the fastest, with an average cold start latency of only 335~ms for Node.js, Python and Go. 
+Using .NET achieves worse results, up to 1739~ms, possibly due to the nature and compilation of .NET respectively C\#. 
+On Azure, cold start latency is strictly more than 2 seconds and up to 5 seconds, with the exception of the combination .NET on Windows, which averages at 1917~ms. 
+IBM compares similarly to \gls{AWS}.
+Finally, Google Cloud Functions consistently produces higher cold start latency, in the 2-3 seconds range. 
+\gls{IBM} shows a similar behaviour across the spectrum of supported languages as \gls{AWS},  although the cold start latency is around 600~ms higher for Node.js, Python and Go but similar for .NET.
+
+%\vs{MAISSEN: what is this 'reclying' you refer to ? can you clarify?} \mais{Recycling meaning in this context deallocating a VM instance of the user and make it available to all users in the cloud's total pool}
+On \gls{AWS} and \gls{IBM}, it took usually around 10 minutes of no activity for the computing instance to be recycled by the provider and re-inserted into the pool of available ones, and up to 20 minutes on Azure. 
+On Google, this time varied varied from 10 minutes up to 10 hours. %\mais{I said to you 12 hours as mentioned previously in this section. I meant also 10. I corrected this, you can remove this comment.}
+
+
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.5\textwidth, trim={0 40 0 0}]{bilder/general_node/cpufact.pdf}
+\caption{Execution time, \texttt{faas-fact} in Node.js.}
+\label{fig:general_node_plot}
+\end{figure}
 
 \subsection{Benchmark: CPU-bound functions}
 \vs{find better section name}
@@ -123,12 +141,19 @@ We collect 100 results for every configuration (runtime, memory, cloud provider)
 Figure~\ref{fig:general_python_plot} depicts our result for Python.
 \vs{If we have time, we could include the same plots for the other languages. MAISSEN: could you give it a try, using the Python example as template to produce them? }
 
+
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.5\textwidth, trim={0 40 0 0}]{bilder/general_python/cpufact.pdf}
-\caption{Execution times of the \texttt{faas-fact} benchmark in Python. Azure allows only one single memory configuration (1536 MB)}
-\label{fig:general_python_plot}
+\includegraphics[width=0.5\textwidth, trim={0 40 0 0}]{bilder/general_go/cpufact.pdf}
+\caption{Execution time, \texttt{faas-fact} in Go.}
+\label{fig:general_go_plot}
+\end{figure}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.5\textwidth, trim={0 40 0 0}]{bilder/general_dotnet/cpufact.pdf}
+\caption{Execution times of the \texttt{faas-fact} in .NET.}
+\label{fig:general_dotnet_plot}
 \end{figure}
 
 We note few interesting facts.

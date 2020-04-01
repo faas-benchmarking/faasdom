@@ -106,7 +106,7 @@ The evaluation results shown in \S\ref{sec:evaluation} uses \texttt{wrk2}~\cite{
 
 %This section will describe the deployment process of the tests.
 Once the main application has started, the client can deploy the desired tests, for instance via the Web-based interface shown in \autoref{fig:ui}.
-Functions can be parametrized with memory allocated, timeouts, list of providers and runtime versions to use for the benchmarks, as well as geographical regions (as supported by the cloud provider) where to deploy the tests. 
+Functions can be parametrized with memory allocated for each instance, timeouts, list of providers and runtime versions to use for the benchmarks, as well as geographical regions (as supported by the cloud provider) where to deploy the tests. 
 %\begin{itemize}
 %    \item \textbf{Test:} a unique identifier for the test to execute to deploy;
 %    \item \textbf{Memory:} The amount of memory to allocate per function.\footnote{Azure assignmes memory dynamically, up to 1536 \gls{MB} per function}
@@ -131,7 +131,7 @@ When testing a serverless execution, \sys will send every five seconds a request
 
 \begin{figure}[!t]
 \begin{center}
-\includegraphics[width=0.45\textwidth]{bilder/grafana.png}
+\includegraphics[width=0.48\textwidth]{bilder/grafana_combined.pdf}
 \caption{Visualization of performance results in Grafana.}
 \label{fig:grafana}
 \end{center}
@@ -142,41 +142,44 @@ When testing a serverless execution, \sys will send every five seconds a request
 
 %An example result of a general test can be seen in section \ref{sec:general_test}.
 
-\begin{figure*}[!t]
-\begin{center}
-\includegraphics[width=1\textwidth]{bilder/benchmark_table.png}
-\caption[Benchmark results in Grafana]{Benchmark results in Grafana.}
-\label{fig:benchmark_table}
-\end{center}
-\end{figure*}
+%\begin{figure*}[!t]
+%\begin{center}
+%\includegraphics[width=1\textwidth]{bilder/benchmark_table.png}
+%\caption[Benchmark results in Grafana]{Benchmark results in Grafana.}
+%\label{fig:benchmark_table}
+%\end{center}
+%\end{figure*}
 
 \subsection{Benchmarking}
 
 For evaluating the performance of a deployed function, \sys's benchmarking component injects specific workloads toward the function exposed by a given serverless provider.
-Our design is modular and currently supports \sloppy{\texttt{wrk2}~\cite{wrk2}}, a constant throughput/correct latency HTTP benchmarking tool. 
+Our design is modular and currently supports \sloppy{\texttt{wrk2}~\cite{wrk2}}, a constant throughput, correct latency HTTP benchmarking tool. 
 Additional tools are easy to integrate by providing a Docker container and a simple REST interface to exchange parameters and results. 
-\sys architecture allows to directly visualize and analyze these results, for instance using Grafana (Figure~\ref{fig:grafana}).
+The \sys architecture allows users to directly visualize and analyze these results, using Grafana (\autoref{fig:grafana}) or other tools that can fetch the result data from the \gls{TSDB}.
 %mainly relies on the wrk2 image. The parameters can be set in the web interface but they are basically just forwarded to wrk2. For the benchmark itself the user can choose the following parameters: requests per second, duration of the benchmark and the desired test to run e.g. the \gls{CPU} factors test. 
 %Afterwards the load test will start and benchmark the chosen function on each cloud and runtime it was deployed to. 
 %This process has to run sequentially otherwise the host of the benchmark suite could potentially not handle the load. 
 %After the test has completed results will be parsed and inserted into the database and can be viewed as a table in Grafana. Figure \ref{fig:benchmark_table} shows an excerpt of a result.
 
 \subsection{Cleanup}
-Upon cleanup, all deployed Lambda \mais{omit Lambda or use serverless} functions are permanently deleted, as well as all the configurations and resource groups created at deployment time. % and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
+
+Upon cleanup, all deployed functions are permanently deleted, as well as all the configurations and resource groups created at deployment time.
+% and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
 %It should therefore be used very carefully and ideally with separate accounts only for this purpose.
 
 
 
 %A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
 
-\subsection{Billing Costs Calculator}\label{ssec:billingcalc}
+\subsection{Billing Costs Calculator}
+\label{ssec:billingcalc}
 
-The core component embeds a pricing calculator, which can be used to calculate beforehand the cost of executing a certain workload on the supported cloud providers. 
+\sys provides a pricing calculator component, which can be used to evaluate beforehand the cost of executing a certain workload on the supported cloud providers. 
 %It does so either by setting the corresponding parameters manually or by exploiting results from previous executions.
 %This component can be used to predict the cost of executing a given benchmark on a specific cloud provider.
-Developers provide the planned workload (\eg number of function invocations, execution time per call, size of the return body and allocated memory, \etc).
+Developers provide the planned workload (\eg number of function invocations, execution time per call, size of the returned data and allocated memory, \etc).
 The \sys prototype produces an overview of the billing costs across the various serverless providers.
-In future work, we envision this module to be able to forecast the billing costs even for full-fledged serverless applications, by applying machine-learning techniques to the system traces produced by sampling executions serving real-world workloads.
+In future work, we envision this module to be able to forecast the billing costs even for full-fledged serverless applications, by applying machine-learning techniques to the system traces produced from sample executions serving real-world workloads.
 %The prices for all clouds will be calculated and displayed in a table. 
 %The functionality is basically the same as the pricing calculators provided by the cloud providers, except here all is in one place and directly comparable.
 %Furthermore, the calculator takes the performed tests into account. 
@@ -185,10 +188,13 @@ In future work, we envision this module to be able to forecast the billing costs
 %This method allows a much better approach of estimated cost. 
 %In section \ref{sec:pricing} the same example will be explained and calculated for both hypothetical and with actual test results as input.
 
-\subsection{Implementation Details}\label{ssec:impl}
-The implementation of \sys rely on Docker containers.
-Specifically, the main container must invoke other containers, using a technique called \emph{Docker-in-Docker}.\footnote{\url{https://www.docker.com/blog/docker-can-now-run-within-docker/}}
-We do so by granting access to the main container to \texttt{/var/run/docker.sock}, \emph{i.e.} mounting it as volume.
-During our evaluation, we did not observe specific performance degradations using this approach.
+\subsection{Container Implementation}
+\label{ssec:impl}
 
-The implementation of \sys is freely available to the open-source community at \url{https://github.com/faasdom/benchmark-suite-serverless-computing}, and it consists of about 2000 lines of Node.js code.
+The implementation of \sys extensively relies on Docker containers.
+Specifically, the main container invoke other containers using a technique called \emph{Docker-in-Docker}.\footnote{\url{https://www.docker.com/blog/docker-can-now-run-within-docker/}}
+We do so by granting the main container access to \texttt{/var/run/docker.sock} and mounting it as a volume.
+During our evaluation, we did not observe any particular performance degradations using this approach.
+
+The implementation of \sys is freely available to the open-source community at \url{https://github.com/faasdom/benchmark-suite-serverless-computing}.
+Its core components consist of about 2,000 lines of Node.js code.
