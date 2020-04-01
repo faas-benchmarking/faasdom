@@ -76,7 +76,7 @@ Similar workflows (and effects on latency) exist on the other cloud providers.\f
 \end{figure}
 
 
-The boxplot reports the results out of ten executions for configuration runtime/cloud. 
+The box plot reports the results out of ten executions for configuration runtime/cloud. 
 Functions are executed using 512 \gls{MB} and without external packages, to reduce the baseline memory footprint, and the corresponding loading time, to the bare minimum.
 %The cold start latency has been tested ten times for each runtime on each cloud.
 %Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. 
@@ -416,7 +416,7 @@ In particular, we use it to evaluate the cost of the CPU-bound benchmarks~\ref{s
 %\subsection*{Example 2}
 %This example takes the result of the \gls{CPU} factors test of section \ref{sec:general_test} as a basis. 
 \textbf{Assumptions.} We assume a Python runtime, and 10M function calls/months.
-Let's also assume 10 million function calls are invoked per month. \mais{Repetitve: 2x 10 m calls}
+%Let's also assume 10 million function calls are invoked per month. \mais{Repetitve: 2x 10 m calls}
 Similarly, the allowed memory is set to 100~\gls{MB} function, and a return payload of 4~KB per call.
 %With the fixed parameter of $26'888'346'474'443$ the function should not consume more than 100 \gls{MB} of memory. 
 %Its return size is around 4 KB per call. 
@@ -424,12 +424,15 @@ Similarly, the allowed memory is set to 100~\gls{MB} function, and a return payl
 We note that Azure supposedly charges the GB-Seconds the function actually used, rounded up to the next 128 \gls{MB} step \cite{AzurePricing}. 
 It seems therefore that the pricing model of Azure is similar to the one of \gls{IBM}, delivering the same performance independent of memory size.
 %Doing the equivalent calculations as in example 1, the following results are obtained as shown in table \ref{table:example2}.
-Table~\ref{table:example2} shows the costs computed by \sys.\vs{MAISSEN: how much do they differ from the real costs - those actually charged? do we know?} \mais{No I don't know. Free tier and the low quantity did not allow to calculate that exactly. This is just an approximation.}
+Table~\ref{table:example2} shows the costs computed by \sys.
+%\vs{MAISSEN: how much do they differ from the real costs - those actually charged? do we know?} \mais{No I don't know. Free tier and the low quantity did not allow to calculate that exactly. This is just an approximation.}
 We observe that \gls{AWS} is particularly accurate: for every doubling of memory, execution time halves, keeping the costs constant.
 Despite not being the cheapest option, it remains the most predictable one. 
 %Azure is the cheapest provider: with th
 %\gls{AWS} is an exemplar in showing how the pricing works. Since with each doubling of memory execution time halves the price is exactly the same because also the GB-Seconds remain the same. But with 170\$ to 200\$ it is not the cheapest in the list.\\
-Azure strikes out to be very cheap. Since this example function application only uses 100 \gls{MB} Azure also only charges for 128 \gls{MB}.  \vs{MAISSEN: why only 1 row of results for Azure ? } \mais{Because memory is allocated and billed dynamically up to the needed next 128MB step. In this example the functions uses only 100 MB (because it is CPU bound) and Azure bills 128MB. Clear?}
+Azure is the cheapest cloud provider according to our computations.
+Since this example function application only uses 100 \gls{MB}, Azure also only charges for 128 \gls{MB}: memory is dynamically allocated, and only bill accordingly to the next 128~MB step.
+%  \vs{MAISSEN: why only 1 row of results for Azure ? } \mais{Because memory is allocated and billed dynamically up to the needed next 128MB step. In this example the functions uses only 100 MB (because it is CPU bound) and Azure bills 128MB. Clear?}
 %However the actual metrics of how much memory was used does not exist for Linux and is only depicted in a graph for Windows. But in the case this test is correct the cost-performance ratio is very good for low memory applications.\\
 The costs of deploying Google Functions follows closely those of \gls{AWS}, especially for mid-range configurations.
 For the least- and most-expensive configurations, AWS reveals to be not the best trade-off in terms of cost/performance.
@@ -451,7 +454,7 @@ Management via the \gls{CLI} or web-based portal is efficient, while setting up 
 \emph{(iii)} security counter-measures imposed by the AWS (\ie changing public APIs more frequently than 30s) reduce the productivity of the developers as well as quick testing.
 
 \textbf{Azure Functions.} Performance and usability are worse than AWS. 
-The cold start latency of 2s~4s makes it not suitable for short-lived sessions, leading to increased costs \mais{cost should not be higher with cold starts. Clouds only bill when the function is actually running / executing code} especially under heavy workloads.
+The cold start latency of 2s--4s makes it unfit for short-lived sessions. %, leading to increased costs \mais{cost should not be higher with cold starts. Clouds only bill when the function is actually running / executing code} especially under heavy workloads.
 The web-based portal provides useful insights on the real-time performance, as well as system insights from telemetry-based monitoring on the supporting computing instances.
 
 \emph{Drawbacks:} 
@@ -489,7 +492,9 @@ Regarding billing costs, Google is the least convenient operator.
 
 \emph{Drawbacks:}
 \emph{(i)} the monitoring measurements available to the developers lag few minutes behind the real execution, preventing prompt (\eg sub-second) interventions.
-\vs{MAISSEN: anything else we could mention here?} \mais{maybe that only 3 runtimes are supported, pricing calculated more granularly which makes it hareder for a user to estimate / understand, not that many configuration / control over the service (but this can be seen as good or bad)}
+\emph{(ii)} it supports a reduced number of runtimes, at the risk of being a less attractive deployment choice;
+\emph{(iii)} deployers are left with very little configuration options, preventing (by design) fine-tuning operations by clients;
+%\vs{MAISSEN: anything else we could mention here?} \mais{maybe that only 3 runtimes are supported, pricing calculated more granularly which makes it harder for a user to estimate / understand, not that many configuration / control over the service (but this can be seen as good or bad)}
 %In regards to performance Google functions is good. The cold start latency is relatively high compared to \gls{AWS} and \gls{IBM}. 
 %Execution times are similar as on \gls{AWS} and scaling during the load test was okay. It seems to work well for fast executing functions but not so good for slower functions (higher than 0.5 seconds) which could be a deal breaker. On paper Google is the most expensive of them all.\\
 %In the Google portal there are some nice graphs to monitor number of allocated instances, execution time, number of invocations and memory used per call. It is not properly real time as the one of Azure since it lags behind a few minutes.
@@ -497,7 +502,7 @@ Regarding billing costs, Google is the least convenient operator.
 \textbf{IBM Cloud Functions.}
 The current public release of IBM lacks straightforward and well-structured documentation.
 The cold-start performance suggests this provider to be a good candidate for quick tests, where an application can start invoking functions with short waiting times.
-According to our experimental evaluation, IBM achieves the lowest memory footprint \mais{Why? I don't understand.}.
+%According to our experimental evaluation, IBM achieves the lowest memory footprint \mais{Why? I don't understand.}.
 Finally, some (important) features are left undocumented, such as the limit of 3000 req/minute authorized for normal accounts.
 
 \emph{Drawbacks:}
