@@ -26,7 +26,7 @@ and \emph{(3)} which provider provides the most predictable results.
 We begin by measuring the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
 %This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. 
 Unless specified otherwise, we deploy Node.js using 128\gls{MB}.
-We note that AWS functions run under a custom kernel 4.14.138-99.102.amzn2.x86\_64.\footnote{\url{https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html}}, 
+We note that AWS functions run under a custom kernel 4.14.138-99.102.amzn2.x86\_64\footnote{\url{https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html}}, 
 whole host configurations are not disclosed for Azure, Google or IBM deployments.
 %\mais{Azure, Google and IBM do not mention anything about the OS. Unfortunately that did not come to my mind when testing it. I can try to find things out by executing commands like 'uname -a'. Please let me know if I shall do that.}.   
 %The test was performed in Node.js with 128\gls{MB} of memory (Azure 1.5\gls{GB}) with the latency test described in section \ref{subsec:latency}. 
@@ -136,8 +136,9 @@ We collect 100 results for every configuration (runtime, memory, cloud provider)
 %The function was invoked every five seconds until a sample size of $n=100$ was reached. 
 %This for each \gls{MB} configuration, each runtime and each cloud. 
 %s input parameter $26'888'346'474'443$ was selected since with this number the function finished ahead of the timeout for low configurations and simultaneously was not too quickly finished for high configurations. 
-Figure~\ref{fig:general_python_plot} depicts our result for Python.
-\vs{If we have time, we could include the same plots for the other languages. MAISSEN: could you give it a try, using the Python example as template to produce them? }
+We report these results for all the languages and cloud configurations, respectively Python (Figure~\ref{fig:general_python_plot}), Go (Figure~\ref{fig:general_go_plot}), Node.js (Figure~\ref{fig:general_node_plot}) and .NET (Figure~\ref{fig:general_dotnet_plot}).
+%Figure~\ref{fig:general_python_plot} depicts our result for Python
+%\vs{If we have time, we could include the same plots for the other languages. MAISSEN: could you give it a try, using the Python example as template to produce them? }
 
 
 \begin{figure}[!t]
@@ -276,9 +277,9 @@ We leave to future work to investigate more in depth the reasons of such results
 %The Go runtime performed much slower in the load test as with the competitors, although as seen in the cold start test in section \ref{sec:coldstart} it has a similar cold start latency as Node.js and Python and as shown in the appendix table \ref{tab:general} it performs generally well on Go. 
 %Thus this bad performance cannot be derived from this or other tests and it is possible that IBMs auto scaling mechanism does not work well for Go. 
 %Of the amount of instances deployed, IBM delivers no statistics.
-\vs{MAISSEN: can you confirm I understood correctly the results in table 3?} \mais{Yes I think so, but bad wording for the last sentence. ->  In particular, we only report the cases which achieved 90\% and below of the target throughput (right-most column).}
-Table~\ref{table:rps} reports for which cases the target throughput (set as target by \texttt{wrk2}) was not reached. 
-In particular, we only report the cases for which 90\% of the results were below such target (right-most column).
+%\vs{MAISSEN: can you confirm I understood correctly the results in table 3?} \mais{Yes I think so, but bad wording for the last sentence. ->  In particular, we only report the cases which achieved 90\% and below of the target throughput (right-most column).}
+Table~\ref{table:rps} reports for which cases the target throughput (set as target by \texttt{wrk2}) could not be reached. 
+In particular, we report the cases achieving at most 90\% of the target throughput (right-most column).
 %So far, the latency has been examined and now the actual throughput will be explained. Most of the cloud providers and runtimes could handle the load and only had an irrelevant smaller throughput than tested against. Therefore only significant impacts in throughput will be presented, meaning that the throughput was less than 90\% of the tested one. The subsequent table \ref{table:rps} shows where throughput was below 90\%.
 %In addition, there are detailed result plots (figure \ref{fig:loadtest_percentile_node} - \ref{fig:loadtest_percentile_dotnet}) and tables (table \ref{table:aws_load_test} - \ref{table:ibm_load_test}) in the appendix.
 
