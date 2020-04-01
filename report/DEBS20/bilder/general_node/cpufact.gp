@@ -17,7 +17,7 @@ set xtics nomirror
 set grid y
 
 set datafile separator ","
-set key vertical maxrows 1 sample 1.0 width 0 at 16,13800
+set key vertical maxrows 2 sample 1.0 width 0 at 19,31000
 set xtics rotate by -45 font "Arial,18"
 plot \
   "data/aws.csv"\
