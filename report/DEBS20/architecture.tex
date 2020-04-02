@@ -102,6 +102,14 @@ The evaluation results shown in \S\ref{sec:evaluation} uses \texttt{wrk2}~\cite{
 \end{center}
 \end{figure}
 
+\begin{figure}[!b]
+\begin{center}
+\includegraphics[scale=0.7]{bilder/deploy_flowcharts_small}
+\caption{Deployment steps for the different cloud providers supported by \sys.}
+\label{fig:flowchart}
+\end{center}
+\end{figure}
+
 \subsection{Deployment}
 
 %This section will describe the deployment process of the tests.
@@ -118,8 +126,8 @@ Functions can be parametrized with memory allocated for each instance, timeouts,
 Once deployed, the interface continuously reports on the progress and potential issues (\eg, timeouts, access problems, \etc). 
 %Next the \textit{Deploy} button can be pressed and the application will initiate the deployment. On the right hand side of the web interface there will be information about the progress. 
 The deployment process is parallelized, including the creation of the required cloud resources, the build and packaging of the functions, and their upload over the cloud.
-The deployment flow is slightly different for each provider. 
-\autoref{fig:steps}\vs{FIX} illustrates the various steps for those supported by \sys.
+The deployment flow is slightly different for each provider, with some providers requiring significantly more operations than others.
+\autoref{fig:flowchart} illustrates the various steps involved in the deployment for the providers supported by \sys.
 
 \subsection{Testing}
 
@@ -130,7 +138,7 @@ When testing a serverless execution, \sys will send every five seconds a request
 
 \begin{figure}[!t]
 \begin{center}
-\includegraphics[width=0.48\textwidth]{bilder/grafana_combined.pdf}
+\includegraphics[width=0.48\textwidth]{bilder/grafana_combined}
 \caption{Visualization of performance results in Grafana.}
 \label{fig:grafana}
 \end{center}
