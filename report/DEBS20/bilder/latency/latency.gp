@@ -8,7 +8,7 @@ set size 2.2,1.1
 set ylabel "Latency [ms]"
 set tmargin 2
 set bmargin 10
-set rmargin 4
+set rmargin 7
 
 
 set title "{/bold Latency of cloud functions over 4 cloud providers and 39 different regions}" offset 0,-0.5
