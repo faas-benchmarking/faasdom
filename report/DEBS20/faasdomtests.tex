@@ -1,23 +1,24 @@
 %!TEX root = main.tex
-\section{The \sys Benchmark Suite}\label{sec:tests}
-The \sys benchmark suite consists of tests targeting different system aspects.
-Each test is implemented in several programming languages, to support the variety of the available runtimes.
-While some difference might be needed to comply with the little discrepancies across cloud providers, the code executed for each programming langauge is largely the same for all of them.
+\section{The \sys Benchmark Suite}
+\label{sec:tests}
+
+The \sys benchmark suite consists of a collection of tests targeting different system aspects.
+Each test is implemented in several programming languages in order to support the variety of the available runtime systems.
+While there are some subtle differences across the code variants to adapt to the specificities of individual cloud providers, the code executed for each programming language is largely the same for all.
 All functions are implemented using an \gls{HTTP} trigger, as supported by all the serverless providers.
-Currently, \sys includes the followings:
+Currently, \sys includes the followings benchmarks:
 
-\textbf{\texttt{faas-fact}} and \textbf{\texttt{faas-matrix-mult}}. 
-Two CPU-bound benchmarks, respectively to factorize an integer and to multiply large integer matrices.
+\textbf{\texttt{faas-fact}} and \textbf{\texttt{faas-matrix-mult}} are two CPU-bound benchmarks to respectively factorize an integer and multiply large integer matrices.
 
-\textbf{\texttt{faas-netlatency}}. This network-bound test immediately returns upon invocation, with a small \gls{JSON} (HTTP body ~ 79 bytes, HTTP complete response including headers around 500 bytes). This test is used to verify the roundtrip times for geographically distibuted deployments
+\textbf{\texttt{faas-netlatency}} is a network-bound test that immediately returns upon invocation, with a small \gls{JSON} payload (HTTP body of 79 bytes and HTTP complete response including headers of $\sim$500 bytes). This test is used to verify the roundtrip times for geographically distributed deployments
 
-\textbf{\texttt{faas-diskio}}. An IO-bound benchmark to evalute the performance of a disk. 
-Perhaps surprisingly, each serverless cloud provides a temporary file-system that functions can use to read/write intermediate results. 
+\textbf{\texttt{faas-diskio}} is an IO-bound benchmark to evaluate the performance of a disk. 
+Perhaps surprisingly, each serverless cloud provides a temporary file-system that functions can use to read and write intermediate results. 
 Other functions executed by the same instance share this file-system to access its content.
 
-\textbf{\texttt{faas-custom}}. Our design allows developers to easily implement custom functions. 
+\textbf{\texttt{faas-custom}} is provided by \sys to allows developers to test custom functions. 
 The suite provides templates for the currently supported cloud providers and the supported implementation languages. 
-In the long term, we expect the number of custom functions to greatly outnumber the ones provided by the suite itself.
+In the long term, we expect the number of custom functions to greatly outnumber those provided by the suite itself.
 
 %\begin{itemize}
 %\item \texttt{faas-fact} and \texttt{faas-matrix-mult}: two CPU-bound benchmarks, respectively to factorize an integer and to multiply large integer matrices;
