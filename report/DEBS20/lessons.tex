@@ -1,24 +1,26 @@
 %!TEX root = main.tex
 
-\section{Lessons Learned}\label{sec:lessons}
-This thesis has shown that serverless computing in the form of \gls{FaaS} can deliver good performance at a reasonable price. For the end user it is fairly simple to start with, to use and maintain compared to \gls{VM}s or even physical servers. With serverless, companies can focus on building their business logic instead of maintaining operating systems and servers which requires expertise and is especially for smaller companies not always affordable. The probably most important point is auto scaling. If the serverless platform can handle that well it takes away one big crucial factor the user does not longer have to care about. Today there are other solutions for automatically scaling applications (i.e. Kubernetes cluster) but using a serverless platform is definitely simpler and more comfortable.\\
-Nevertheless, there are also 
+\section{Lessons Learned}
+\label{sec:lessons}
 
-Through the implementation and evaluation of \sys, we encounted the following limitations of the FaaS paradigm. 
+This study has shown that serverless computing in the form of \gls{FaaS} can deliver good performance at a reasonable price.
+It is fairly easy to set up, deploy and execute code in the Cloud for the end user, as compared to \gls{VM}s or even physical servers.
+With serverless computing, companies can focus on building their business logic instead of maintaining operating systems and servers on premises, which requires expertise and is not always affordable for small companies.
+One of the most important features of \gls{FaaS} is is auto-scaling capability, which take away from the deployer the burden of dimensioning the system and allocating resources.
 
-First, one is heavily limited by the offering of a specific cloud provider, including
-available runtimes and programming languages, supported triggers, the possibility of third party 
-services integration, quotas, maximum memory. 
-Users cannot easily overcome such limitations, although given the full application stack is managed by the provider, it might only rarely result in considerable limitations.
+Through the implementation and evaluation of \sys, we notably encountered the following limitations of the FaaS paradigm. 
 
-Second, providers can force (\eg flipping an upgrade switch) an application to migrate from a specific runtime version to an arbitrarely differentone (\eg from Node.js v6 to v8).
-Despite backward compatibility, functions might break, forcing developers to keep up the peace imposed by the cloud provider.
+First, one is heavily limited by the offering of specific cloud providers, including available runtime systems and programming languages, supported triggers, third party  services integration, quotas or maximum memory. 
+Users cannot easily overcome such limitations as the full application stack is managed by the provider.
 
-Thirdly, developers risk to vendor-lock themselves, even unintentionally.
-Especially when application upgrades and potential provider migrations are considered, this might become a serious issue.
+Second, providers can force an application to migrate from a specific runtime version to an arbitrarily different one (\eg, when upgrading their system from Node.js v6 to v8).
+Despite backward compatibility, functions might break, forcing developers to keep up with the pace imposed by the cloud provider.
 
-Lack of deployment standards makes the FaaS paradigm still a largely experimental playground.
-Providers offer custom APIs (\eg request/response objects), which inevitably vary across cloud offerings.
+Third, developers face the risk of vendor lock-in by depending on proprietary features.
+This might become a serious issue when considering application upgrades and potential provider migrations.
+
+Finally, the lack of deployment standards makes the FaaS paradigm still a largely experimental playground.
+Providers offer custom APIs (\eg, request/response objects), which inevitably vary across cloud offerings.
 A common framework supported by a standard would certainly improve adoption and benefit the whole ecosystem.
 
 
