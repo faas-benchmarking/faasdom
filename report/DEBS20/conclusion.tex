@@ -1,15 +1,15 @@
 %!TEX root = main.tex
 
-\section{Conclusion and Future Work}\label{sec:conclusion}
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
 
-Motivated by the lack of common FaaS framework or standard platform to evaluate serverless platforms, this paper presented \sys, a user-space application that facilitates the performance testing across a variety of serverless platform.
-\sys is an open-source benchmark suite easy to deploy, and that provides meaningful insights across a variety of metrics and serverless providers. 
+Motivated by the lack of common FaaS framework or standard platform to evaluate serverless platforms, this paper presented \sys, a user-space application that facilitates performance testing across a variety of serverless platform.
+\sys is an open-source benchmark suite that is easy to deploy and provides meaningful insights across a variety of metrics and serverless providers. 
 
 We envision to extend \sys along the following directions.
-The set of supported languages and runtime will be expanded, also by integrating contributions from the open-source community.
-A continuous, online deployment of the \sys, publicly accessible, will allow us to build a larger dataset of measurements, which we also plan to release to the research community.
-We intend to include native support for Docker images to ship functions, to facilitate integration with services such as Google Cloud Run~\cite{cloudrun}.
-
+The set of supported languages and runtime systems will be expanded, also by integrating contributions from the open-source community.
+A continuous, online deployment of the \sys, publicly accessible, will allow us to build a larger dataset of historical measurements, which we also plan to release to the research community.
+We intend to include native support for Docker images to ship functions, in order to facilitate integration with services such as Google Cloud Run~\cite{cloudrun}.
 
 %Although this benchmark suite covers the most important aspects it can be developed and be improved further. Apart from general improvements and optimizations more runtimes respectively languages and cloud providers could be supported, more different tests could be implemented and provided. 
 %In addition, a plotting integration (e.g. with R) would be useful as Grafana does not provide much exporting and plotting capabilities and is rather focused on live monitoring.\\
