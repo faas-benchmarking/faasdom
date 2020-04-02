@@ -129,6 +129,8 @@ The deployment process is parallelized, including the creation of the required c
 The deployment flow is slightly different for each provider, with some providers requiring significantly more operations than others.
 \autoref{fig:flowchart} illustrates the various steps involved in the deployment for the providers supported by \sys.
 
+Upon cleanup, all deployed functions are permanently deleted, as well as all the configurations and resource groups created at deployment time.
+
 \subsection{Testing}
 
 %In this section it is briefly explained how to execute a test and see its results. 
@@ -168,13 +170,11 @@ The \sys architecture allows users to directly visualize and analyze these resul
 %This process has to run sequentially otherwise the host of the benchmark suite could potentially not handle the load. 
 %After the test has completed results will be parsed and inserted into the database and can be viewed as a table in Grafana. Figure \ref{fig:benchmark_table} shows an excerpt of a result.
 
-\subsection{Cleanup}
+% \subsection{Cleanup}
 
-Upon cleanup, all deployed functions are permanently deleted, as well as all the configurations and resource groups created at deployment time.
+% Upon cleanup, all deployed functions are permanently deleted, as well as all the configurations and resource groups created at deployment time.
 % and \gls{API} gateways on \gls{AWS} and IBM, all resource groups with a name containing latency, factors, matrix, filesystem and custom and on Google all functions in the configured project. 
 %It should therefore be used very carefully and ideally with separate accounts only for this purpose.
-
-
 
 %A more detailed test example with increasing load is discussed in section \ref{sec:loadtest}.
 
