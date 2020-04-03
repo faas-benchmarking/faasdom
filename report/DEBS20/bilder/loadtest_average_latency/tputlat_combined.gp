@@ -18,13 +18,13 @@ IY=0
 LX=0.05
 LY=0.01
 
-set size 2.0,0.6
+set size 2.0,0.65
 
 set lmargin MX+0.5
 set rmargin MX+12
 
-set tmargin MY+4
-set bmargin MY+0.12
+set tmargin MY+3.5
+set bmargin MY+1
 
 set multiplot
 
@@ -33,29 +33,30 @@ set grid y
 
 set origin MX+LX+0*(IX+SX)-0.005,MY+0*(IY+SY)+LY
 set size 0.6,SY
-set ylabel "Average Latency\n[ms, x1000]" offset 0.5,0
+set ylabel "Average Latency\n[ms, x1000]" offset -0.5,0
 set ytics nomirror
 set grid y
 set yrange[0:3000]
 set xtics ("10" 1,"25" 2,"50" 3,"100" 4,"200" 5, "400" 6, "800" 7) rotate by -45
 set ytics ("0" 0, "0.5" 500, "1" 1000, "1.5" 1500, "2" 2000, "2.5" 2500, "3" 3000)
-set xlabel "Request Rate" offset 0,0.5
-set title "Node.js" offset 0,-1.0
+set xlabel "Request Rate" offset 0,0
+set title "Node.js" offset 0,-0.6 font "Arial-bold,18"
 set datafile separator ","
-set key vertical sample 1.0 width 0 maxrows 1 at 25,3560 font "Arial, 18"
+set key vertical sample 1.0 width 0 maxrows 1 at screen 1.0,0.62 center 
 
 plot\
 	 "average_latency_all.csv" using ($1):($3)  w lp ls 2101 title "AWS",\
 	 "average_latency_all.csv" using ($1):($7)  w lp ls 2102 title "Azure",\
-	 "average_latency_all.csv" using ($1):($10)  w lp ls 2105 title "Azure (win)",\
+	 "average_latency_all.csv" using ($1):($10) w lp ls 2105 title "Azure (win)",\
 	 "average_latency_all.csv" using ($1):($12) w lp ls 2103 title "Google",\
 	 "average_latency_all.csv" using ($1):($15) w lp ls 2104 title "IBM",\
-	 		 	   
+
+unset key  
 
 set origin MX+LX+1*(IX+SX)-0.16,MY+0*(IY+SY)+LY
 set size 0.6,SY
 set yrange[0:30000]
-#unset ylabel
+unset ylabel
 set ytics ("0" 0, "5" 5000, "10" 10000, "15" 15000, "20" 20000, "25" 25000, "30" 30000)
 set title "Python"
 plot\

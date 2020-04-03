@@ -153,7 +153,7 @@ As expected, every doubling of the allocated memory results in halving the execu
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[scale=0.7]{bilder/loadtest_average_latency/tputlat_combined.pdf}
+\includegraphics[scale=0.7]{bilder/loadtest_average_latency/tputlat_combined}
 \caption{Throughput/latency benchmark using \texttt{wrk2}~\cite{wrk2} and \sys's  \texttt{faas-matrix-mult} stress function.}
 %\mais{Something's wrong. Did you intentially not plot Azure Windows for Node.js and .NET? Further, the .NET plot is wrong: AWS not plotted, Azure (Linux) has the color of AWS}}
 \label{fig:load_test_latency_all}
@@ -253,7 +253,7 @@ The plot shows the number of instances allocated during the load test on Google,
 
 \begin{figure}[!t]
 \centering
-\includegraphics[scale=0.7]{bilder/go_instances/go_instances.pdf}
+\includegraphics[scale=0.7]{bilder/go_instances/go_instances}
 \caption{Google Go: number of active compute instances during the wrk2 load test.}
 \label{fig:google_graph_go}
 \end{figure}
@@ -308,37 +308,37 @@ Further investigation is needed as part of future work to understand the reasons
   \scriptsize
   \center
   \rowcolors{1}{gray!10}{gray!0}
-  \begin{tabular}{l|c|c|c|c|c|c}
+  \begin{tabular}{r|r|r|r|r|r|r}
   \rowcolor{gray!45}
   \textbf{Memory} & \textbf{Exec. time}  & \textbf{Invocation} & \textbf{GB/sec} & \textbf{GHz/sec} & \textbf{BW} & \textbf{Total} \\
     \hline
   \rowcolor{gray!25}
     AWS  & & & & & &\\
-    128~MB & 8000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
-    256~MB & 4000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
-    512~MB & 2000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
-	1~GB   & 1000~ms &  2.00\$  &  166.67\$  &  - & 3.43\$ & 172.10\$ \\
-	2GB~MB &  600~ms &  2.00\$  &  200.00\$  &  - & 3.43\$ & 205.43\$ \\
+    128\,MB & 8000\,ms &  2.00\$  &  166.67\$  &  --- & 3.43\$ & 172.10\$ \\
+    256\,MB & 4000\,ms &  2.00\$  &  166.67\$  &  --- & 3.43\$ & 172.10\$ \\
+    512\,MB & 2000\,ms &  2.00\$  &  166.67\$  &  --- & 3.43\$ & 172.10\$ \\
+	1\,GB   & 1000\,ms &  2.00\$  &  166.67\$  &  --- & 3.43\$ & 172.10\$ \\
+	2\,GB &  600\,ms &  2.00\$  &  200.00\$  &  --- & 3.43\$ & 205.43\$ \\
     \hline
   \rowcolor{gray!25}
     Azure  & & & & & &\\
-    128~MB & 1267~ms &  2.00\$  &   25.34\$     &  -        & 3.32\$ &  30.66\$ \\
+    128\,MB & 1267\,ms &  2.00\$  &   25.34\$     &  ---        & 3.32\$ &  30.66\$ \\
     \hline
   \rowcolor{gray!25}
     Google  & & & & & &\\
-    128~MB & 7700~ms &  4.00\$  &   24.06\$     &  154.00\$ & 4.58\$ & 186.64\$ \\
-    256~MB & 3200~ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
-    512~MB & 1600~ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
-	1~GB   &  900~ms &  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\
-	2GB~MB &  800~ms &  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\
+    128\,MB & 7700\,ms &  4.00\$  &   24.06\$     &  154.00\$ & 4.58\$ & 186.64\$ \\
+    256\,MB & 3200\,ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
+    512\,MB & 1600\,ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
+	1\,GB   &  900\,ms &  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\
+	2GB\,MB &  800\,ms &  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\
     \hline
   \rowcolor{gray!25}
     IBM & & & & & &\\
-    128~MB & 700~ms &  -       &   14.88\$     &  -        & -      &  14.88\$\\
-    256~MB & 600~ms &  -       &   25.50\$     &  -        & -      &  25.50\$\\ 
-    512~MB & 600~ms &  -       &   51.00\$     &  -        & -      &  51.00\$\\ 
-	1~GB   & 600~ms &  -       &  102.00\$     &  -        & -      &  102.00\$\\
-	2~GB   & 700~ms &  -       &  238.00\$     &  -        & -      &  238.00\$\\
+    128\,MB & 700\,ms &  ---       &   14.88\$     &  ---        & ---      &  14.88\$\\
+    256\,MB & 600\,ms &  ---       &   25.50\$     &  ---        & ---      &  25.50\$\\ 
+    512\,MB & 600\,ms &  ---       &   51.00\$     &  ---        & ---      &  51.00\$\\ 
+	1\,GB   & 600\,ms &  ---       &  102.00\$     &  ---        & ---      &  102.00\$\\
+	2\,GB   & 700\,ms &  ---       &  238.00\$     &  ---        & ---      &  238.00\$\\
     \hline
   \end{tabular}
 %\vspace{-10pt}
