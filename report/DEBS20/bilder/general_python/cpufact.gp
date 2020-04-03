@@ -2,14 +2,14 @@ set term postscript color eps enhanced 22
 set encoding utf8
 set output "cpufact.eps"
 load "../styles.inc"
-set size 1.0,0.9
+set size 1.0,0.8
 set ylabel "Time [ms]"
-set tmargin 3
+set tmargin 3.5
 
-set bmargin 7
+set bmargin 3.5
 set rmargin 6
 
-set title "{/bold Execution Time, {/Courier faas-fact} benchmark}" offset 0,1
+set title "{/bold Execution time of {/Courier-bold faas-fact} (Python)}" offset 0,1
 
 set yrange [0:12000]
 
@@ -17,7 +17,7 @@ set xtics nomirror
 set grid y
 
 set datafile separator ","
-set key vertical maxrows 1 sample 1.0 width 0 at 16,13800
+set key vertical maxrows 1 sample 1.0 width 0 at screen 0.5,0.68 center font "Arial-Condensed"
 set xtics rotate by -45 font "Arial,18"
 plot \
   "data/aws.csv"\
