@@ -122,7 +122,7 @@ On Google, this time varied from 10 minutes up to 10 hours. %\mais{I said to you
 \label{sec:general_test}
 
 %This test was performed to analyze the functions under normal circumstances, meaning that there is not much load respectively that the load can be handled well by the cloud provider. The objective is to compare the achieved performance of the clouds regarding execution speed and the thereby implicated costs. 
-This benchmark evaluates how CPU-bound workload behave across the different cloud providers.
+This benchmark evaluates how CPU-bound workloads behave across the different cloud providers.
 % evaluation the \gls{CPU} factors test (see section \ref{sec:factors_test}) was executed. 
 A function (\texttt{faas-fact}) is invoked every five seconds, using as parameter a large integer triggering a sufficiently challenging computation. 
 We collect 100 results for every configuration (runtime, memory, cloud provider).
@@ -330,7 +330,7 @@ Further investigation is needed as part of future work to understand the reasons
     256\,MB & 3200\,ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
     512\,MB & 1600\,ms &  4.00\$  &   20.00\$     &  128.00\$ & 4.58\$ & 156.58\$ \\
 	1\,GB   &  900\,ms &  4.00\$  &   22.50\$     &  126.00\$ & 4.58\$ & 157.08\$ \\
-	2GB\,MB &  800\,ms &  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\
+	2\,GB &  800\,ms &  4.00\$  &   40.00\$     &  192.00\$ & 4.58\$ & 240.58\$ \\
     \hline
   \rowcolor{gray!25}
     IBM & & & & & &\\
@@ -425,7 +425,7 @@ Despite not being the cheapest option, it remains the most predictable one.
 %Azure is the cheapest provider: with th
 %\gls{AWS} is an exemplar in showing how the pricing works. Since with each doubling of memory execution time halves the price is exactly the same because also the GB-Seconds remain the same. But with 170\$ to 200\$ it is not the cheapest in the list.\\
 Azure is the cheapest cloud provider according to our computations.
-Since this example function application only uses 100\,\gls{MB}, Azure also only charges for 128\,\gls{MB}: memory is dynamically allocated and only bill according to the next 128\,MB step.
+Since this example function application only uses 100\,\gls{MB}, Azure also only charges for 128\,\gls{MB}: memory is dynamically allocated and only billed according to the next 128\,MB step.
 %  \vs{MAISSEN: why only 1 row of results for Azure ? } \mais{Because memory is allocated and billed dynamically up to the needed next 128MB step. In this example the functions uses only 100 MB (because it is CPU bound) and Azure bills 128MB. Clear?}
 %However the actual metrics of how much memory was used does not exist for Linux and is only depicted in a graph for Windows. But in the case this test is correct the cost-performance ratio is very good for low memory applications.\\
 The costs of deploying Google Functions follows closely those of \gls{AWS}, especially for mid-range configurations.

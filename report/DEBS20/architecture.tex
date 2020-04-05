@@ -199,7 +199,7 @@ In future work, we envision this module to be able to forecast the billing costs
 \label{ssec:impl}
 
 The implementation of \sys extensively relies on Docker containers.
-Specifically, the main container invoke other containers using a technique called \emph{Docker-in-Docker}.\footnote{\url{https://www.docker.com/blog/docker-can-now-run-within-docker/}}
+Specifically, the main container invokes other containers using a technique called \emph{Docker-in-Docker}.\footnote{\url{https://www.docker.com/blog/docker-can-now-run-within-docker/}}
 We do so by granting the main container access to \texttt{/var/run/docker.sock} and mounting it as a volume.
 During our evaluation, we did not observe any particular performance degradations using this approach.
 
