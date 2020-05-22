@@ -23,7 +23,7 @@ These experiments specifically aim at answering the following questions:
 %In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
 
 \subsection{Call Latency}
-
+\vs{clarify these are valid for the region from where we computed those}
 We begin by measuring the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
 %This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. 
 Unless specified otherwise, we deploy Node.js using 128\,\gls{MB}.
@@ -55,7 +55,7 @@ Overall, the best performing cloud provider is Amazon, with slightly lower laten
 
 \subsection{Cold Start}
 \label{sec:coldstart}
-
+\vs{clarify experimental methodology, provide further details if possible}
 %This test measured the cold start latency. 
 A cold start happens when a function takes longer than usual to execute. 
 Most of the time, this occurs when the invocation is scheduled right after the completion of its deployment, or when the function has not been used in a while, \eg, after 10 minutes without invocations.
@@ -346,7 +346,7 @@ Further investigation is needed as part of future work to understand the reasons
 
 \subsection{Pricing}
 \label{sec:pricing}
-
+\vs{check Exec. time column values}
 We conclude our quantitative evaluation by showcasing one possible usage of \sys's billing calculator (\S\ref{ssec:billingcalc}).
 To that end, we use it to evaluate the cost of the CPU-bound benchmarks if executed across all the serverless providers.
 
@@ -433,7 +433,6 @@ For the least- and most-expensive configurations, AWS reveals to not be the best
 Finally, IBM's billing method offers predictable costs, being roughly linearly dependant of the chosen memory configurations.
 %Google generally conforms with the pricing results of \gls{AWS}. It positions itself in the same price region although it climbs in costs at 128 \gls{MB} and 2048 \gls{MB}. This can be traced back to the fact that it performed inconsistent and relatively seen slower for 128 MB, and for 2048 MB not much performance was gained. Therefore these two options are more expensive.\\
 %IBM leans on Azure's method of calculating prices. It only charges for the defined and allocated GB-Seconds, but performs basically always the same. Hence, it gets approximately linearly more expensive with more memory allocation.
-
 \subsection{Usability Considerations}
 
 %In this section. the four serverless services will be compared. Two aspects were crucial for the evaluation: First, the previously discussed test and benchmark results and secondly, my personal opinion which was developed during this research and its implementation.
