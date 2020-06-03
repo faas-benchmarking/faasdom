@@ -47,18 +47,18 @@ The results can then be easily compared along several dimensions.
 Based on this information, deployers can evaluate the ``FaaS-domness'' of the providers and decide which one is best adapted for their applications, in terms of performance, reliability or cost.
 % and the suite helps to make the decision easier.
 
-While few efforts exist to benchmark serverless computing~\cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34}, they are relatively limited in terms of supported providers, comparison metrics, diversity of benchmarks (\eg, user-defined functions), or operating modes (\eg, stress-test vs. continuous monitoring).
+While few efforts exist to benchmark serverless computing (often FaaS oriented) ~\cite{doi:10.1002/cpe.4792, Kuntsevich:2018:DAB:3284014.3284016, EoPSCE, 10.1007/978-3-319-75178-8_34, DBLP:conf/wosp/EykSEAI20, DBLP:conf/sac/KuhlenkampWBEW20, DBLP:conf/comsnets/SomuDBK20,DBLP:conf/asplos/GanZCSRKBHRJHPH19,DBLP:conf/cloud/JonasPVSR17,DBLP:journals/corr/abs-1912-00937,DBLP:conf/cidr/HellersteinFGSS19}, they are relatively limited in terms of supported providers, comparison metrics, diversity of benchmarks (\eg, user-defined functions, elasticity), or operating modes (\eg, stress-test vs. continuous monitoring).
 % ...\vs{fill in with 1 sentence saying why those efforts are not sufficient/clear/poor/}. 
 Similarly, studies on benchmarking cloud platforms lack an in-depth evaluation of serverless computing platforms~\cite{Gan:2019:OBS:3297858.3304013}. 
-\vs{
-Related work (should be compared and cited):
-\url{https://arxiv.org/pdf/1812.03651.pdf} (CIDR'19)
-\url{https://arxiv.org/pdf/1912.00937v1.pdf} (SIGMOD'20)
-\url{https://dl.acm.org/doi/10.1145/3127479.3128601} (SoCC'17)
-\url{https://serverless-benchmark.com/}
-\url{http://www.csl.cornell.edu/~delimitrou/papers/2019.asplos.microservices.pdf} (ASPLOS'19)
-}
-
+%\vs{
+%Related work (should be compared and cited):
+%\url{https://arxiv.org/pdf/1812.03651.pdf} (CIDR'19)
+%\url{https://arxiv.org/pdf/1912.00937v1.pdf} (SIGMOD'20)
+%\url{https://dl.acm.org/doi/10.1145/3127479.3128601} (SoCC'17)
+%\url{https://serverless-benchmark.com/}
+%\url{http://www.csl.cornell.edu/~delimitrou/papers/2019.asplos.microservices.pdf} (ASPLOS'19)
+%}
+%
 In this paper, we introduce \sys, a modular and extensible benchmark suite for evaluating serverless computing.
 \sys natively supports major FaaS providers (AWS, Azure, Google, IBM) but can be easily extended to benchmark additional platforms.
 It includes a wide range of workloads, including user-defined functions, and implementation languages.
