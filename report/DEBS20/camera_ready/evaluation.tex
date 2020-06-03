@@ -23,7 +23,7 @@ These experiments specifically aim at answering the following questions:
 %In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
 
 \subsection{Call Latency}
-\vs{clarify these are valid for the region from where we computed those}
+%\vs{clarify these are valid for the region from where we computed those}
 We begin by measuring the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
 %This test differs from a normal ping, that effectively a cloud function is executed instead of just returning a message on a more abstract level. 
 Unless specified otherwise, we deploy Node.js using 128\,\gls{MB}.
@@ -48,14 +48,15 @@ A request is sent every 5 seconds to each cloud and region, up to 100 samples pe
 %We observe the following.
 The average latency over all clouds and regions is 538\,ms.
 We achieve the fasted result on AWS Lambda (\texttt{eu-central-1}) at 80\,ms, and the slowest toward Google (\texttt{asia-east2}) at 1,770\,ms. 
-Overall, the best performing cloud provider is Amazon, with slightly lower latency for the same geographical locations of other providers. \mais{This benchmark was performed from Bern, Switzerland and results will vary depending on the location of execution.}
+Overall, the best performing cloud provider is Amazon, with slightly lower latency for the same geographical locations of other providers. 
+Note that this benchmark was performed from Bern, Switzerland, hence different results might be achieved from different locations. 
 
 %For more detailed results see table \ref{tab:latency}. 
 %The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
 
 \subsection{Cold Start}
 \label{sec:coldstart}
-\vs{clarify experimental methodology, provide further details if possible}
+%\vs{clarify experimental methodology, provide further details if possible}
 %This test measured the cold start latency. 
 A cold start happens when a function takes longer than usual to execute. 
 Most of the time, this occurs when the invocation is scheduled right after the completion of its deployment, or when the function has not been used in a while, \eg, after 10 minutes without invocations.
@@ -90,7 +91,10 @@ Functions are executed using 512\,\gls{MB} of memory and without external packag
 %Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. 
 We executed these tests on the following regions: \texttt{eu-central-1} for AWS, \texttt{west-europe} for Azure,  \texttt{europe-west1} for Google and \texttt{eu-de} for IBM. 
 Note however that the chosen region has no impact on the cold start latency. 
-We compute the cold start latency as the total request time minus the normal average latency. \mais{Cold starts were deteced with the help of instance IDs on AWS and IBM. On Azure and Google online metrics of running instances were taken into account to verify cold starts. The challenge of cold start detection lead to a manual test execution and data manipulation.}
+We compute the cold start latency as the total request time minus the normal average latency.
+On AWS and IBM, cold starts can be deteced with the help of instance IDs. 
+On Azure and Google, online metrics of running instances were taken into account to verify cold starts. 
+The challenge of cold start detection lead to a manual test execution and data manipulation.
 
 \begin{figure}[!b]
 \centering
@@ -302,8 +306,7 @@ Further investigation is needed as part of future work to understand the reasons
 %\end{table}
 
 \begin{table}[!t]
-    \caption{Pricing calculation: cost of the CPU-bound benchmarks computed by \sys according to the pricing models of each cloud. \mais{Execution times are rounded up to the next 100\,ms for AWS, Google and IBM \cite{AWSPricing, GoogleFunctionsPricing, IBMPricing}}.
-    \label{table:example2}}
+    \caption{Pricing calculation: cost of the CPU-bound benchmarks computed by \sys according to the pricing models of each cloud. Execution times are rounded up to the next 100\,ms for AWS, Google and IBM~\cite{AWSPricing,GoogleFunctionsPricing, IBMPricing}\label{table:example2}}.
     \setlength{\tabcolsep}{3pt}
   \scriptsize
   \center
@@ -346,7 +349,7 @@ Further investigation is needed as part of future work to understand the reasons
 
 \subsection{Pricing}
 \label{sec:pricing}
-\vs{check Exec. time column values}
+%\vs{check Exec. time column values}
 We conclude our quantitative evaluation by showcasing one possible usage of \sys's billing calculator (\S\ref{ssec:billingcalc}).
 To that end, we use it to evaluate the cost of the CPU-bound benchmarks if executed across all the serverless providers.
 
