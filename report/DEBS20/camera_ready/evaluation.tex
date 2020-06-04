@@ -15,7 +15,12 @@ These experiments specifically aim at answering the following questions:
 %chapter results of performed tests will be presented and explained, an example for a pricing calculation will be given, the services among the cloud providers will be compared and some general advantages and disadvantages about serverless computing will be specified derived from these results.
 %
 %In this thesis, four different tests have been performed. Each one will be discussed in detail and results will be presented in the following subsections.
-
+\begin{figure}[!t]
+\centering
+\includegraphics[scale=0.7]{bilder/cold_start/coldstart_whisker}
+\caption{Cold start latency.}
+\label{fig:coldstart_plot}
+\end{figure}
 \subsection{Call Latency}
 %\vs{clarify these are valid for the region from where we computed those}
 We begin by measuring the latency (round-trip) for all cloud providers and corresponding regions, using the \texttt{faas-netlatency} benchmark.
@@ -47,12 +52,7 @@ Note that this benchmark was performed from Bern, Switzerland, hence different r
 
 %For more detailed results see table \ref{tab:latency}. 
 %The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
-\begin{figure}[!b]
-\centering
-\includegraphics[scale=0.7]{bilder/cold_start/coldstart_whisker}
-\caption{Cold start latency.}
-\label{fig:coldstart_plot}
-\end{figure}
+
 
 \begin{figure}[!t]
 \centering
