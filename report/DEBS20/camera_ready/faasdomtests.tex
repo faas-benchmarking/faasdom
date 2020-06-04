@@ -1,4 +1,10 @@
 %!TEX root = main.tex
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=1.0\textwidth]{bilder/latency/latency}
+\caption{Latency test scatter plot. Since \texttt{azure-west-us} had issues with Node.js, we resort to \texttt{.NET} for that zone.}
+\label{fig:latency_plot}
+\end{figure*}
 \section{The \sys Benchmark Suite}
 \label{sec:tests}
 
@@ -19,6 +25,8 @@ Other functions executed by the same instance share this file-system to access i
 \textbf{\texttt{faas-custom}} is provided by \sys to allows developers to test custom functions. 
 The suite provides templates for the currently supported cloud providers and the supported implementation languages. 
 In the long term, we expect the number of custom functions to greatly outnumber those provided by the suite itself.
+
+
 
 %\begin{itemize}
 %\item \texttt{faas-fact} and \texttt{faas-matrix-mult}: two CPU-bound benchmarks, respectively to factorize an integer and to multiply large integer matrices;

@@ -1,11 +1,5 @@
 %!TEX root = main.tex
 
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=1.0\textwidth]{bilder/latency/latency}
-\caption{Latency test scatter plot. Since \texttt{azure-west-us} had issues with Node.js, we resort to \texttt{.NET} for that zone.}
-\label{fig:latency_plot}
-\end{figure*}
 
 \section{Evaluation}
 \label{sec:evaluation}
@@ -53,48 +47,19 @@ Note that this benchmark was performed from Bern, Switzerland, hence different r
 
 %For more detailed results see table \ref{tab:latency}. 
 %The raw result file, R script and plot image are also on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/1-latency}{GitHub}.
-
-\subsection{Cold Start}
-\label{sec:coldstart}
-%\vs{clarify experimental methodology, provide further details if possible}
-%This test measured the cold start latency. 
-A cold start happens when a function takes longer than usual to execute. 
-Most of the time, this occurs when the invocation is scheduled right after the completion of its deployment, or when the function has not been used in a while, \eg, after 10 minutes without invocations.
-%However, we observed longer timings, for instance on Google, with up to 10 hours before de-allocating the instance. \mais{I don't understand the previous sentence.}
-Specifically, there are several steps to perform before a function can execute: allocate a server, set up a worker with the associated code, packages and extensions, load the function in memory, and finally run it.
-These steps contribute clearly to the cold start effect that we observe in our results.
-When the function is \emph{warm}, it is ready in memory and can immediately serve requests.
-A function can also be de-allocated (\ie, garbage-collected) when a new instance needs to be provisioned for scaling purposes. 
-When this happens and an invocation is scheduled for the just garbage-collected function, the cold start effect is clearly measurable with degrading effects on the measured latency.
-%\vs{MAISSEN: can't understand this sentence, can you rephrase?} \mais{In order for the cloud provider to prepare the VM instance and deploy the user function code on it, some time can pass.}
-\autoref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as opposed to the warm case. 
-Similar workflows (and effects on latency) exist on the other cloud providers.\footnote{Refer for instance to \url{https://cloud.google.com/functions/docs/bestpractices/tips} for information and best practices from Google.}
-%\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?} \mais{This is just exemplary done for Azure. Should be very similar on other clouds. see \url{https://cloud.google.com/functions/docs/bestpractices/tips} , little doc of providers because a 'disadvantage' of serverless}
-
 \begin{figure}[!b]
-\centering
-\includegraphics[scale=0.6]{bilder/cold-warm}
-\caption{Workflow for cold and warm start on Azure~\cite{AzureColdStart}.}
-\label{fig:azure_coldstart}
-\end{figure}
-
-\begin{figure}[!t]
 \centering
 \includegraphics[scale=0.7]{bilder/cold_start/coldstart_whisker}
 \caption{Cold start latency.}
 \label{fig:coldstart_plot}
 \end{figure}
 
-Our results are averaged over ten executions for each configuration runtime/cloud. 
-Functions are executed using 512\,\gls{MB} of memory and without external packages, to reduce the baseline footprint and the corresponding loading time to the bare minimum.
-%The cold start latency has been tested ten times for each runtime on each cloud.
-%Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. 
-We executed these tests on the following regions: \texttt{eu-central-1} for AWS, \texttt{west-europe} for Azure,  \texttt{europe-west1} for Google and \texttt{eu-de} for IBM. 
-Note however that the chosen region has no impact on the cold start latency. 
-We compute the cold start latency as the total request time minus the normal average latency.
-On AWS and IBM, cold starts can be deteced with the help of instance IDs. 
-On Azure and Google, online metrics of running instances were taken into account to verify cold starts. 
-The challenge of cold start detection lead to a manual test execution and data manipulation.
+\begin{figure}[!t]
+\centering
+\includegraphics[scale=0.6]{bilder/cold-warm}
+\caption{Workflow for cold and warm start on Azure~\cite{AzureColdStart}.}
+\label{fig:azure_coldstart}
+\end{figure}
 
 \begin{figure}[!b]
 \centering
@@ -109,6 +74,57 @@ The challenge of cold start detection lead to a manual test execution and data m
 \caption{Execution time of \texttt{faas-fact} in Node.js.}
 \label{fig:general_node_plot}
 \end{figure}
+
+\subsection{Cold Start}
+\label{sec:coldstart}
+%\vs{clarify experimental methodology, provide further details if possible}
+%This test measured the cold start latency. 
+A cold start happens when a function takes longer than usual to execute. 
+Most of the time, this occurs when the invocation is scheduled right after the completion of its deployment, or when the function has not been used in a while, \eg, after 10 minutes without invocations.
+%However, we observed longer timings, for instance on Google, with up to 10 hours before de-allocating the instance. \mais{I don't understand the previous sentence.}
+Specifically, there are several steps to perform before a function can execute: allocate a server, set up a worker with the associated code, packages and extensions, load the function in memory, and finally run it.
+These steps contribute clearly to the cold start effect that we observe in our results.
+When the function is \emph{warm}, it is ready in memory and can immediately serve requests.
+A function can also be de-allocated (\ie, garbage-collected) when a new instance needs to be provisioned for scaling purposes. 
+
+
+
+\begin{figure}[!b]
+\centering
+\includegraphics[scale=0.7]{bilder/general_go/cpufact.pdf}
+\caption{Execution time of \texttt{faas-fact} in Go.}
+\label{fig:general_go_plot}
+\end{figure}
+
+\begin{figure}[!b]
+\centering
+\includegraphics[scale=0.7]{bilder/general_dotnet/cpufact.pdf}
+\caption{Execution time of the \texttt{faas-fact} in .NET.}
+\label{fig:general_dotnet_plot}
+\end{figure}
+
+When this happens and an invocation is scheduled for the just garbage-collected function, the cold start effect is clearly measurable with degrading effects on the measured latency.
+%\vs{MAISSEN: can't understand this sentence, can you rephrase?} \mais{In order for the cloud provider to prepare the VM instance and deploy the user function code on it, some time can pass.}
+\autoref{fig:azure_coldstart} shows the execution workflow for a cold start on Azure, as opposed to the warm case. 
+Similar workflows (and effects on latency) exist on the other cloud providers.\footnote{Refer for instance to \url{https://cloud.google.com/functions/docs/bestpractices/tips} for information and best practices from Google.}
+%\vs{MAISSEN: do you have the same results for the other providers? eg, why only Azure?} \mais{This is just exemplary done for Azure. Should be very similar on other clouds. see \url{https://cloud.google.com/functions/docs/bestpractices/tips} , little doc of providers because a 'disadvantage' of serverless}
+
+
+
+
+
+Our results are averaged over ten executions for each configuration runtime/cloud. 
+Functions are executed using 512\,\gls{MB} of memory and without external packages, to reduce the baseline footprint and the corresponding loading time to the bare minimum.
+%The cold start latency has been tested ten times for each runtime on each cloud.
+%Memory size was defined with 512 \gls{MB} and no packages were loaded into the function. 
+We executed these tests on the following regions: \texttt{eu-central-1} for AWS, \texttt{west-europe} for Azure,  \texttt{europe-west1} for Google and \texttt{eu-de} for IBM. 
+Note however that the chosen region has no impact on the cold start latency. 
+We compute the cold start latency as the total request time minus the normal average latency.
+On AWS and IBM, cold starts can be deteced with the help of instance IDs. 
+On Azure and Google, online metrics of running instances were taken into account to verify cold starts. 
+The challenge of cold start detection lead to a manual test execution and data manipulation.
+
+
 
 \autoref{fig:coldstart_plot} summarizes our results using a box-and-whiskers plot.
 It stands out that \gls{AWS} is overall the fastest, with an average cold start latency of only 335\,ms for Node.js, Python and Go. 
@@ -137,31 +153,9 @@ We report these results for all cloud configurations and languages: Python (\aut
 %Figure~\ref{fig:general_python_plot} depicts our result for Python
 %\vs{If we have time, we could include the same plots for the other languages. MAISSEN: could you give it a try, using the Python example as template to produce them? }
 
-\begin{figure}[!b]
-\centering
-\includegraphics[scale=0.7]{bilder/general_go/cpufact.pdf}
-\caption{Execution time of \texttt{faas-fact} in Go.}
-\label{fig:general_go_plot}
-\end{figure}
-
-\begin{figure}[!b]
-\centering
-\includegraphics[scale=0.7]{bilder/general_dotnet/cpufact.pdf}
-\caption{Execution time of the \texttt{faas-fact} in .NET.}
-\label{fig:general_dotnet_plot}
-\end{figure}
-
 We note a few interesting facts.
 On \gls{AWS} Lambda, the standard deviation is low, with a minimum value of 50\,ms using .NET and  2,048\,MB of memory, with very consistent execution times across all the different configurations. 
 As expected, every doubling of the allocated memory results in halving the execution time, \ie, performance scales linearly with allocated memory~\cite{AWSLambdaConfig}. 
-
-\begin{figure*}[!t]
-\centering
-\includegraphics[scale=0.7]{bilder/loadtest_average_latency/tputlat_combined}
-\caption{Throughput/latency benchmark using \texttt{wrk2}~\cite{wrk2} and \sys's  \texttt{faas-matrix-mult} stress function.}
-%\mais{Something's wrong. Did you intentially not plot Azure Windows for Node.js and .NET? Further, the .NET plot is wrong: AWS not plotted, Azure (Linux) has the color of AWS}}
-\label{fig:load_test_latency_all}
-\end{figure*}
 
 Azure's memory configuration of 1,536\,\gls{MB} suggests its performance to be in the 1,024-2,048\,\gls{MB} range.
 Surprisingly, it is slower than 1,024\,\gls{MB} instances of the other clouds.  
@@ -172,41 +166,17 @@ Note however that the performance scaling behaves differently on the Google plat
 The results we gathered on the \gls{IBM} platform suggests that memory allocation does not correlate with \gls{CPU} allocation in any way, with five different configurations performing very closely. 
 This is remarkable since the pricing model of \gls{IBM} only accounts for the GB-seconds used. 
 %\vs{MAISSEN: Is this true for all the languages? These resuls are only for Phython. Do you have the same tests for all the other languges? This means that a user could deploy his application always with the smallest memory option possible and would thereby get the same performance for the smaller price.} \mais{Yes this is true for all languages, see {https://github.com/Bschitter/benchmark-suite-serverless-computing/blob/master/results/3-general} files with name scatterplot\_general\_<RUNTIME>.png}
-%The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}.
+%The results and plots for this and the three other runtimes can be found on \href{https://github.com/Bschitter/benchmark-suite-serverless-computing/tree/master/results/3-general}{GitHub}
 
-\subsection{Throughput/Latency}
-\label{sec:loadtest}
 
-To understand the saturation point of the deployed services, we rely on \texttt{wrk2}~\cite{wrk2}, a constant throughput/exact latency HTTP-based benchmarking tool.
-We configure this benchmark to issue function call invocations at increasingly high rates, from 10 up to 1,000 requests per second.
-For each of the configurations, \texttt{wrk2} reports the average latency to handle the requests (\ie, the functions).
-Between each configuration, the benchmark waits for sufficient time to process any request still possibly enqueued.
-\autoref{fig:load_test_latency_all} shows our results for the \texttt{faas-matrix-mult} function and the 4 different programming languages under test.
-%The load test is designed to benchmark the serverless functions up to 1000 requests per second. 
-%This is carried out with the \gls{HTTP} benchmark tool \textit{wrk2} (see \cite{wrk2}). A function is first called with 10 requests per second for the duration of 1 minute. 
-%Subsequently with 25, 50, 100, 200, 400, 800 and finally 1000 requests per second each time for one minute. 
-%In between is a short break of 10 seconds to allow the function to process requests that are still queued. As test, the matrix function with a parameter of 100 is used. With this setup the matrix function should have an average execution time of about 100ms for Node.js, Go and .NET and around 250ms for Python. The graphic \ref{fig:load_test_latency_all} displays the average latency results grouped by runtime.
-%The results are now discussed step by step. 
+\begin{figure*}[!t]
+\centering
+\includegraphics[scale=0.7]{bilder/loadtest_average_latency/tputlat_combined}
+\caption{Throughput/latency benchmark using \texttt{wrk2}~\cite{wrk2} and \sys's  \texttt{faas-matrix-mult} stress function.}
+%\mais{Something's wrong. Did you intentially not plot Azure Windows for Node.js and .NET? Further, the .NET plot is wrong: AWS not plotted, Azure (Linux) has the color of AWS}}
+\label{fig:load_test_latency_all}
+\end{figure*}
 
-We observe that \gls{AWS} achieves stable response latencies for all the tested workloads. 
-%This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
-Azure, on the other hand, shows more surprising results.
-Whereas it can tolerate high loads on Windows OS, it performs very inconsistently on Linux.
-The response latency grows almost linearly with the total requests per second injected and quickly saturates. 
-That is a strong indication that none (or too few) new instances were allocated to handle the load. 
-We investigated this behaviour further through the Azure portal Live Metrics Stream (not shown). 
-When reaching 1,000 requests per second, only a total of 12 instances were deployed to serve .NET functions. % have been deployed (see figure \ref{fig:live_metrics_stream}). 
-Additionally, only 500 requests per second were actually served, leaving a large percentage of requests in the waiting queue.
-%\begin{remark}
-%In the screenshot the request duration differs from the wrk2 results since that is most likely only considering execution time without queuing time.
-%\end{remark}
-
-%\begin{figure}[htp]
-%\centering
-%\includegraphics[scale=0.3]{bilder/Azure_Dotnet_1000.png}
-%\caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
-%\label{fig:live_metrics_stream}
-%\end{figure}
 
 \renewcommand{\arraystretch}{1.2}
 \begin{table}[!t]
@@ -243,6 +213,43 @@ IBM & Go & 25 &  21 & 84.00\% \\ \hline
 \label{table:rps}
 \vspace{-15pt}
 \end{table}
+
+\subsection{Throughput/Latency}
+\label{sec:loadtest}
+
+To understand the saturation point of the deployed services, we rely on \texttt{wrk2}~\cite{wrk2}, a constant throughput/exact latency HTTP-based benchmarking tool.
+We configure this benchmark to issue function call invocations at increasingly high rates, from 10 up to 1,000 requests per second.
+For each of the configurations, \texttt{wrk2} reports the average latency to handle the requests (\ie, the functions).
+Between each configuration, the benchmark waits for sufficient time to process any request still possibly enqueued.
+\autoref{fig:load_test_latency_all} shows our results for the \texttt{faas-matrix-mult} function and the 4 different programming languages under test.
+%The load test is designed to benchmark the serverless functions up to 1000 requests per second. 
+%This is carried out with the \gls{HTTP} benchmark tool \textit{wrk2} (see \cite{wrk2}). A function is first called with 10 requests per second for the duration of 1 minute. 
+%Subsequently with 25, 50, 100, 200, 400, 800 and finally 1000 requests per second each time for one minute. 
+%In between is a short break of 10 seconds to allow the function to process requests that are still queued. As test, the matrix function with a parameter of 100 is used. With this setup the matrix function should have an average execution time of about 100ms for Node.js, Go and .NET and around 250ms for Python. The graphic \ref{fig:load_test_latency_all} displays the average latency results grouped by runtime.
+%The results are now discussed step by step. 
+
+
+We observe that \gls{AWS} achieves stable response latencies for all the tested workloads. 
+%This is very remarkable and a very good result and can be probably traced back to the low cold start latency and the good and consistent performance presented in section \ref{sec:general_test}.\\
+Azure, on the other hand, shows more surprising results.
+Whereas it can tolerate high loads on Windows OS, it performs very inconsistently on Linux.
+The response latency grows almost linearly with the total requests per second injected and quickly saturates. 
+That is a strong indication that none (or too few) new instances were allocated to handle the load. 
+We investigated this behaviour further through the Azure portal Live Metrics Stream (not shown). 
+When reaching 1,000 requests per second, only a total of 12 instances were deployed to serve .NET functions. % have been deployed (see figure \ref{fig:live_metrics_stream}). 
+Additionally, only 500 requests per second were actually served, leaving a large percentage of requests in the waiting queue.
+%\begin{remark}
+%In the screenshot the request duration differs from the wrk2 results since that is most likely only considering execution time without queuing time.
+%\end{remark}
+
+%\begin{figure}[htp]
+%\centering
+%\includegraphics[scale=0.3]{bilder/Azure_Dotnet_1000.png}
+%\caption[Azure Linux .NET Live Metrics Stream during 1000 RPS]{Azure Linux .NET Live Metrics Stream during 1000 RPS\\Source: screenshot Azure portal}
+%\label{fig:live_metrics_stream}
+%\end{figure}
+
+
 
 For Node.js and .NET, response latencies spike up to 24\,s and 18\,s, respectively. % and are not plotted in the graph for illustration purposes. 
 Using Python, Azure managed to handle up to 200 requests per second, beyond which none of the requests could be served correctly.
