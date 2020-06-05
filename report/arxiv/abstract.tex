@@ -1,0 +1,26 @@
+%!TEX root = main.tex
+%\nocite{Pellegrini_2019}
+\begin{abstract}
+Serverless computing has become a major trend among cloud providers. 
+With serverless computing, developers fully delegate the task of managing the servers, dynamically allocating the required resources, as well as handling availability and fault-tolerance matters to the cloud provider.
+In doing so, developers can solely focus on the application logic of their software, which is then deployed and completely managed in the cloud.
+
+Despite its increasing popularity, not much is known regarding the actual system performance achievable on the currently available serverless platforms.
+Specifically, it is cumbersome to benchmark such systems in a language- or runtime-independent manner.
+Instead, one must resort to a full application deployment, to later take informed decisions on the most convenient solution along several dimensions, including performance and economic costs.
+
+\sys is a modular architecture and proof-of-concept implementation of a benchmark suite for serverless computing platforms.
+It currently supports the current mainstream serverless cloud providers (\emph{i.e.}, AWS, Azure, Google, IBM), a large set of benchmark tests and a variety of implementation languages.
+The suite fully automatizes the deployment, execution and clean-up of such tests, providing insights (including historical) on the performance observed by serverless applications. 
+\sys also integrates a model to estimate budget costs for deployments across the supported providers.
+\sys is open-source and available at \sloppy{\url{https://github.com/bschitter/benchmark-suite-serverless-computing}}.
+%Among all the services the cloud offers, serverless computing is very popular and every large cloud service provider offers a serverless platform. 
+%However, there has not been much effort to test, benchmark or compare these services. 
+%This thesis tries to take an approach on benchmarking serverless computing with building a suite that everyone can use.
+
+%This suite provides five different tests to benchmark on four different clouds, highly automated deployment and cleanup of these tests, a testing utility for comparing cloud providers, a heavy benchmark to load test the serverless platforms and a pricing calculator to estimate hypothetical and actual costs. 
+%Everything is packaged with Docker and is easy to use.
+
+%This benchmark suite is completely open source and the code and the documentation can be found at \url{https://github.com/bschitter/benchmark-suite-serverless-computing}.
+\end{abstract}
+%\textbf{Keywords:} Serverless, Serverless Computing, Benchmarking, \gls{AWS} Lambda, Microsoft Azure Functions, Google Cloud Functions, %\gls{IBM} Cloud Functions, \gls{FaaS}

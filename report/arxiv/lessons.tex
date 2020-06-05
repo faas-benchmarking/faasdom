@@ -1,0 +1,34 @@
+%!TEX root = main.tex
+%\vspace{-20pt}
+\section{Lessons Learned}
+\label{sec:lessons}
+
+This study has shown that serverless computing in the form of \gls{FaaS} can deliver good performance at a reasonable price.
+It is fairly easy to set up, deploy and execute code in the cloud for the end user, as compared to \gls{VM}s or even physical servers.
+With serverless computing, companies can focus on building their business logic instead of maintaining operating systems and servers on premises, which requires expertise and is not always affordable for small companies.
+One of the most important features of \gls{FaaS} is is auto-scaling capability, which take away from the deployer the burden of dimensioning the system and allocating resources.
+
+Through the implementation and evaluation of \sys, we notably encountered the following limitations of the FaaS paradigm. 
+
+First, one is heavily limited by the offering of specific cloud providers, including available runtime systems and programming languages, supported triggers, third party  services integration, quotas or maximum memory. 
+Users cannot easily overcome such limitations as the full application stack is managed by the provider.
+
+Second, providers can force an application to migrate from a specific runtime version to an arbitrarily different one (\eg, when upgrading their system from Node.js v6 to v8).
+Despite backward compatibility, functions might break, forcing developers to keep up with the pace imposed by the cloud provider.
+
+Third, developers face the risk of vendor lock-in by depending on proprietary features.
+This might become a serious issue when considering application upgrades and potential provider migrations.
+
+Finally, the lack of deployment standards makes the FaaS paradigm still a largely experimental playground.
+Providers offer custom APIs (\eg, request/response objects), which inevitably vary across cloud offerings.
+A common framework supported by a standard would certainly improve adoption and benefit the whole ecosystem.
+
+
+%can normally not be changed or influenced by the user. In most cases and particularly for simpler applications this should be no obstacle. 
+%Considering the full development stack is managed by the provider users can potentially be forced to upgrade their application runtime (e.g. Node.js 6 to Node.js 8) when it reaches end of life. If this is announced early enough it doesn't put the users under pressure. But still the action eventually needs to be done and this costs resources. That can be annoying and the user has no control over it.\\
+
+%Another risk of using these services can be a vendor lock-in. If the service is easily capable of being integrated along with other services of the cloud, the user can be entrapped to use them and get unintentionally bonded to the provider. 
+%When a change in the application design is on its way or even a change of the cloud provider is considered, these integrations could block a modification in the architecture or a migration.\\
+
+%Furthermore there is no de facto standard on how to implement and deploy the functions. Each cloud uses its custom methods and properties (e.g. request and response object) inside the function which varies across the clouds. There is obviously no common interest of the providers to develop a standardized framework due to their competition.\\
+%A last aspect I'd like to mention is efficiency. Since the customer is billed by the execution time of the function it is extremely important to only run highly optimized and efficient code, when executed in high quantities. Otherwise billing for unnecessary or idle \gls{CPU} time (e.g. run remote operations synchronously) can happen. This concern should be obvious to developers and entrepreneurs but the fact that one is billed exactly by the usage emphasizes it even more (compared of having an over provisioned server).
