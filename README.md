@@ -1,5 +1,8 @@
-# benchmark-suite-serverless-computing
-Repository used for the master thesis "A Benchmark Suite for Serverless Computing".
+# The FAASDOM benchmark suite
+This is a fork of Pascal Maissen's original [MSc thesis report](https://github.com/Bschitter/benchmark-suite-serverless-computing).
+The results of this work will appear in the proceedings of the upcoming [14TH ACM International Conference in Distributed and Event-Based Systems (ACM DEBS 2020)](https://2020.debs.org/). 
+
+Please refer to this work using: _TBD (link in the ACM DL to appear beginning of July 2020)_
 
 ![Overview](images/main_app.png)
 
