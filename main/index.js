@@ -25,6 +25,8 @@ const AZURE_CONTAINER_IMAGE = 'mcr.microsoft.com/azure-cli:2.0.78';
 const GOOGLE_CONTAINER_IMAGE = 'google/cloud-sdk:274.0.1-alpine';
 const IBM_CONTAINER_IMAGE = 'ibmcom/ibm-cloud-developer-tools-amd64:0.20.0';
 
+const PORT = process.env.PORT || 3001;
+
 /** variable for config data */
 var config;
 
@@ -261,8 +263,10 @@ app.get('/status', function(req, res, next) {
 });
 
 loadConfig();
-app.listen(3001, function () {
-	console.log('INFO: App listening on port 3001!')
+var env = app.get('env');
+app.listen(PORT, function(err) {
+    if (err) throw err;
+    console.log(`INFO: App listening on port ${PORT} in ${env} mode`);
 });
 
 /** load configurations from file */
