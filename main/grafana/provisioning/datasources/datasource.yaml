@@ -4,7 +4,7 @@ datasources:
 - name: InfluxDB
   type: influxdb
   access: proxy
-  url: http://localhost:8086
+  url: http://db:8086
   database: results
   user: benchmark-suite
   isDefault: true

@@ -46,7 +46,6 @@ services:
       - "8083:8083"
       - "8086:8086"
       - "8090:8090"
-    network_mode: "host"
     volumes:
       - influx:/var/lib/influxdb
 
@@ -55,9 +54,10 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    links:
+      - db
     env_file:
       - env.grafana
-    network_mode: "host"
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/var/lib/grafana/dashboards
@@ -71,7 +71,6 @@ services:
       - grafana
     ports:
       - "3001:3001"
-    network_mode: "host"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 

@@ -7,7 +7,7 @@ const request = require('request');
 const tags = ['test', 'provider', 'language', 'memory'];
 
 const influx = new Influx.InfluxDB({
-    host: 'localhost',
+    host: 'db',
     port: 8086,
     database: 'results',
     username: 'benchmark-suite',

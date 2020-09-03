@@ -1,7 +1,7 @@
 const Influx = require('influx');
 
 const influx = new Influx.InfluxDB({
-    host: 'localhost',
+    host: 'db',
     port: 8086,
     database: 'results',
     username: 'benchmark-suite',
