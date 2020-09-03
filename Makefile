@@ -4,10 +4,16 @@ all: start
 start:
 	cd main && docker-compose up -d db grafana app
 
+restart:
+	cd main && docker-compose restart db grafana app
+
 clean: stop
 
 stop:
 	cd main && docker-compose down
+
+build:
+	cd main && docker-compose build
 
 setup: create_volumes copy_data_into_volumne
 

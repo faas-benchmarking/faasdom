@@ -64,7 +64,8 @@ services:
 
   app:
     build: .
-    image: bschitter/benchmark-suite-serverless-computing:0.1
+    # Build new docker image. Could later host a cached version public as bschitter (not available anymore!)
+    # image: bschitter/benchmark-suite-serverless-computing:0.1
     container_name: app
     depends_on:
       - db
