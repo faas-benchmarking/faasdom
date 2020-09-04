@@ -1097,7 +1097,8 @@ async function cleanupAWS() {
 		currentLogStatusAWSEnd += '</ul>';
 		runningStatusAWS = true;
 
-		let awsFunctions = [], awsGateways = [];
+		let awsFunctions = [];
+		let awsGateways = [];
 
 		var promises = [];
 
