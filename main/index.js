@@ -635,14 +635,15 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 			
 			/** get the ARN of lambda */
-			let lambdaarn = await execShellCommand(dockerPrefixOnlyCLIVolume + 'aws lambda list-functions --query "Functions[?FunctionName==\\`' + functionName + '\\`].FunctionArn" --output text --region ' + config.aws.region).catch((err) => {
+			let getARNCmd = dockerPrefixOnlyCLIVolume + 'aws lambda list-functions --query "Functions[?FunctionName==\\`' + functionName + '\\`].FunctionArn" --output json --region ' + config.aws.region;
+			let lambdaarn = await execShellCommand(getARNCmd).catch((err) => {
 				error = true;
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while getting the ARN of the lambda function. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
 				return;
 			}
-			lambdaarn = lambdaarn.replace('\n', '');
+			lambdaarn = JSON.parse(lambdaarn)[0];
 
 			/** Create Api */
 			await execShellCommand(dockerPrefixOnlyCLIVolume + 'aws apigateway create-rest-api --name "' + APIName + '" --description "Api for ' + functionName + '" --region ' + config.aws.region).catch((err) => {
@@ -654,24 +655,26 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** get the ID of the API */
-			let apiid = await execShellCommand(dockerPrefixOnlyCLIVolume + 'aws apigateway get-rest-apis --query "items[?name==\\`' + APIName + '\\`].id" --output text --region ' + config.aws.region).catch((err) => {
+			let getApiIdCmd = dockerPrefixOnlyCLIVolume + 'aws apigateway get-rest-apis --query "items[?name==\\`' + APIName + '\\`].id" --output json --region ' + config.aws.region;
+			let apiid = await execShellCommand(getApiIdCmd).catch((err) => {
 				error = true;
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while getting the REST API ID. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
 				return;
 			}
-			apiid = apiid.replace('\n', '');
+			apiid = JSON.parse(apiid)[0];
 
 			/** get the parent ID of the API */
-			let parentresourceid = await execShellCommand(dockerPrefixOnlyCLIVolume + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/\\`].id" --output text --region ' + config.aws.region).catch((err) => {
+			var getApiParentIdCmd = dockerPrefixOnlyCLIVolume + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/\\`].id" --output json --region ' + config.aws.region;
+			let parentresourceid = await execShellCommand(getApiParentIdCmd).catch((err) => {
 				error = true;
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while getting the parent ID of the API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
 				return;
 			}
-			parentresourceid = parentresourceid.replace('\n', '');
+			parentresourceid = JSON.parse(parentresourceid)[0];
 			
 			/** Create resource on API */
 			await execShellCommand(dockerPrefixOnlyCLIVolume + 'aws apigateway create-resource --rest-api-id ' + apiid + ' --parent-id ' + parentresourceid + ' --path-part ' + APIPath + ' --region ' + config.aws.region).catch((err) => {
@@ -683,14 +686,15 @@ async function deployFunction(provider, language, test, functionName, APIName, A
 			}
 
 			/** get the resource ID */
-			let resourceid = await execShellCommand(dockerPrefixOnlyCLIVolume + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/' + APIPath + '\\`].id" --output text --region ' + config.aws.region).catch((err) => {
+			let getResourceIdCmd = dockerPrefixOnlyCLIVolume + 'aws apigateway get-resources --rest-api-id ' + apiid + ' --query "items[?path==\\`/' + APIPath + '\\`].id" --output json --region ' + config.aws.region;
+			let resourceid = await execShellCommand(getResourceIdCmd).catch((err) => {
 				error = true;
 				currentLogStatusAWS += '<li><span style="color:red">ERROR:</span> Error happened while getting the resource ID of the API. Function ' + functionName + ' in language ' + languageName + ' was <span style="font-weight: bold">NOT</span> deployed.</li>';
 			});
 			if(error) {
 				return;
 			}
-			resourceid = resourceid.replace('\n', '');
+			resourceid = JSON.parse(resourceid)[0];
 
 			/** Create Method on resource */
 			await execShellCommand(dockerPrefixOnlyCLIVolume + 'aws apigateway put-method --rest-api-id ' + apiid + ' --resource-id ' + resourceid + ' --http-method ANY --authorization-type NONE --region ' + config.aws.region).catch((err) => {
