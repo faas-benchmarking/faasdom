@@ -4,6 +4,9 @@ all: start
 start:
 	cd main && docker-compose up -d db grafana app
 
+start_debug:
+	cd main && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d db grafana app
+
 restart:
 	cd main && docker-compose restart db grafana app
 
