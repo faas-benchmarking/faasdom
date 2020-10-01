@@ -35,7 +35,7 @@ copy_data_into_volumne:
 	docker rm helper
 
 login:
-	# 1) Follow the config steps: https://github.com/spec-rg-cloud/faasdom#configure
+	# 1) Follow the config steps in the README under ##configure
 	# 2) Use login_CLOUD (CLOUD=aws|azure|google|ibm)
 
 ### mount the volumes and login with the cloud provider

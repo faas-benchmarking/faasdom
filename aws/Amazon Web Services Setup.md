@@ -14,4 +14,4 @@
 
 If you want to use the regions *me-south-1, Middle East (Bahrain)* and *ap-east-1, Asia Pacific (Hong Kong)* you will have to manually activate them in the AWS console in the browser. See [https://console.aws.amazon.com/billing/home?#/account?AWS-Regions](https://console.aws.amazon.com/billing/home?#/account?AWS-Regions)
 
-You also need to append them to 'aws.regions_options' in the `main/config.json` until the corresponding [issue](https://github.com/spec-rg-cloud/faasdom/issues/1) is fixed.
+You also need to append them to 'aws.regions_options' in the `main/config.json` until the cleanup issue where non-active regions let the cleanup operation fail.
