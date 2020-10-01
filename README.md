@@ -96,6 +96,13 @@ docker run --rm -tiv ibm-secrets:/root/.bluemix ibmcom/ibm-cloud-developer-tools
 
 ## Usage
 
+### Update configuration
+
+```bash
+# Currently requires re-building the Docker image on every change of config.json
+docker-compose build
+```
+
 ### Starting the application
 
 To start the main application (in the folder [main](main/)) run:

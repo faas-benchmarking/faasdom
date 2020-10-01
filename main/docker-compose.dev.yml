@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    ports:
+      - "3001:3001"
+    #   DEBUG ONLY
+      - "9229:9229"
+    # DEBUG ONLY
+    command:
+      - "npm"
+      - "run"
+      - "debug"
